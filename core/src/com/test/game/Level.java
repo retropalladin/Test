@@ -43,11 +43,12 @@ public class Level {
     }
 
     public void update(float delta) {
-        frameTime = Math.min(delta, 0.25f);
+        frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
         accumulator += frameTime;
-        while (accumulator >= 1/45f) {
-            world.step(1/45f, 6, 2);
-            accumulator -= 1/45f;
+        while (accumulator >= Constants.PHYSICS_STEP) {
+            world.step(Constants.PHYSICS_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
+            // processing collisions
+            accumulator -= Constants.PHYSICS_STEP;
         }
     }
 

@@ -56,4 +56,11 @@ public class Level {
         if(Constants.DEBUG_PHYSICS_RENDER)
             debugRenderer.render(world, viewport.getCamera().combined);
     }
+
+    public void dispose(){
+        world.dispose();
+        if(Constants.DEBUG_PHYSICS_RENDER)
+            debugRenderer.dispose();
+        stage.dispose();
+    }
 }

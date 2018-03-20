@@ -59,9 +59,9 @@ public class GameplayScreen implements Screen {
     private void setupLevel(String levelName) {
         if(!load) {
             if(Constants.DEBUG)
-                level = Level.debugLevel(batch);
+                level = Level.debugLevel();
             else
-                level = LevelLoader.load(levelName, batch);
+                level = LevelLoader.load(levelName);
         }
     }
 }

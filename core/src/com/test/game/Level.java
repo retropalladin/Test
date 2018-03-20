@@ -13,27 +13,22 @@ public class Level {
 
     public ExtendViewport viewport;
 
-    private Stage stage;
-
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
     private float frameTime;
     private float accumulator;
 
-    public Level(SpriteBatch batch) {
+    public Level() {
         this.viewport = new ExtendViewport(Constants.WORLD_SIZE, Constants.WORLD_SIZE);
 
         world = new World(Vector2.Zero, false);
         if(Constants.DEBUG_PHYSICS_RENDER)
             debugRenderer = new Box2DDebugRenderer();
-
-        stage = new Stage(viewport, batch);
-        Gdx.input.setInputProcessor(stage);
     }
 
-    public static Level debugLevel(SpriteBatch batch) {
-        Level level = new Level(batch);
+    public static Level debugLevel() {
+        Level level = new Level();
         level.initializeDebugLevel();
         return level;
     }
@@ -61,6 +56,5 @@ public class Level {
         world.dispose();
         if(Constants.DEBUG_PHYSICS_RENDER)
             debugRenderer.dispose();
-        stage.dispose();
     }
 }

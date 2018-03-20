@@ -18,6 +18,9 @@ public class Level {
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
+    private float frameTime;
+    private float accumulator;
+
     public Level(SpriteBatch batch) {
         this.viewport = new ExtendViewport(Constants.WORLD_SIZE, Constants.WORLD_SIZE);
 
@@ -40,6 +43,12 @@ public class Level {
     }
 
     public void update(float delta) {
+        frameTime = Math.min(delta, 0.25f);
+        accumulator += frameTime;
+        while (accumulator >= 1/45f) {
+            world.step(1/45f, 6, 2);
+            accumulator -= 1/45f;
+        }
     }
 
     public void render() {

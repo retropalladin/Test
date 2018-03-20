@@ -23,6 +23,10 @@ public class MyTestGame extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(img, 0, 0);
 		batch.end();
+
+		int  i = 100;
+
+		int j = 100;
 	}
 	
 	@Override

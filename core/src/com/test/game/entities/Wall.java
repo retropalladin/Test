@@ -1,4 +1,9 @@
 package com.test.game.entities;
 
-public class Wall {
+import com.badlogic.gdx.utils.Pool;
+
+public class Wall implements Pool.Poolable {
+    @Override
+    public void reset() {
+    }
 }

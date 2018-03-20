@@ -1,4 +1,9 @@
 package com.test.game.entities;
 
-public class Bullet {
+import com.badlogic.gdx.utils.Pool;
+
+public class Bullet implements Pool.Poolable {
+    @Override
+    public void reset() {
+    }
 }

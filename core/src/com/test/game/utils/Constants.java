@@ -5,5 +5,10 @@ package com.test.game.utils;
  */
 
 public class Constants {
+    // developing
     public static final boolean DEBUG = true;
+    public static final boolean DEBUG_PHYSICS_RENDER = true;
+
+    // Level settings
+    public static final int WORLD_SIZE = 20;
 }

@@ -22,7 +22,7 @@ public class MyTestGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		batch.draw(img, 0, 0);
-		batch.end();
+		batch.end();int i=1;
 	}
 	
 	@Override

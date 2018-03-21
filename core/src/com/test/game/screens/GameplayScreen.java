@@ -34,7 +34,7 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        levelRenderer.updateViewport(width, height);
+        levelRenderer.updateCameraResolution(width, height);
     }
 
     @Override

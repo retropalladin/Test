@@ -18,6 +18,16 @@ public class Constants {
     // Physics settings
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
-    public static final int CELL_SIZE = 2;
     public static final float PHYSICS_STEP = 1/45f;
+
+    public static final int CELL_SIZE = 2;
+
+    public static final float LIGHT_TANK_DENSITY = 0.3f;
+    public static final float LIGHT_TANK_FRICTION = 0f;
+    public static final float LIGHT_TANK_RESTITUTION = 0f;
+
+
+    public static final float HEAVY_TANK_DENSITY = 0.6f;
+    public static final float HEAVY_TANK_FRICTION = 0f;
+    public static final float HEAVY_TANK_RESTITUTION = 0f;
 }

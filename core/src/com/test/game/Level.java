@@ -36,8 +36,8 @@ public class Level {
     private Vector2 tankCenter;
     private BodyDef tankBodyDef;
     private PolygonShape tankRectangle;
-    private FixtureDef tankFixtureDef;
-
+    private FixtureDef lightTankFixtureDef;
+    private FixtureDef heavyTankFixtureDef;
 
     public Level() {
         aliveBullets = new Array<Bullet>();
@@ -55,8 +55,17 @@ public class Level {
         tankRectangle = new PolygonShape();
         tankRectangle.setAsBox(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f, tankCenter, 0);
 
-        tankFixtureDef = new FixtureDef();
-        tankFixtureDef.shape = tankRectangle;
+        lightTankFixtureDef = new FixtureDef();
+        lightTankFixtureDef.shape = tankRectangle;
+        lightTankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
+        lightTankFixtureDef.friction = Constants.LIGHT_TANK_FRICTION;
+        lightTankFixtureDef.restitution = Constants.LIGHT_TANK_RESTITUTION;
+
+        heavyTankFixtureDef = new FixtureDef();
+        heavyTankFixtureDef.shape = tankRectangle;
+        heavyTankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
+        heavyTankFixtureDef.friction = Constants.HEAVY_TANK_FRICTION;
+        heavyTankFixtureDef.restitution = Constants.HEAVY_TANK_RESTITUTION;
     }
 
     public static Level debugLevel() {
@@ -67,16 +76,21 @@ public class Level {
 
     private void initializeDebugLevel() {
         spawnLightTank(0,0);
+        spawnHeavyTank(3,3);
     }
 
     private Tank spawnLightTank(float posX, float posY)
     {
         Tank lightTank = spawnTank(posX,posY);
-        tankFixtureDef.density = 0.5f;
-        tankFixtureDef.friction = 0.0f;
-        tankFixtureDef.restitution = 0.0f;
-        lightTank.body.createFixture(tankFixtureDef);
+        lightTank.body.createFixture(lightTankFixtureDef);
         return lightTank;
+    }
+
+    private Tank spawnHeavyTank(float posX, float posY)
+    {
+        Tank heavyTank = spawnTank(posX,posY);
+        heavyTank.body.createFixture(heavyTankFixtureDef);
+        return heavyTank;
     }
 
     private Tank spawnTank(float posX, float posY) {

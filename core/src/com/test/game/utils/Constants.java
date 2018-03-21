@@ -10,11 +10,12 @@ public class Constants {
     public static final boolean DEBUG_PHYSICS_RENDER = true;
 
     // Level settings
-    public static final int WORLD_SIZE = 20;
+    public static final int WORLD_SIZE = 32;
     public static final float FRAME_TIME_MAX = 0.25f;
 
     // Physics settings
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
+    public static final int CELL_SIZE = 2;
     public static final float PHYSICS_STEP = 1/45f;
 }

@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.test.game.Level;
+import com.test.game.LevelRenderer;
 import com.test.game.utils.Constants;
 import com.test.game.utils.LevelLoader;
 
 public class GameplayScreen implements Screen {
 
     private Level level;
+    private LevelRenderer levelRenderer = new LevelRenderer();
     private boolean load = false;
 
     private SpriteBatch batch;
@@ -27,12 +29,12 @@ public class GameplayScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         level.update(delta);
-        level.render(batch);
+        levelRenderer.render(level,batch);
     }
 
     @Override
     public void resize(int width, int height) {
-        level.viewport.update(width, height, false);
+        levelRenderer.updateViewport(width, height);
     }
 
     @Override
@@ -53,6 +55,7 @@ public class GameplayScreen implements Screen {
     @Override
     public void dispose() {
         level.dispose();
+        levelRenderer.dispose();
         batch.dispose();
     }
 

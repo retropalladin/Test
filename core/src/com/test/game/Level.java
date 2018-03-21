@@ -16,31 +16,25 @@ import com.test.game.utils.Constants;
 
 public class Level {
 
-    public ExtendViewport viewport;
-
-    private Array<Bullet> aliveBullets;
+    public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
 
-    private Array<Tank> aliveTanks;
+    public Array<Tank> aliveTanks;
     private static Pool<Tank> tankPool = Pools.get(Tank.class);
 
-    private Array<Wall> aliveWalls;
+    public Array<Wall> aliveWalls;
     private static Pool<Wall> wallPool = Pools.get(Wall.class);
 
-    private World world;
-    private Box2DDebugRenderer debugRenderer;
+    public World world;
 
     private float frameTime;
     private float accumulator;
 
     public Level() {
-        this.viewport = new ExtendViewport(Constants.WORLD_SIZE, Constants.WORLD_SIZE);
         aliveBullets = new Array<Bullet>();
         aliveTanks = new Array<Tank>();
         aliveWalls = new Array<Wall>();
         world = new World(Vector2.Zero, false);
-        if(Constants.DEBUG_PHYSICS_RENDER)
-            debugRenderer = new Box2DDebugRenderer();
     }
 
     public static Level debugLevel() {
@@ -50,7 +44,6 @@ public class Level {
     }
 
     private void initializeDebugLevel(){
-
     }
 
     public void update(float delta) {
@@ -63,15 +56,8 @@ public class Level {
         }
     }
 
-    public void render(SpriteBatch batch) {
-        if(Constants.DEBUG_PHYSICS_RENDER)
-            debugRenderer.render(world, viewport.getCamera().combined);
-    }
-
     public void dispose(){
         world.dispose();
-        if(Constants.DEBUG_PHYSICS_RENDER)
-            debugRenderer.dispose();
         freeAliveArrays();
     }
 

@@ -60,12 +60,14 @@ public class Level {
         lightTankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
         lightTankFixtureDef.friction = Constants.LIGHT_TANK_FRICTION;
         lightTankFixtureDef.restitution = Constants.LIGHT_TANK_RESTITUTION;
+        lightTankFixtureDef.filter.groupIndex = Constants.GROUP_TANKS;
 
         heavyTankFixtureDef = new FixtureDef();
         heavyTankFixtureDef.shape = tankRectangle;
         heavyTankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
         heavyTankFixtureDef.friction = Constants.HEAVY_TANK_FRICTION;
         heavyTankFixtureDef.restitution = Constants.HEAVY_TANK_RESTITUTION;
+        heavyTankFixtureDef.filter.groupIndex = Constants.GROUP_TANKS;
     }
 
     public static Level debugLevel() {
@@ -75,20 +77,32 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        spawnLightTank(0,0);
-        spawnHeavyTank(3,3);
+        spawnLightTank(0,0,true);
+        spawnHeavyTank(3,0,false);
     }
 
-    private Tank spawnLightTank(float posX, float posY)
-    {
+    private Tank spawnLightTank(float posX, float posY, boolean isAlly) {
         Tank lightTank = spawnTank(posX,posY);
+        if(isAlly) {
+            lightTankFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ALLY;
+            lightTankFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ENEMY;
+        }else{
+            lightTankFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ENEMY;
+            lightTankFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ALLY;
+        }
         lightTank.body.createFixture(lightTankFixtureDef);
         return lightTank;
     }
 
-    private Tank spawnHeavyTank(float posX, float posY)
-    {
+    private Tank spawnHeavyTank(float posX, float posY, boolean isAlly) {
         Tank heavyTank = spawnTank(posX,posY);
+        if(isAlly) {
+            heavyTankFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ALLY;
+            heavyTankFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ENEMY;
+        }else{
+            heavyTankFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ENEMY;
+            heavyTankFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ALLY;
+        }
         heavyTank.body.createFixture(heavyTankFixtureDef);
         return heavyTank;
     }

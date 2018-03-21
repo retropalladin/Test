@@ -30,4 +30,10 @@ public class Constants {
     public static final float HEAVY_TANK_DENSITY = 0.6f;
     public static final float HEAVY_TANK_FRICTION = 0f;
     public static final float HEAVY_TANK_RESTITUTION = 0f;
+
+    public static final int CATEGORY_BITS_ALLY = 0x0001;
+    public static final int CATEGORY_BITS_ENEMY = 0x0002;
+
+    public static final int GROUP_TANKS = 1;
+    public static final int GROUP_BULLETS = 2;
 }

@@ -20,7 +20,7 @@ public class Constants {
 
     public static final float CELL_SIZE = 2;
     public static final float BULLET_WIDTH = 1;
-    public static final float BULLET_HEIHT = 0.5f;
+    public static final float BULLET_HEIGHT = 0.5f;
     public static final float BULLET_EPS_SPAWN = 0.05f;
 
     public static final float LIGHT_TANK_DENSITY = 0.3f;
@@ -46,7 +46,7 @@ public class Constants {
     public static final short CATEGORY_ALLY_BULLET = (1 << 3);
     public static final short CATEGORY_ENEMY_BULLET = (1 << 4);
 
-    public static final short MASK_WALL = 0;
+    public static final short MASK_WALL = CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET | CATEGORY_ENEMY_BULLET;
     public static final short MASK_ALLY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
     public static final short MASK_ENEMY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET;
     public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;

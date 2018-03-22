@@ -45,8 +45,7 @@ public class Level {
     private BodyDef bulletBodyDef;
     private PolygonShape horizontalBulletRectangle;
     private PolygonShape verticalBulletRectangle;
-    private FixtureDef horizontalBulletFixtureDef;
-    private FixtureDef verticalBulletFixtureDef;
+    private FixtureDef BulletFixtureDef;
 
     public Level() {
         aliveBullets = new Array<Bullet>();
@@ -69,8 +68,8 @@ public class Level {
         TankFixtureDef.friction = Constants.TANK_FRICTION;
         TankFixtureDef.restitution = Constants.TANK_RESTITUTION;
 
-        horizontalBulletCenter = new Vector2(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIHT * 0.5f);
-        verticalBulletCenter = new Vector2(Constants.BULLET_HEIHT * 0.5f, Constants.BULLET_WIDTH * 0.5f);
+        horizontalBulletCenter = new Vector2(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIGHT * 0.5f);
+        verticalBulletCenter = new Vector2(Constants.BULLET_HEIGHT * 0.5f, Constants.BULLET_WIDTH * 0.5f);
 
         bulletBodyDef = new BodyDef();
         bulletBodyDef.type = BodyType.DynamicBody;
@@ -79,18 +78,13 @@ public class Level {
         horizontalBulletRectangle = new PolygonShape();
         verticalBulletRectangle = new PolygonShape();
 
-        horizontalBulletRectangle.setAsBox(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIHT * 0.5f, horizontalBulletCenter , 0);
-        verticalBulletRectangle.setAsBox(Constants.BULLET_HEIHT * 0.5f, Constants.BULLET_WIDTH * 0.5f, verticalBulletCenter, 0);
+        horizontalBulletRectangle.setAsBox(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIGHT * 0.5f, horizontalBulletCenter , 0);
+        verticalBulletRectangle.setAsBox(Constants.BULLET_HEIGHT * 0.5f, Constants.BULLET_WIDTH * 0.5f, verticalBulletCenter, 0);
 
-        horizontalBulletFixtureDef = new FixtureDef();
-        horizontalBulletFixtureDef.shape = horizontalBulletRectangle;
-        horizontalBulletFixtureDef.friction = Constants.BULLET_FRICTION;
-        horizontalBulletFixtureDef.restitution = Constants.BULLET_RESTITUTION;
-
-        verticalBulletFixtureDef = new FixtureDef();
-        verticalBulletFixtureDef.shape = verticalBulletRectangle;
-        verticalBulletFixtureDef.friction = Constants.BULLET_FRICTION;
-        verticalBulletFixtureDef.restitution = Constants.BULLET_RESTITUTION;
+        BulletFixtureDef = new FixtureDef();
+        BulletFixtureDef.shape = horizontalBulletRectangle;
+        BulletFixtureDef.friction = Constants.BULLET_FRICTION;
+        BulletFixtureDef.restitution = Constants.BULLET_RESTITUTION;
     }
 
     public static Level debugLevel() {
@@ -100,10 +94,10 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        spawnDefinedTank(10,0,TankType.LIGHT_TANK,true);
-        spawnDefinedTank(-10,0,TankType.LIGHT_TANK,false);
-        spawnTankCorrectedBullet(-10,0,BulletType.AP_BULLET,Direction.RIGHT,false);
-        spawnTankCorrectedBullet(10,0,BulletType.AP_BULLET,Direction.LEFT,true);
+        spawnDefinedTank(0,10,TankType.LIGHT_TANK,true);
+        spawnDefinedTank(0,-10,TankType.LIGHT_TANK,false);
+        spawnTankCorrectedBullet(0,-10,BulletType.AP_BULLET,Direction.UP,false);
+        spawnTankCorrectedBullet(0,10,BulletType.AP_BULLET,Direction.DOWN,true);
     }
 
     private Tank spawnDefinedTank(float posX, float posY, TankType type, boolean isAlly) {
@@ -145,82 +139,61 @@ public class Level {
         switch (direction)
         {
             case UP:
-                posX += tankCenter.x - Constants.BULLET_HEIHT * 0.5;
+                posX += tankCenter.x - Constants.BULLET_HEIGHT * 0.5;
                 posY += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
                 break;
             case DOWN:
-                posX += tankCenter.x - Constants.BULLET_HEIHT * 0.5;
+                posX += tankCenter.x - Constants.BULLET_HEIGHT * 0.5;
                 posY += Constants.BULLET_EPS_SPAWN;
                 break;
             case LEFT:
-                posY += tankCenter.y - Constants.BULLET_HEIHT * 0.5;
+                posY += tankCenter.y - Constants.BULLET_HEIGHT * 0.5;
                 posX += Constants.BULLET_EPS_SPAWN;
                 break;
             case RIGHT:
                 posX += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
-                posY += tankCenter.y - Constants.BULLET_HEIHT * 0.5;
+                posY += tankCenter.y - Constants.BULLET_HEIGHT * 0.5;
                 break;
         }
         spawnDefinedBullet(posX,posY,type,direction,isAlly);
     }
 
     private Bullet spawnDefinedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
-
         Bullet bullet = spawnBullet(posX,posY);
+        if(isAlly) {
+            BulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
+            BulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
+        }else{
+            BulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_BULLET;
+            BulletFixtureDef.filter.maskBits = Constants.MASK_ENEMY_BULLET;
+        }
 
-        switch (direction)
-        {
+        switch (type){
+            case NORMAL_BULLET:
+                bullet.type = BulletType.NORMAL_BULLET;
+                BulletFixtureDef.density = Constants.NORMAL_BULLET_DENSITY;
+                break;
+            case PLASMA_BULLET:
+                bullet.type = BulletType.PLASMA_BULLET;
+                BulletFixtureDef.density = Constants.PLASMA_BULLET_DENSITY;
+                break;
+            case AP_BULLET:
+                bullet.type = BulletType.AP_BULLET;
+                BulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
+                break;
+        }
+
+        switch (direction) {
             case UP:
             case DOWN:
-                switch (type){
-                    case NORMAL_BULLET:
-                        bullet.type = BulletType.NORMAL_BULLET;
-                        verticalBulletFixtureDef.density = Constants.NORMAL_BULLET_DENSITY;
-                        break;
-                    case PLASMA_BULLET:
-                        bullet.type = BulletType.PLASMA_BULLET;
-                        verticalBulletFixtureDef.density = Constants.PLASMA_BULLET_DENSITY;
-                        break;
-                    case AP_BULLET:
-                        bullet.type = BulletType.AP_BULLET;
-                        verticalBulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
-                        break;
-                }
-                if(isAlly) {
-                    verticalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
-                    verticalBulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
-                }else{
-                    verticalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_BULLET;
-                    verticalBulletFixtureDef.filter.maskBits = Constants.MASK_ENEMY_BULLET;
-                }
-                bullet.body.createFixture(verticalBulletFixtureDef);
+                BulletFixtureDef.shape = verticalBulletRectangle;
                 break;
             case LEFT:
             case RIGHT:
-                switch (type){
-                    case NORMAL_BULLET:
-                        bullet.type = BulletType.NORMAL_BULLET;
-                        horizontalBulletFixtureDef.density = Constants.NORMAL_BULLET_DENSITY;
-                        break;
-                    case PLASMA_BULLET:
-                        bullet.type = BulletType.PLASMA_BULLET;
-                        horizontalBulletFixtureDef.density = Constants.PLASMA_BULLET_DENSITY;
-                        break;
-                    case AP_BULLET:
-                        bullet.type = BulletType.AP_BULLET;
-                        horizontalBulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
-                        break;
-                }
-                if(isAlly) {
-                    horizontalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
-                    horizontalBulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
-                }else{
-                    horizontalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_BULLET;
-                    horizontalBulletFixtureDef.filter.maskBits =  Constants.MASK_ENEMY_BULLET;
-                }
-                bullet.body.createFixture(horizontalBulletFixtureDef);
+                BulletFixtureDef.shape = horizontalBulletRectangle;
                 break;
         }
+        bullet.body.createFixture(BulletFixtureDef);
 
         switch (direction) {
             case UP:
@@ -250,7 +223,6 @@ public class Level {
         aliveBullets.add(bullet);
         return bullet;
     }
-
 
     public void update(float delta) {
         frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);

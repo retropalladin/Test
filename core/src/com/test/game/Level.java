@@ -68,8 +68,8 @@ public class Level {
         TankFixtureDef.friction = Constants.TANK_FRICTION;
         TankFixtureDef.restitution = Constants.TANK_RESTITUTION;
 
-        horizontalBulletCenter = new Vector2(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIGHT * 0.5f);
-        verticalBulletCenter = new Vector2(Constants.BULLET_HEIGHT * 0.5f, Constants.BULLET_WIDTH * 0.5f);
+        horizontalBulletCenter = new Vector2(Constants.BULLET_WIDTH_H, Constants.BULLET_HEIGHT_H);
+        verticalBulletCenter = new Vector2(Constants.BULLET_HEIGHT_H, Constants.BULLET_WIDTH_H);
 
         bulletBodyDef = new BodyDef();
         bulletBodyDef.type = BodyType.DynamicBody;
@@ -78,8 +78,8 @@ public class Level {
         horizontalBulletRectangle = new PolygonShape();
         verticalBulletRectangle = new PolygonShape();
 
-        horizontalBulletRectangle.setAsBox(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIGHT * 0.5f, horizontalBulletCenter , 0);
-        verticalBulletRectangle.setAsBox(Constants.BULLET_HEIGHT * 0.5f, Constants.BULLET_WIDTH * 0.5f, verticalBulletCenter, 0);
+        horizontalBulletRectangle.setAsBox(Constants.BULLET_WIDTH_H, Constants.BULLET_HEIGHT_H, horizontalBulletCenter , 0);
+        verticalBulletRectangle.setAsBox(Constants.BULLET_HEIGHT_H, Constants.BULLET_WIDTH_H, verticalBulletCenter, 0);
 
         BulletFixtureDef = new FixtureDef();
         BulletFixtureDef.shape = horizontalBulletRectangle;
@@ -94,11 +94,12 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        spawnDefinedTank(0,10,TankType.LIGHT_TANK,true);
-        spawnDefinedTank(0,-10,TankType.LIGHT_TANK,false);
-        spawnTankCorrectedBullet(0,-10,BulletType.AP_BULLET,Direction.UP,false);
-        spawnTankCorrectedBullet(0,10,BulletType.AP_BULLET,Direction.DOWN,true);
-    }
+        spawnDefinedTank(-10,0,TankType.LIGHT_TANK,true);
+        spawnTankCorrectedDoubleBullet(-10,0,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plama, AP and have fun :)
+
+        spawnDefinedTank(10,0,TankType.LIGHT_TANK,false);
+        spawnTankCorrectedBullet(10,0,BulletType.AP_BULLET,Direction.LEFT,false);
+        }
 
     private Tank spawnDefinedTank(float posX, float posY, TankType type, boolean isAlly) {
         Tank tank = spawnTank(posX,posY);
@@ -139,27 +140,91 @@ public class Level {
         switch (direction)
         {
             case UP:
-                posX += tankCenter.x - Constants.BULLET_HEIGHT * 0.5;
+                posX += tankCenter.x - Constants.BULLET_HEIGHT_H;
                 posY += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
                 break;
             case DOWN:
-                posX += tankCenter.x - Constants.BULLET_HEIGHT * 0.5;
+                posX += tankCenter.x - Constants.BULLET_HEIGHT_H;
                 posY += Constants.BULLET_EPS_SPAWN;
                 break;
             case LEFT:
-                posY += tankCenter.y - Constants.BULLET_HEIGHT * 0.5;
+                posY += tankCenter.y - Constants.BULLET_HEIGHT_H;
                 posX += Constants.BULLET_EPS_SPAWN;
                 break;
             case RIGHT:
                 posX += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
-                posY += tankCenter.y - Constants.BULLET_HEIGHT * 0.5;
+                posY += tankCenter.y - Constants.BULLET_HEIGHT_H;
                 break;
         }
         spawnDefinedBullet(posX,posY,type,direction,isAlly);
     }
 
-    private Bullet spawnDefinedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
+    private void spawnTankCorrectedDoubleBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
+        switch (direction)
+        {
+            case UP:
+                posX += tankCenter.x - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
+                posY += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
+                break;
+            case DOWN:
+                posX += tankCenter.x - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
+                posY += Constants.BULLET_EPS_SPAWN;
+                break;
+            case LEFT:
+                posY += tankCenter.y - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
+                posX += Constants.BULLET_EPS_SPAWN;
+                break;
+            case RIGHT:
+                posX += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
+                posY += tankCenter.y - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
+                break;
+        }
+        spawnDefinedDoubleBullet(posX,posY,type,direction,isAlly);
+    }
+
+    private void spawnDefinedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
         Bullet bullet = spawnBullet(posX,posY);
+        configureBulletFixture(direction, isAlly);
+        configureBulletType(bullet, type);
+        bullet.body.createFixture(BulletFixtureDef);
+        launchBullet(bullet, direction);
+    }
+
+    private void spawnDefinedDoubleBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
+        Bullet bullet1 = spawnBullet(posX,posY);
+        switch (direction){
+            case UP:
+            case DOWN:
+                posX += Constants.BULLET_HEIGHT + Constants.DOUBLE_BULLET_EPS_SPAWN;
+                break;
+            case RIGHT:
+            case LEFT:
+                posY += Constants.BULLET_HEIGHT + Constants.DOUBLE_BULLET_EPS_SPAWN;
+                break;
+        }
+        Bullet bullet2 = spawnBullet(posX,posY);
+        configureBulletFixture(direction, isAlly);
+        configureBulletType(bullet1, type);
+        configureBulletType(bullet2, type);
+        bullet1.body.createFixture(BulletFixtureDef);
+        bullet2.body.createFixture(BulletFixtureDef);
+        launchBullet(bullet1, direction);
+        launchBullet(bullet2, direction);
+    }
+
+    private Bullet spawnBullet(float posX, float posY) {
+        bulletBodyDef.position.set(posX,posY);
+        Body body = world.createBody(bulletBodyDef);
+        Bullet bullet = bulletPool.obtain();
+
+        bullet.init(body);
+        body.setUserData(bullet);
+
+        aliveBullets.add(bullet);
+        return bullet;
+    }
+
+    private void configureBulletFixture(Direction direction, boolean isAlly) {
         if(isAlly) {
             BulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
             BulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
@@ -168,6 +233,19 @@ public class Level {
             BulletFixtureDef.filter.maskBits = Constants.MASK_ENEMY_BULLET;
         }
 
+        switch (direction) {
+            case UP:
+            case DOWN:
+                BulletFixtureDef.shape = verticalBulletRectangle;
+                break;
+            case LEFT:
+            case RIGHT:
+                BulletFixtureDef.shape = horizontalBulletRectangle;
+                break;
+        }
+    }
+
+    private void configureBulletType(Bullet bullet, BulletType type) {
         switch (type){
             case NORMAL_BULLET:
                 bullet.type = BulletType.NORMAL_BULLET;
@@ -182,19 +260,9 @@ public class Level {
                 BulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
                 break;
         }
+    }
 
-        switch (direction) {
-            case UP:
-            case DOWN:
-                BulletFixtureDef.shape = verticalBulletRectangle;
-                break;
-            case LEFT:
-            case RIGHT:
-                BulletFixtureDef.shape = horizontalBulletRectangle;
-                break;
-        }
-        bullet.body.createFixture(BulletFixtureDef);
-
+    private void launchBullet(Bullet bullet, Direction direction){
         switch (direction) {
             case UP:
                 bullet.body.applyLinearImpulse(Constants.BULLET_UP_IMPULSE, bullet.body.getWorldCenter(), true);
@@ -209,19 +277,6 @@ public class Level {
                 bullet.body.applyLinearImpulse(Constants.BULLET_RIGHT_IMPULSE, bullet.body.getWorldCenter(), true);
                 break;
         }
-        return bullet;
-    }
-
-    private Bullet spawnBullet(float posX, float posY) {
-        bulletBodyDef.position.set(posX,posY);
-        Body body = world.createBody(bulletBodyDef);
-        Bullet bullet = bulletPool.obtain();
-
-        bullet.init(body);
-        body.setUserData(bullet);
-
-        aliveBullets.add(bullet);
-        return bullet;
     }
 
     public void update(float delta) {

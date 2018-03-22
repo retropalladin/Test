@@ -21,7 +21,11 @@ public class Constants {
     public static final float CELL_SIZE = 2;
     public static final float BULLET_WIDTH = 1;
     public static final float BULLET_HEIGHT = 0.5f;
-    public static final float BULLET_EPS_SPAWN = 0.05f;
+    public static final float BULLET_WIDTH_H = BULLET_WIDTH * 0.5f;
+    public static final float BULLET_HEIGHT_H = BULLET_HEIGHT * 0.5f;
+    public static final float BULLET_EPS_SPAWN = 0.1f;
+    public static final float DOUBLE_BULLET_EPS_SPAWN = 0.1f;
+    public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
 
     public static final float LIGHT_TANK_DENSITY = 0.3f;
     public static final float HEAVY_TANK_DENSITY = 0.6f;

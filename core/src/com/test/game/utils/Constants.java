@@ -2,10 +2,6 @@ package com.test.game.utils;
 
 import com.badlogic.gdx.math.Vector2;
 
-/**
- * Created by Владимир on 20.03.2018.
- */
-
 public class Constants {
     // developing
     public static final boolean DEBUG = true;
@@ -44,10 +40,15 @@ public class Constants {
     public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE,0);
     public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE,0);
 
+    public static final short CATEGORY_WALL = 1;
+    public static final short CATEGORY_ALLY_TANK = (1 << 1);
+    public static final short CATEGORY_ENEMY_TANK = (1 << 2);
+    public static final short CATEGORY_ALLY_BULLET = (1 << 3);
+    public static final short CATEGORY_ENEMY_BULLET = (1 << 4);
 
-    public static final int CATEGORY_BITS_ALLY = 0x0001;
-    public static final int CATEGORY_BITS_ENEMY = 0x0002;
-
-    public static final int GROUP_TANKS = 1;
-    public static final int GROUP_BULLETS = 2;
+    public static final short MASK_WALL = 0;
+    public static final short MASK_ALLY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
+    public static final short MASK_ENEMY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET;
+    public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
+    public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 }

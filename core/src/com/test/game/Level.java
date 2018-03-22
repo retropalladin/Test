@@ -68,7 +68,6 @@ public class Level {
         TankFixtureDef.shape = tankRectangle;
         TankFixtureDef.friction = Constants.TANK_FRICTION;
         TankFixtureDef.restitution = Constants.TANK_RESTITUTION;
-        TankFixtureDef.filter.groupIndex = Constants.GROUP_TANKS;
 
         horizontalBulletCenter = new Vector2(Constants.BULLET_WIDTH * 0.5f, Constants.BULLET_HEIHT * 0.5f);
         verticalBulletCenter = new Vector2(Constants.BULLET_HEIHT * 0.5f, Constants.BULLET_WIDTH * 0.5f);
@@ -87,13 +86,11 @@ public class Level {
         horizontalBulletFixtureDef.shape = horizontalBulletRectangle;
         horizontalBulletFixtureDef.friction = Constants.BULLET_FRICTION;
         horizontalBulletFixtureDef.restitution = Constants.BULLET_RESTITUTION;
-        horizontalBulletFixtureDef.filter.groupIndex = Constants.GROUP_BULLETS;
 
         verticalBulletFixtureDef = new FixtureDef();
         verticalBulletFixtureDef.shape = verticalBulletRectangle;
         verticalBulletFixtureDef.friction = Constants.BULLET_FRICTION;
         verticalBulletFixtureDef.restitution = Constants.BULLET_RESTITUTION;
-        verticalBulletFixtureDef.filter.groupIndex = Constants.GROUP_BULLETS;
     }
 
     public static Level debugLevel() {
@@ -105,6 +102,7 @@ public class Level {
     private void initializeDebugLevel() {
         spawnDefinedTank(10,0,TankType.LIGHT_TANK,true);
         spawnDefinedTank(-10,0,TankType.LIGHT_TANK,false);
+        spawnTankCorrectedBullet(-10,0,BulletType.AP_BULLET,Direction.RIGHT,false);
         spawnTankCorrectedBullet(10,0,BulletType.AP_BULLET,Direction.LEFT,true);
     }
 
@@ -121,11 +119,11 @@ public class Level {
                 break;
         }
         if(isAlly) {
-            TankFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ALLY;
-            TankFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ENEMY;
+            TankFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_TANK;
+            TankFixtureDef.filter.maskBits = Constants.MASK_ALLY_TANK;
         }else{
-            TankFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ENEMY;
-            TankFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ALLY;
+            TankFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_TANK;
+            TankFixtureDef.filter.maskBits = Constants.MASK_ENEMY_TANK;
         }
         tank.body.createFixture(TankFixtureDef);
         return tank;
@@ -143,8 +141,7 @@ public class Level {
         return tank;
     }
 
-    private void spawnTankCorrectedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly)
-    {
+    private void spawnTankCorrectedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
         switch (direction)
         {
             case UP:
@@ -167,7 +164,7 @@ public class Level {
         spawnDefinedBullet(posX,posY,type,direction,isAlly);
     }
 
-    private Bullet spawnDefinedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly){
+    private Bullet spawnDefinedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
 
         Bullet bullet = spawnBullet(posX,posY);
 
@@ -190,11 +187,11 @@ public class Level {
                         break;
                 }
                 if(isAlly) {
-                    verticalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ALLY;
-                    verticalBulletFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ENEMY;
+                    verticalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
+                    verticalBulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
                 }else{
-                    verticalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ENEMY;
-                    verticalBulletFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ALLY;
+                    verticalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_BULLET;
+                    verticalBulletFixtureDef.filter.maskBits = Constants.MASK_ENEMY_BULLET;
                 }
                 bullet.body.createFixture(verticalBulletFixtureDef);
                 break;
@@ -215,11 +212,11 @@ public class Level {
                         break;
                 }
                 if(isAlly) {
-                    horizontalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ALLY;
-                    horizontalBulletFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ENEMY;
+                    horizontalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
+                    horizontalBulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
                 }else{
-                    horizontalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_BITS_ENEMY;
-                    horizontalBulletFixtureDef.filter.maskBits = Constants.CATEGORY_BITS_ALLY;
+                    horizontalBulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_BULLET;
+                    horizontalBulletFixtureDef.filter.maskBits =  Constants.MASK_ENEMY_BULLET;
                 }
                 bullet.body.createFixture(horizontalBulletFixtureDef);
                 break;
@@ -265,7 +262,7 @@ public class Level {
         }
     }
 
-    public void dispose(){
+    public void dispose() {
         world.dispose();
         tankRectangle.dispose();
         horizontalBulletRectangle.dispose();
@@ -273,8 +270,7 @@ public class Level {
         freeAliveArrays();
     }
 
-    private void freeAliveArrays()
-    {
+    private void freeAliveArrays() {
         bulletPool.freeAll(aliveBullets);
         tankPool.freeAll(aliveTanks);
         wallPool.freeAll(aliveWalls);

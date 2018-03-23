@@ -1,8 +1,5 @@
 package com.test.game.utils;
 
-/**
- * Created by Владимир on 22.03.2018.
- */
 
 public class Enums {
     public enum TankType {
@@ -10,7 +7,11 @@ public class Enums {
     }
 
     public enum BulletType {
-        NORMAL_BULLET, PLASMA_BULLET, AP_BULLET
+        NORMAL_BULLET, PLASMA_BULLET, AP_BULLET, RAP_BULLET
+    }
+
+    public enum DoubleBulletType {
+        DOUBLE_NORMAL_BULLET, DOUBLE_PLASMA_BULLET
     }
 
     public enum  WallType {

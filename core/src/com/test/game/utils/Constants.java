@@ -11,7 +11,10 @@ public class Constants {
     public static final float FRAME_TIME_MAX = 0.25f;
 
     // LevelRenderer settings
-    public static final int WORLD_VISIBLE_HEIGHT = 20;
+    public static final int WORLD_VISIBLE_HEIGHT = 32;
+    public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
+    public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
+    public static final float CHASE_CAMERA_FOLLOWING_MOVE_SPEED = 2f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
     // Physics settings
@@ -31,7 +34,7 @@ public class Constants {
 
     public static final float NORMAL_BULLET_DENSITY = 0.7f;
     public static final float PLASMA_BULLET_DENSITY = 0.5f;
-    public static final float AP_BULLET_DENSITY = 0.3f;
+    public static final float AP_BULLET_DENSITY = 0.3f; // RAP_BULLET_DENSITY is equal
     public static final float BULLET_FRICTION = 0f;
     public static final float BULLET_RESTITUTION = 0f;
 
@@ -50,8 +53,9 @@ public class Constants {
     public static final short CATEGORY_WALL = 1;
     public static final short CATEGORY_ALLY_TANK = (1 << 1);
     public static final short CATEGORY_ENEMY_TANK = (1 << 2);
-    public static final short CATEGORY_ALLY_BULLET = (1 << 3);
-    public static final short CATEGORY_ENEMY_BULLET = (1 << 4);
+    public static final short CATEGORY_TANK_ON_MOVE = (1 << 3);
+    public static final short CATEGORY_ALLY_BULLET = (1 << 13);
+    public static final short CATEGORY_ENEMY_BULLET = (1 << 14);
 
     public static final short MASK_WALL = CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET | CATEGORY_ENEMY_BULLET;
     public static final short MASK_ALLY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
@@ -71,10 +75,17 @@ public class Constants {
     public static final float TANK_HEIGHT_H = TANK_HEIGHT * 0.5f;
     public static final float TANK_MARGIN = CELL_SIZE_H - TANK_HEIGHT_H;
     // Bullet settings
+
+    public static final int NORMAL_BULLET_MAX_HP = 1;
+    public static final int PLASMA_BULLET_MAX_HP = 1;
+    public static final int AP_BULLET_MAX_HP = 2;
+    public static final int RAP_BULLET_MAX_HP = 2;
+
     public static final float BULLET_WIDTH = 0.7f;
     public static final float BULLET_HEIGHT = 0.35f;
     public static final float BULLET_WIDTH_H = BULLET_WIDTH * 0.5f;
     public static final float BULLET_HEIGHT_H = BULLET_HEIGHT * 0.5f;
+
     public static final float BULLET_EPS_SPAWN = 0.1f;
     public static final float DOUBLE_BULLET_EPS_SPAWN = 0.2f;
     public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;

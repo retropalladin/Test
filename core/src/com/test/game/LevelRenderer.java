@@ -28,6 +28,10 @@ public class LevelRenderer {
         batch.end();
     }
 
+    public void presetCameraPosition(Level level) {
+        chaseCamera.presetCameraPosition(level);
+    }
+
     public void updateCameraResolution(int width, int height) {
         chaseCamera.updateCameraResolution(width,height);
     }

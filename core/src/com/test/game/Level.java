@@ -11,20 +11,30 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import com.test.game.entities.Bullet;
 import com.test.game.entities.NpcTank;
 import com.test.game.entities.PlayerTank;
 import com.test.game.entities.Wall;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.BulletType;
+import com.test.game.utils.Enums.DoubleBulletType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.Enums.WallType;
+
+import sun.security.krb5.internal.PAData;
 
 
 public class Level {
 
     public PlayerTank playerTank;
+
+    public short[][] objectsMatrix = null;
+    public int objectMatrixWidth = 0;
+    public float levelWidth = 0;
+    public int objectMatrixHeight = 0;
+    public float levelHeigt = 0;
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
@@ -41,11 +51,9 @@ public class Level {
     private float accumulator;
 
     private Vector2 wallRectangleCenter;
-    private Vector2 wallCircleCenter;
 
     private BodyDef wallBodyDef;
     private PolygonShape wallRectangle;
-    private CircleShape wallCircle;
     private FixtureDef wallFixtureDef;
 
     private Vector2 tankCenter;
@@ -68,7 +76,6 @@ public class Level {
         world = new World(Vector2.Zero, false);
 
         wallRectangleCenter = new Vector2(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f);
-        wallCircleCenter = new Vector2(Constants.BUSH_WALL_RADIUS, Constants.BUSH_WALL_RADIUS);
 
         wallBodyDef = new BodyDef();
         wallBodyDef.type = BodyType.StaticBody;
@@ -76,9 +83,6 @@ public class Level {
 
         wallRectangle = new PolygonShape();
         wallRectangle.setAsBox(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f, wallRectangleCenter, 0);
-        wallCircle = new CircleShape();
-        wallCircle.setRadius(Constants.BUSH_WALL_RADIUS);
-        wallCircle.setPosition(wallCircleCenter);
 
         wallFixtureDef = new FixtureDef();
         wallFixtureDef.shape = wallRectangle;
@@ -127,21 +131,36 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        float[] x = new float[]{-6,-4,-2,0,2,4,6,-6,-6,-6,-6,6,6,6,6};
-        float[] y = new float[]{-4,-4,-4,-4,-4,-4,-4,-2,0,2,4,-2,0,2,4};
+        int height = 50;
+        int width = 50;
+        objectsMatrix = new short[height][width];
+        objectMatrixHeight = height - 1;
+        levelHeigt = (height - 2) * Constants.CELL_SIZE;
+        objectMatrixWidth = width - 1;
+        levelWidth = (width - 2) * Constants.CELL_SIZE;
+        float[] x = new float[]{20,20,20,20,20,20,20,20,20,20,20,21,22,23,24,25,26,27,28,29,30,30,30,30,30,30,30,30,30,30,30,29,28,27,26,25,24,23,22,21};
+        float[] y = new float[]{30,29,28,27,26,25,24,23,22,21,20,20,20,20,20,20,20,20,20,20,20,21,22,23,24,25,26,27,28,29,30,30,30,30,30,30,30,30,30,30};
 
-        spawnDefinedWalls(x,y,WallType.STONE_WALL);
-        spawnDefinedWall(-2,4, WallType.WOODEN_WALL);
-        spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
-        spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
+        spawnGridDefinedWalls(x,y,WallType.STONE_WALL);
+        spawnGridDefinedWall(3,6, WallType.WOODEN_WALL);
+        spawnGridDefinedWall( 5,5, WallType.BUSH_WALL);
+        spawnGridDefinedWall(6,3, WallType.WOODEN_WALL);
+        spawnGridDefinedWall(10,10, WallType.WOODEN_WALL);
 
-
-        playerTank = spawnDefinedPlayerTank(-4 + Constants.TANK_MARGIN ,0 + Constants.TANK_MARGIN ,TankType.LIGHT_TANK, Direction.RIGHT);
-        //spawnTankCorrectedDoubleBullet(playerTank.body.getPosition().x,playerTank.body.getPosition().y,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
-
-       // spawnDefinedNpcTank(4, 0,TankType.LIGHT_TANK,Direction.LEFT,false);
-       // spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
+        playerTank = spawnGridDefinedPlayerTank(23,25,TankType.LIGHT_TANK, Direction.RIGHT);
+        spawnCorrectedDoubleBullet(playerTank.body.getPosition().x,playerTank.body.getPosition().y,DoubleBulletType.DOUBLE_NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
+        spawnGridDefinedNpcTank(27, 25,TankType.LIGHT_TANK,Direction.LEFT,false);
         }
+
+
+    //player
+    private PlayerTank spawnGridDefinedPlayerTank(int posX, int posY, TankType type, Direction direction){
+        if(objectsMatrix[objectMatrixHeight - posY][posX] == 0) {
+            objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_ALLY_TANK;
+            return spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction);
+        }
+        return null;
+    }
 
     private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type, Direction direction) {
         PlayerTank playerTank = spawnPlayerTank(posX,posY);
@@ -173,6 +192,23 @@ public class Level {
         aliveNpcTanks.add(playerTank);
         return playerTank;
     }
+    //end player
+    //wall
+    //warning: this method doesn't take care about objectMatrix[i][j] == 0. Just brutal spawn!
+    //warning: arrays should consist of integer values (2. , 3. , etc)!
+    public void spawnGridDefinedWalls(float[] posX, float[] posY, WallType type) {
+        if(posX == null || posY == null)
+            throw new NullPointerException("spawnDefineWall(s): null array reference");
+        if(posX.length != posY.length)
+            throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
+        for(int i = 0; i < posX.length; i++)
+        {
+            objectsMatrix[objectMatrixHeight - (int)posY[i]][(int)posX[i]] = Constants.CATEGORY_WALL;
+            posX[i] *= Constants.CELL_SIZE;
+            posY[i] *= Constants.CELL_SIZE;
+        }
+        spawnDefinedWalls(posX, posY, type);
+    }
 
     public void spawnDefinedWalls(float[] posX, float[] posY, WallType type) {
         if(posX == null || posY == null)
@@ -185,16 +221,13 @@ public class Level {
             case WOODEN_WALL:
                 hp = Constants.WOODEN_WALL_HP_MAX;
                 immortal = false;
-                wallFixtureDef.shape = wallRectangle;
                 break;
             case STONE_WALL:
                 immortal = true;
-                wallFixtureDef.shape = wallRectangle;
                 break;
             case BUSH_WALL:
                 hp = Constants.BUSH_WALL_HP_MAX;
                 immortal = false;
-                wallFixtureDef.shape = wallCircle;
                 break;
         }
 
@@ -207,6 +240,13 @@ public class Level {
         }
     }
 
+    private void spawnGridDefinedWall(int posX, int posY, WallType type) {
+        if(objectsMatrix[objectMatrixHeight - posY][posX] == 0) {
+            objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_WALL;
+            spawnDefinedWall(posX * Constants.CELL_SIZE, posY * Constants.CELL_SIZE, type);
+        }
+    }
+
     private void spawnDefinedWall(float posX, float posY, WallType type) {
         Wall wall = spawnWall(posX,posY);
         switch (type){
@@ -214,18 +254,15 @@ public class Level {
                 wall.type = WallType.WOODEN_WALL;
                 wall.hp = Constants.WOODEN_WALL_HP_MAX;
                 wall.immortal = false;
-                wallFixtureDef.shape = wallRectangle;
                 break;
             case STONE_WALL:
                 wall.type = WallType.STONE_WALL;
                 wall.immortal = true;
-                wallFixtureDef.shape = wallRectangle;
                 break;
             case BUSH_WALL:
                 wall.type = WallType.BUSH_WALL;
                 wall.hp = Constants.BUSH_WALL_HP_MAX;
                 wall.immortal = false;
-                wallFixtureDef.shape = wallCircle;
                 break;
         }
         wall.body.createFixture(wallFixtureDef);
@@ -241,6 +278,17 @@ public class Level {
 
         aliveWalls.add(wall);
         return wall;
+    }
+    //end wall
+    //npc
+    private void spawnGridDefinedNpcTank(int posX, int posY, TankType type, Direction direction, boolean isAlly){
+        if(objectsMatrix[objectMatrixHeight - posY][posX] == 0) {
+            if (isAlly)
+                objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_ALLY_TANK;
+            else
+                objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_ENEMY_TANK;
+            spawnDefinedNpcTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction, isAlly);
+        }
     }
 
     private void spawnDefinedNpcTank(float posX, float posY, TankType type, Direction direction, boolean isAlly) {
@@ -277,8 +325,9 @@ public class Level {
         aliveNpcTanks.add(npcTank);
         return npcTank;
     }
-
-    private void spawnTankCorrectedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
+    //end npc
+    //bullet
+    private void spawnCorrectedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
         switch (direction)
         {
             case UP:
@@ -301,7 +350,7 @@ public class Level {
         spawnDefinedBullet(posX,posY,type,direction,isAlly);
     }
 
-    private void spawnTankCorrectedDoubleBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
+    private void spawnCorrectedDoubleBullet(float posX, float posY, DoubleBulletType type, Direction direction, boolean isAlly) {
         switch (direction)
         {
             case UP:
@@ -332,7 +381,7 @@ public class Level {
         launchBullet(bullet, direction);
     }
 
-    private void spawnDefinedDoubleBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
+    private void spawnDefinedDoubleBullet(float posX, float posY, DoubleBulletType type, Direction direction, boolean isAlly) {
         Bullet bullet1 = spawnBullet(posX,posY);
         switch (direction){
             case UP:
@@ -346,8 +395,16 @@ public class Level {
         }
         Bullet bullet2 = spawnBullet(posX,posY);
         configureBulletFixture(direction, isAlly);
-        configureBulletType(bullet1, type);
-        configureBulletType(bullet2, type);
+        switch(type){
+            case DOUBLE_NORMAL_BULLET:
+                configureBulletType(bullet1, BulletType.NORMAL_BULLET);
+                configureBulletType(bullet2, BulletType.NORMAL_BULLET);
+                break;
+            case DOUBLE_PLASMA_BULLET:
+                configureBulletType(bullet1, BulletType.PLASMA_BULLET);
+                configureBulletType(bullet2, BulletType.PLASMA_BULLET);
+                break;
+        }
         bullet1.body.createFixture(bulletFixtureDef);
         bullet2.body.createFixture(bulletFixtureDef);
         launchBullet(bullet1, direction);
@@ -391,14 +448,22 @@ public class Level {
         switch (type){
             case NORMAL_BULLET:
                 bullet.type = BulletType.NORMAL_BULLET;
+                bullet.hp = Constants.NORMAL_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.NORMAL_BULLET_DENSITY;
                 break;
             case PLASMA_BULLET:
                 bullet.type = BulletType.PLASMA_BULLET;
+                bullet.hp = Constants.PLASMA_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.PLASMA_BULLET_DENSITY;
                 break;
             case AP_BULLET:
                 bullet.type = BulletType.AP_BULLET;
+                bullet.hp = Constants.AP_BULLET_MAX_HP;
+                bulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
+                break;
+            case RAP_BULLET:
+                bullet.type = BulletType.RAP_BULLET;
+                bullet.hp = Constants.RAP_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
                 break;
         }
@@ -421,6 +486,8 @@ public class Level {
         }
     }
 
+    // end bullet
+
     public void update(float delta) {
         playerTank.update();
         frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
@@ -436,7 +503,6 @@ public class Level {
     public void dispose() {
         world.dispose();
         wallRectangle.dispose();
-        wallCircle.dispose();
         tankRectangle.dispose();
         horizontalBulletRectangle.dispose();
         verticalBulletRectangle.dispose();

@@ -29,15 +29,19 @@ public class PlayerTank extends NpcTank {
         // Demo
         body.setLinearVelocity(Vector2.Zero);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            direction = Direction.LEFT;
             body.applyLinearImpulse(Constants.TANK_LEFT_IMPULSE,body.getWorldCenter(),true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            direction = Direction.RIGHT;
             body.applyLinearImpulse(Constants.TANK_RIGHT_IMPULSE,body.getWorldCenter(),true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            direction = Direction.UP;
             body.applyLinearImpulse(Constants.TANK_UP_IMPULSE,body.getWorldCenter(),true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            direction = Direction.DOWN;
             body.applyLinearImpulse(Constants.TANK_DOWN_IMPULSE,body.getWorldCenter(),true);
         }
     }

@@ -6,6 +6,8 @@ import com.test.game.utils.Enums;
 
 public class Bullet implements Pool.Poolable {
     public boolean alive;
+    public int hp;
+
     public Enums.BulletType type;
     public Body body;
 
@@ -16,6 +18,7 @@ public class Bullet implements Pool.Poolable {
 
     @Override
     public void reset() {
+        hp = 0;
         body = null;
         alive = false;
     }

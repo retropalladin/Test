@@ -23,6 +23,8 @@ public class GameplayScreen implements Screen {
         Box2D.init();
         batch = new SpriteBatch();
         setupLevel("123rofl321");
+        levelRenderer.presetCameraPosition(level);
+
     }
 
     @Override

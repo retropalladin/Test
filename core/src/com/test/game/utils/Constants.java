@@ -56,6 +56,12 @@ public class Constants {
     public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE,0);
     public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE,0);
 
+    public static final float TANK_IMPULSE = 2.0f;
+    public static final Vector2 TANK_UP_IMPULSE = new Vector2(0,TANK_IMPULSE);
+    public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0,-TANK_IMPULSE);
+    public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE,0);
+    public static final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE,0);
+
     public static final short CATEGORY_WALL = 1;
     public static final short CATEGORY_ALLY_TANK = (1 << 1);
     public static final short CATEGORY_ENEMY_TANK = (1 << 2);

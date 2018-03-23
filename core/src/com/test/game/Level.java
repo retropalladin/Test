@@ -131,7 +131,7 @@ public class Level {
         float[] y = new float[]{-4,-4,-4,-4,-4,-4,-4,-2,0,2,4,-2,0,2,4};
 
         spawnDefinedWalls(x,y,WallType.STONE_WALL);
-        spawnDefinedWall(-2,4, WallType.WOODEN_WALL);
+        //spawnDefinedWall(-2,4, WallType.WOODEN_WALL);
         spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
         spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
 
@@ -421,6 +421,7 @@ public class Level {
     }
 
     public void update(float delta) {
+        playerTank.update();
         frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
         accumulator += frameTime;
         while (accumulator >= Constants.PHYSICS_STEP) {
@@ -428,6 +429,7 @@ public class Level {
             // processing collisions
             accumulator -= Constants.PHYSICS_STEP;
         }
+
     }
 
     public void dispose() {

@@ -135,6 +135,7 @@ public class Level {
         spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
         spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
 
+
         playerTank = spawnDefinedPlayerTank(-4 + Constants.TANK_MARGIN ,0 + Constants.TANK_MARGIN ,TankType.LIGHT_TANK, Direction.RIGHT);
         //spawnTankCorrectedDoubleBullet(playerTank.body.getPosition().x,playerTank.body.getPosition().y,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
 

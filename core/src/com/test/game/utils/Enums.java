@@ -14,7 +14,7 @@ public class Enums {
     }
 
     public enum  WallType {
-        WOODEN_WALL, STONE_WALL, IRON_WALL, CACTUS_WALL, BUSH_WALL
+        WOODEN_WALL, STONE_WALL, BUSH_WALL
     }
 
     public enum Direction {

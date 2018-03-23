@@ -9,8 +9,9 @@ public class Constants {
 
     // Wall settings
     public static int WOODEN_WALL_HP_MAX = 4;
-    public static int CACTUS_WALL_HP_MAX = 1;
     public static int BUSH_WALL_HP_MAX = 1;
+
+    public static float BUSH_WALL_RADIUS = 0.5f;
 
     // Tank settings
 

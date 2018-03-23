@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -36,9 +37,12 @@ public class Level {
     private float frameTime;
     private float accumulator;
 
-    private Vector2 wallCenter;
+    private Vector2 wallRectangleCenter;
+    private Vector2 wallCircleCenter;
+
     private BodyDef wallBodyDef;
     private PolygonShape wallRectangle;
+    private CircleShape wallCircle;
     private FixtureDef wallFixtureDef;
 
     private Vector2 tankCenter;
@@ -60,14 +64,18 @@ public class Level {
 
         world = new World(Vector2.Zero, false);
 
-        wallCenter = new Vector2(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f);
+        wallRectangleCenter = new Vector2(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f);
+        wallCircleCenter = new Vector2(Constants.BUSH_WALL_RADIUS, Constants.BUSH_WALL_RADIUS);
 
         wallBodyDef = new BodyDef();
         wallBodyDef.type = BodyType.StaticBody;
         wallBodyDef.fixedRotation = true;
 
         wallRectangle = new PolygonShape();
-        wallRectangle.setAsBox(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f, wallCenter, 0);
+        wallRectangle.setAsBox(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f, wallRectangleCenter, 0);
+        wallCircle = new CircleShape();
+        wallCircle.setRadius(Constants.BUSH_WALL_RADIUS);
+        wallCircle.setPosition(wallCircleCenter);
 
         wallFixtureDef = new FixtureDef();
         wallFixtureDef.shape = wallRectangle;
@@ -116,26 +124,13 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        spawnDefinedWall(-6,-4, WallType.STONE_WALL);
-        spawnDefinedWall(-4,-4, WallType.STONE_WALL);
-        spawnDefinedWall(-2,-4, WallType.STONE_WALL);
-        spawnDefinedWall( 0,-4, WallType.STONE_WALL);
-        spawnDefinedWall( 2,-4, WallType.STONE_WALL);
-        spawnDefinedWall( 4,-4, WallType.STONE_WALL);
-        spawnDefinedWall( 6,-4, WallType.STONE_WALL);
-        spawnDefinedWall(-6,-2, WallType.STONE_WALL);
-        spawnDefinedWall(-6, 0, WallType.STONE_WALL);
-        spawnDefinedWall(-6, 2, WallType.STONE_WALL);
-        spawnDefinedWall(-6, 4, WallType.STONE_WALL);
-        spawnDefinedWall(6,-2, WallType.STONE_WALL);
-        spawnDefinedWall(6,0, WallType.STONE_WALL);
-        spawnDefinedWall(6,2, WallType.STONE_WALL);
-        spawnDefinedWall(6,4, WallType.STONE_WALL);
-        spawnDefinedWall(-4,4, WallType.WOODEN_WALL);
-        spawnDefinedWall(-2,4, WallType.CACTUS_WALL);
-        spawnDefinedWall( 0,4, WallType.BUSH_WALL);
-        spawnDefinedWall( 2,4, WallType.CACTUS_WALL);
-        spawnDefinedWall( 4,4, WallType.WOODEN_WALL);
+        float[] x = new float[]{-6,-4,-2,0,2,4,6,-6,-6,-6,-6,6,6,6,6};
+        float[] y = new float[]{-4,-4,-4,-4,-4,-4,-4,-2,0,2,4,-2,0,2,4};
+
+        spawnDefinedWalls(x,y,WallType.STONE_WALL);
+        spawnDefinedWall(-2,4, WallType.WOODEN_WALL);
+        spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
+        spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
 
         spawnDefinedTank(-4,0,TankType.LIGHT_TANK,true);
         spawnTankCorrectedDoubleBullet(-4,0,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
@@ -155,20 +150,16 @@ public class Level {
             case WOODEN_WALL:
                 hp = Constants.WOODEN_WALL_HP_MAX;
                 immortal = false;
+                wallFixtureDef.shape = wallRectangle;
                 break;
             case STONE_WALL:
                 immortal = true;
-                break;
-            case IRON_WALL:
-                immortal = true;
-                break;
-            case CACTUS_WALL:
-                hp = Constants.CACTUS_WALL_HP_MAX;
-                immortal = false;
+                wallFixtureDef.shape = wallRectangle;
                 break;
             case BUSH_WALL:
                 hp = Constants.BUSH_WALL_HP_MAX;
                 immortal = false;
+                wallFixtureDef.shape = wallCircle;
                 break;
         }
 
@@ -188,24 +179,18 @@ public class Level {
                 wall.type = WallType.WOODEN_WALL;
                 wall.hp = Constants.WOODEN_WALL_HP_MAX;
                 wall.immortal = false;
+                wallFixtureDef.shape = wallRectangle;
                 break;
             case STONE_WALL:
                 wall.type = WallType.STONE_WALL;
                 wall.immortal = true;
-                break;
-            case IRON_WALL:
-                wall.type = WallType.IRON_WALL;
-                wall.immortal = true;
-                break;
-            case CACTUS_WALL:
-                wall.type = WallType.CACTUS_WALL;
-                wall.hp = Constants.CACTUS_WALL_HP_MAX;
-                wall.immortal = false;
+                wallFixtureDef.shape = wallRectangle;
                 break;
             case BUSH_WALL:
                 wall.type = WallType.BUSH_WALL;
                 wall.hp = Constants.BUSH_WALL_HP_MAX;
                 wall.immortal = false;
+                wallFixtureDef.shape = wallCircle;
                 break;
         }
         wall.body.createFixture(wallFixtureDef);
@@ -413,6 +398,8 @@ public class Level {
 
     public void dispose() {
         world.dispose();
+        wallRectangle.dispose();
+        wallCircle.dispose();
         tankRectangle.dispose();
         horizontalBulletRectangle.dispose();
         verticalBulletRectangle.dispose();

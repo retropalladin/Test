@@ -16,7 +16,7 @@ public class Wall implements Pool.Poolable {
     public void init(Body body) {
         this.body = body;
         alive = true;
-        immortal = false;
+        immortal = true;
     }
 
     @Override

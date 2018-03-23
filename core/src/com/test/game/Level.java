@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
-import com.sun.xml.internal.bind.v2.TODO;
 import com.test.game.entities.Bullet;
 import com.test.game.entities.Tank;
 import com.test.game.entities.Wall;
@@ -145,7 +144,42 @@ public class Level {
         spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
         }
 
-    //TODO: spawnDefinedWall(float[] posX, float[] posT, WallType type)
+    public void spawnDefinedWalls(float[] posX, float[] posY, WallType type) {
+        if(posX == null || posY == null)
+            throw new NullPointerException("spawnDefineWall(s): null array reference");
+        if(posX.length != posY.length)
+            throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
+        boolean immortal = false;
+        int hp = 0;
+        switch (type){
+            case WOODEN_WALL:
+                hp = Constants.WOODEN_WALL_HP_MAX;
+                immortal = false;
+                break;
+            case STONE_WALL:
+                immortal = true;
+                break;
+            case IRON_WALL:
+                immortal = true;
+                break;
+            case CACTUS_WALL:
+                hp = Constants.CACTUS_WALL_HP_MAX;
+                immortal = false;
+                break;
+            case BUSH_WALL:
+                hp = Constants.BUSH_WALL_HP_MAX;
+                immortal = false;
+                break;
+        }
+
+        for(int i = 0; i < posX.length; i++) {
+            Wall wall = spawnWall(posX[i],posY[i]);
+            wall.hp = hp;
+            wall.type = type;
+            wall.immortal = immortal;
+            wall.body.createFixture(wallFixtureDef);
+        }
+    }
 
     private void spawnDefinedWall(float posX, float posY, WallType type) {
         Wall wall = spawnWall(posX,posY);
@@ -153,6 +187,7 @@ public class Level {
             case WOODEN_WALL:
                 wall.type = WallType.WOODEN_WALL;
                 wall.hp = Constants.WOODEN_WALL_HP_MAX;
+                wall.immortal = false;
                 break;
             case STONE_WALL:
                 wall.type = WallType.STONE_WALL;
@@ -165,10 +200,12 @@ public class Level {
             case CACTUS_WALL:
                 wall.type = WallType.CACTUS_WALL;
                 wall.hp = Constants.CACTUS_WALL_HP_MAX;
+                wall.immortal = false;
                 break;
             case BUSH_WALL:
                 wall.type = WallType.BUSH_WALL;
                 wall.hp = Constants.BUSH_WALL_HP_MAX;
+                wall.immortal = false;
                 break;
         }
         wall.body.createFixture(wallFixtureDef);

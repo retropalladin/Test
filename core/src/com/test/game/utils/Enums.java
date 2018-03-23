@@ -13,6 +13,10 @@ public class Enums {
         NORMAL_BULLET, PLASMA_BULLET, AP_BULLET
     }
 
+    public enum  WallType {
+        WOODEN_WALL, STONE_WALL, IRON_WALL, CACTUS_WALL, BUSH_WALL
+    }
+
     public enum Direction {
         LEFT, RIGHT, UP, DOWN
     }

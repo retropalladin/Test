@@ -7,6 +7,22 @@ public class Constants {
     public static final boolean DEBUG = true;
     public static final boolean DEBUG_PHYSICS_RENDER = true;
 
+    // Wall settings
+    public static int WOODEN_WALL_HP_MAX = 4;
+    public static int CACTUS_WALL_HP_MAX = 1;
+    public static int BUSH_WALL_HP_MAX = 1;
+
+    // Tank settings
+
+    // Bullet settings
+    public static final float BULLET_WIDTH = 1;
+    public static final float BULLET_HEIGHT = 0.5f;
+    public static final float BULLET_WIDTH_H = BULLET_WIDTH * 0.5f;
+    public static final float BULLET_HEIGHT_H = BULLET_HEIGHT * 0.5f;
+    public static final float BULLET_EPS_SPAWN = 0.1f;
+    public static final float DOUBLE_BULLET_EPS_SPAWN = 0.1f;
+    public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
+
     // Level settings
     public static final float FRAME_TIME_MAX = 0.25f;
 
@@ -17,15 +33,10 @@ public class Constants {
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
     public static final float PHYSICS_STEP = 1/45f;
-
     public static final float CELL_SIZE = 2;
-    public static final float BULLET_WIDTH = 1;
-    public static final float BULLET_HEIGHT = 0.5f;
-    public static final float BULLET_WIDTH_H = BULLET_WIDTH * 0.5f;
-    public static final float BULLET_HEIGHT_H = BULLET_HEIGHT * 0.5f;
-    public static final float BULLET_EPS_SPAWN = 0.1f;
-    public static final float DOUBLE_BULLET_EPS_SPAWN = 0.1f;
-    public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
+
+    public static final float WALL_FRICTION = 0f;
+    public static final float WALL_RESTITUTION = 0f;
 
     public static final float LIGHT_TANK_DENSITY = 0.3f;
     public static final float HEAVY_TANK_DENSITY = 0.6f;

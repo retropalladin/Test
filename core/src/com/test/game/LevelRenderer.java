@@ -4,37 +4,32 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.test.game.utils.ChaseCamera;
 import com.test.game.utils.Constants;
 
 public class LevelRenderer {
 
-    private OrthographicCamera camera;
+    private ChaseCamera chaseCamera;
     private Box2DDebugRenderer debugRenderer;
 
     public LevelRenderer() {
-        camera = new OrthographicCamera();
+        chaseCamera = new ChaseCamera();
         if(Constants.DEBUG_PHYSICS_RENDER)
             debugRenderer = new Box2DDebugRenderer();
     }
 
-    public void render(Level level, SpriteBatch batch) {
-        updateCamera(level);
-        camera.update();
+    public void render(float delta, Level level, SpriteBatch batch) {
+        chaseCamera.update(delta, level);
         if(Constants.DEBUG_PHYSICS_RENDER) {
-            debugRenderer.render(level.world, camera.combined);
+            debugRenderer.render(level.world, chaseCamera.camera.combined);
         }
-        batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(chaseCamera.camera.combined);
         batch.begin();
         batch.end();
     }
 
-    public void updateCamera(Level level){
-
-    }
-
     public void updateCameraResolution(int width, int height) {
-        camera.viewportHeight = Constants.WORLD_VISIBLE_HEIGHT;
-        camera.viewportWidth = Constants.WORLD_VISIBLE_HEIGHT * 1.0f * width / height;
+        chaseCamera.updateCameraResolution(width,height);
     }
 
     public void dispose(){

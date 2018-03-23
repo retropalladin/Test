@@ -135,15 +135,16 @@ public class Level {
         spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
         spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
 
-        playerTank = spawnDefinedPlayerTank(-4,0,TankType.LIGHT_TANK);
+        playerTank = spawnDefinedPlayerTank(-4,0,TankType.LIGHT_TANK, Direction.RIGHT);
         spawnTankCorrectedDoubleBullet(-4,0,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
 
-        spawnDefinedNpcTank(4, 0,TankType.LIGHT_TANK,false);
+        spawnDefinedNpcTank(4, 0,TankType.LIGHT_TANK,Direction.LEFT,false);
         spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
         }
 
-    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type) {
+    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type, Direction direction) {
         PlayerTank playerTank = spawnPlayerTank(posX,posY);
+        playerTank.direction = direction;
         switch (type){
             case LIGHT_TANK:
                 tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
@@ -241,8 +242,9 @@ public class Level {
         return wall;
     }
 
-    private void spawnDefinedNpcTank(float posX, float posY, TankType type, boolean isAlly) {
+    private void spawnDefinedNpcTank(float posX, float posY, TankType type, Direction direction, boolean isAlly) {
         NpcTank npcTank = spawnNpcTank(posX,posY);
+        npcTank.direction = direction;
         switch (type){
             case LIGHT_TANK:
                 tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;

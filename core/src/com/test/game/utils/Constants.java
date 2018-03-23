@@ -10,7 +10,6 @@ public class Constants {
     // Wall settings
     public static int WOODEN_WALL_HP_MAX = 4;
     public static int BUSH_WALL_HP_MAX = 1;
-
     public static float BUSH_WALL_RADIUS = 0.5f;
 
     // NpcTank settings
@@ -29,6 +28,7 @@ public class Constants {
 
     // LevelRenderer settings
     public static final int WORLD_VISIBLE_HEIGHT = 32;
+    public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
     // Physics settings
     public static final int VELOCITY_ITERATIONS = 6;

@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.sun.xml.internal.bind.v2.TODO;
 import com.test.game.entities.Bullet;
 import com.test.game.entities.Tank;
 import com.test.game.entities.Wall;
@@ -73,6 +74,8 @@ public class Level {
         wallFixtureDef.shape = wallRectangle;
         wallFixtureDef.friction = Constants.WALL_FRICTION;
         wallFixtureDef.restitution = Constants.WALL_RESTITUTION;
+        wallFixtureDef.filter.categoryBits = Constants.CATEGORY_WALL;
+        wallFixtureDef.filter.maskBits = Constants.MASK_WALL;
 
         tankCenter = new Vector2(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f);
 
@@ -142,6 +145,8 @@ public class Level {
         spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
         }
 
+    //TODO: spawnDefinedWall(float[] posX, float[] posT, WallType type)
+
     private void spawnDefinedWall(float posX, float posY, WallType type) {
         Wall wall = spawnWall(posX,posY);
         switch (type){
@@ -166,8 +171,6 @@ public class Level {
                 wall.hp = Constants.BUSH_WALL_HP_MAX;
                 break;
         }
-        wallFixtureDef.filter.categoryBits = Constants.CATEGORY_WALL;
-        wallFixtureDef.filter.maskBits = Constants.MASK_WALL;
         wall.body.createFixture(wallFixtureDef);
     }
 

@@ -20,7 +20,7 @@ public class Constants {
     public static final float BULLET_WIDTH_H = BULLET_WIDTH * 0.5f;
     public static final float BULLET_HEIGHT_H = BULLET_HEIGHT * 0.5f;
     public static final float BULLET_EPS_SPAWN = 0.1f;
-    public static final float DOUBLE_BULLET_EPS_SPAWN = 0.1f;
+    public static final float DOUBLE_BULLET_EPS_SPAWN = 0.2f;
     public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
 
     // Level settings

@@ -12,7 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.test.game.entities.Bullet;
-import com.test.game.entities.Tank;
+import com.test.game.entities.NpcTank;
+import com.test.game.entities.PlayerTank;
 import com.test.game.entities.Wall;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.BulletType;
@@ -23,11 +24,13 @@ import com.test.game.utils.Enums.WallType;
 
 public class Level {
 
+    public PlayerTank playerTank;
+
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
 
-    public Array<Tank> aliveTanks;
-    private static Pool<Tank> tankPool = Pools.get(Tank.class);
+    public Array<NpcTank> aliveNpcTanks;
+    private static Pool<NpcTank> npcTankPool = Pools.get(NpcTank.class);
 
     public Array<Wall> aliveWalls;
     private static Pool<Wall> wallPool = Pools.get(Wall.class);
@@ -59,7 +62,7 @@ public class Level {
 
     public Level() {
         aliveBullets = new Array<Bullet>();
-        aliveTanks = new Array<Tank>();
+        aliveNpcTanks = new Array<NpcTank>();
         aliveWalls = new Array<Wall>();
 
         world = new World(Vector2.Zero, false);
@@ -132,12 +135,42 @@ public class Level {
         spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
         spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
 
-        spawnDefinedTank(-4,0,TankType.LIGHT_TANK,true);
+        playerTank = spawnDefinedPlayerTank(-4,0,TankType.LIGHT_TANK);
         spawnTankCorrectedDoubleBullet(-4,0,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
 
-        spawnDefinedTank(4, 0,TankType.LIGHT_TANK,false);
+        spawnDefinedNpcTank(4, 0,TankType.LIGHT_TANK,false);
         spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
         }
+
+    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type) {
+        PlayerTank playerTank = spawnPlayerTank(posX,posY);
+        switch (type){
+            case LIGHT_TANK:
+                tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
+                playerTank.type = TankType.LIGHT_TANK;
+                break;
+            case HEAVY_TANK:
+                playerTank.type = TankType.HEAVY_TANK;
+                tankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
+                break;
+        }
+        tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_TANK;
+        tankFixtureDef.filter.maskBits = Constants.MASK_ALLY_TANK;
+        playerTank.body.createFixture(tankFixtureDef);
+        return playerTank;
+    }
+
+    private PlayerTank spawnPlayerTank(float posX, float posY) {
+        tankBodyDef.position.set(posX,posY);
+        Body body = world.createBody(tankBodyDef);
+        PlayerTank playerTank = new PlayerTank(this, body);
+
+        playerTank.init(this,body);
+        body.setUserData(playerTank);
+
+        aliveNpcTanks.add(playerTank);
+        return playerTank;
+    }
 
     public void spawnDefinedWalls(float[] posX, float[] posY, WallType type) {
         if(posX == null || posY == null)
@@ -208,15 +241,15 @@ public class Level {
         return wall;
     }
 
-    private Tank spawnDefinedTank(float posX, float posY, TankType type, boolean isAlly) {
-        Tank tank = spawnTank(posX,posY);
+    private void spawnDefinedNpcTank(float posX, float posY, TankType type, boolean isAlly) {
+        NpcTank npcTank = spawnNpcTank(posX,posY);
         switch (type){
             case LIGHT_TANK:
                 tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
-                tank.type = TankType.LIGHT_TANK;
+                npcTank.type = TankType.LIGHT_TANK;
                 break;
             case HEAVY_TANK:
-                tank.type = TankType.HEAVY_TANK;
+                npcTank.type = TankType.HEAVY_TANK;
                 tankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
                 break;
         }
@@ -227,20 +260,19 @@ public class Level {
             tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_TANK;
             tankFixtureDef.filter.maskBits = Constants.MASK_ENEMY_TANK;
         }
-        tank.body.createFixture(tankFixtureDef);
-        return tank;
+        npcTank.body.createFixture(tankFixtureDef);
     }
 
-    private Tank spawnTank(float posX, float posY) {
+    private NpcTank spawnNpcTank(float posX, float posY) {
         tankBodyDef.position.set(posX,posY);
         Body body = world.createBody(tankBodyDef);
-        Tank tank = tankPool.obtain();
+        NpcTank npcTank = npcTankPool.obtain();
 
-        tank.init(body);
-        body.setUserData(tank);
+        npcTank.init(this,body);
+        body.setUserData(npcTank);
 
-        aliveTanks.add(tank);
-        return tank;
+        aliveNpcTanks.add(npcTank);
+        return npcTank;
     }
 
     private void spawnTankCorrectedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
@@ -408,7 +440,7 @@ public class Level {
 
     private void freeAliveArrays() {
         bulletPool.freeAll(aliveBullets);
-        tankPool.freeAll(aliveTanks);
+        npcTankPool.freeAll(aliveNpcTanks);
         wallPool.freeAll(aliveWalls);
     }
 }

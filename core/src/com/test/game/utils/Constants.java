@@ -13,7 +13,7 @@ public class Constants {
 
     public static float BUSH_WALL_RADIUS = 0.5f;
 
-    // Tank settings
+    // NpcTank settings
 
     // Bullet settings
     public static final float BULLET_WIDTH = 1;

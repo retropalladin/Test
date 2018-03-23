@@ -87,14 +87,14 @@ public class Level {
         wallFixtureDef.filter.categoryBits = Constants.CATEGORY_WALL;
         wallFixtureDef.filter.maskBits = Constants.MASK_WALL;
 
-        tankCenter = new Vector2(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f);
+        tankCenter = new Vector2(Constants.TANK_WIDTH_H, Constants.TANK_HEIGHT_H);
 
         tankBodyDef = new BodyDef();
         tankBodyDef.type = BodyType.DynamicBody;
         tankBodyDef.fixedRotation = true;
 
         tankRectangle = new PolygonShape();
-        tankRectangle.setAsBox(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f, tankCenter, 0);
+        tankRectangle.setAsBox(Constants.TANK_WIDTH_H, Constants.TANK_HEIGHT_H, tankCenter, 0);
 
         tankFixtureDef = new FixtureDef();
         tankFixtureDef.shape = tankRectangle;
@@ -131,15 +131,15 @@ public class Level {
         float[] y = new float[]{-4,-4,-4,-4,-4,-4,-4,-2,0,2,4,-2,0,2,4};
 
         spawnDefinedWalls(x,y,WallType.STONE_WALL);
-        //spawnDefinedWall(-2,4, WallType.WOODEN_WALL);
+        spawnDefinedWall(-2,4, WallType.WOODEN_WALL);
         spawnDefinedWall( 0.5f,4.5f, WallType.BUSH_WALL);
         spawnDefinedWall( 2,4, WallType.WOODEN_WALL);
 
-        playerTank = spawnDefinedPlayerTank(-4,0,TankType.LIGHT_TANK, Direction.RIGHT);
-        spawnTankCorrectedDoubleBullet(-4,0,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
+        playerTank = spawnDefinedPlayerTank(-4 + Constants.TANK_MARGIN ,0 + Constants.TANK_MARGIN ,TankType.LIGHT_TANK, Direction.RIGHT);
+        //spawnTankCorrectedDoubleBullet(playerTank.body.getPosition().x,playerTank.body.getPosition().y,BulletType.NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
 
-        spawnDefinedNpcTank(4, 0,TankType.LIGHT_TANK,Direction.LEFT,false);
-        spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
+       // spawnDefinedNpcTank(4, 0,TankType.LIGHT_TANK,Direction.LEFT,false);
+       // spawnTankCorrectedBullet(4,0,BulletType.AP_BULLET,Direction.LEFT,false);
         }
 
     private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type, Direction direction) {
@@ -282,7 +282,7 @@ public class Level {
         {
             case UP:
                 posX += tankCenter.x - Constants.BULLET_HEIGHT_H;
-                posY += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
+                posY += Constants.TANK_HEIGHT - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
                 break;
             case DOWN:
                 posX += tankCenter.x - Constants.BULLET_HEIGHT_H;
@@ -293,7 +293,7 @@ public class Level {
                 posX += Constants.BULLET_EPS_SPAWN;
                 break;
             case RIGHT:
-                posX += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
+                posX += Constants.TANK_WIDTH - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
                 posY += tankCenter.y - Constants.BULLET_HEIGHT_H;
                 break;
         }
@@ -305,7 +305,7 @@ public class Level {
         {
             case UP:
                 posX += tankCenter.x - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
-                posY += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
+                posY += Constants.TANK_HEIGHT - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
                 break;
             case DOWN:
                 posX += tankCenter.x - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
@@ -316,7 +316,7 @@ public class Level {
                 posX += Constants.BULLET_EPS_SPAWN;
                 break;
             case RIGHT:
-                posX += Constants.CELL_SIZE - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
+                posX += Constants.TANK_WIDTH - Constants.BULLET_WIDTH - Constants.BULLET_EPS_SPAWN;
                 posY += tankCenter.y - Constants.BULLET_HEIGHT - Constants.DOUBLE_BULLET_EPS_SPAWN_H;
                 break;
         }

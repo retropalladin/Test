@@ -12,16 +12,12 @@ import com.test.game.utils.Enums.TankType;
 
 public class PlayerTank extends NpcTank {
 
-    public boolean alive;
-    public Direction direction;
-    public TankType type;
-    public Body body;
-    private Level level;
-
     public PlayerTank(Level level, Body body) {
-        this.level = level;
-        this.body = body;
-        alive = true;
+        super.init(level, body);
+    }
+
+    public void configurePlayerTankType(short category, TankType type, Direction direction) {
+        this.configureNpcTankType(category,type,direction);
     }
 
     public void update()

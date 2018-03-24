@@ -4,14 +4,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import com.test.game.entities.Bullet;
 import com.test.game.entities.NpcTank;
 import com.test.game.entities.PlayerTank;
@@ -22,8 +20,6 @@ import com.test.game.utils.Enums.DoubleBulletType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.Enums.WallType;
-
-import sun.security.krb5.internal.PAData;
 
 
 public class Level {
@@ -148,7 +144,6 @@ public class Level {
         spawnGridDefinedWall(10,10, WallType.WOODEN_WALL);
 
         playerTank = spawnGridDefinedPlayerTank(23,25,TankType.LIGHT_TANK, Direction.RIGHT);
-        spawnCorrectedDoubleBullet(playerTank.body.getPosition().x,playerTank.body.getPosition().y,DoubleBulletType.DOUBLE_NORMAL_BULLET,Direction.RIGHT,true); //change Normal, Plasma, AP and have fun :)
         spawnGridDefinedNpcTank(27, 25,TankType.LIGHT_TANK,Direction.LEFT,false);
         }
 
@@ -164,33 +159,35 @@ public class Level {
 
     private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type, Direction direction) {
         PlayerTank playerTank = spawnPlayerTank(posX,posY);
-        playerTank.direction = direction;
-        switch (type){
-            case LIGHT_TANK:
-                tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
-                playerTank.type = TankType.LIGHT_TANK;
-                break;
-            case HEAVY_TANK:
-                playerTank.type = TankType.HEAVY_TANK;
-                tankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
-                break;
-        }
-        tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_TANK;
-        tankFixtureDef.filter.maskBits = Constants.MASK_ALLY_TANK;
-        playerTank.body.createFixture(tankFixtureDef);
+        configurePlayerTankFixture(type);
+        playerTank.configurePlayerTankType(Constants.CATEGORY_ALLY_TANK, type, direction);
+        playerTank.createFixture(tankFixtureDef);
         return playerTank;
     }
 
     private PlayerTank spawnPlayerTank(float posX, float posY) {
         tankBodyDef.position.set(posX,posY);
         Body body = world.createBody(tankBodyDef);
-        PlayerTank playerTank = new PlayerTank(this, body);
 
-        playerTank.init(this,body);
+        PlayerTank playerTank = new PlayerTank(this, body);
         body.setUserData(playerTank);
 
         aliveNpcTanks.add(playerTank);
         return playerTank;
+    }
+
+    private void configurePlayerTankFixture(TankType type) {
+        tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_TANK;
+        tankFixtureDef.filter.maskBits = Constants.MASK_ALLY_TANK;
+
+        switch (type){
+            case LIGHT_TANK:
+                tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
+                break;
+            case HEAVY_TANK:
+                tankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
+                break;
+        }
     }
     //end player
     //wall
@@ -215,28 +212,10 @@ public class Level {
             throw new NullPointerException("spawnDefineWall(s): null array reference");
         if(posX.length != posY.length)
             throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
-        boolean immortal = false;
-        int hp = 0;
-        switch (type){
-            case WOODEN_WALL:
-                hp = Constants.WOODEN_WALL_HP_MAX;
-                immortal = false;
-                break;
-            case STONE_WALL:
-                immortal = true;
-                break;
-            case BUSH_WALL:
-                hp = Constants.BUSH_WALL_HP_MAX;
-                immortal = false;
-                break;
-        }
-
         for(int i = 0; i < posX.length; i++) {
             Wall wall = spawnWall(posX[i],posY[i]);
-            wall.hp = hp;
-            wall.type = type;
-            wall.immortal = immortal;
-            wall.body.createFixture(wallFixtureDef);
+            wall.configureWallType(Constants.CATEGORY_WALL, type);
+            wall.createFixture(wallFixtureDef);
         }
     }
 
@@ -249,23 +228,8 @@ public class Level {
 
     private void spawnDefinedWall(float posX, float posY, WallType type) {
         Wall wall = spawnWall(posX,posY);
-        switch (type){
-            case WOODEN_WALL:
-                wall.type = WallType.WOODEN_WALL;
-                wall.hp = Constants.WOODEN_WALL_HP_MAX;
-                wall.immortal = false;
-                break;
-            case STONE_WALL:
-                wall.type = WallType.STONE_WALL;
-                wall.immortal = true;
-                break;
-            case BUSH_WALL:
-                wall.type = WallType.BUSH_WALL;
-                wall.hp = Constants.BUSH_WALL_HP_MAX;
-                wall.immortal = false;
-                break;
-        }
-        wall.body.createFixture(wallFixtureDef);
+        wall.configureWallType(Constants.CATEGORY_WALL, type);
+        wall.createFixture(wallFixtureDef);
     }
 
     private Wall spawnWall(float posX, float posY) {
@@ -293,25 +257,9 @@ public class Level {
 
     private void spawnDefinedNpcTank(float posX, float posY, TankType type, Direction direction, boolean isAlly) {
         NpcTank npcTank = spawnNpcTank(posX,posY);
-        npcTank.direction = direction;
-        switch (type){
-            case LIGHT_TANK:
-                tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
-                npcTank.type = TankType.LIGHT_TANK;
-                break;
-            case HEAVY_TANK:
-                npcTank.type = TankType.HEAVY_TANK;
-                tankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
-                break;
-        }
-        if(isAlly) {
-            tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_TANK;
-            tankFixtureDef.filter.maskBits = Constants.MASK_ALLY_TANK;
-        }else{
-            tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_TANK;
-            tankFixtureDef.filter.maskBits = Constants.MASK_ENEMY_TANK;
-        }
-        npcTank.body.createFixture(tankFixtureDef);
+        configureNpcTankFixture(type, isAlly);
+        npcTank.configureNpcTankType(tankFixtureDef.filter.categoryBits, type, direction);
+        npcTank.createFixture(tankFixtureDef);
     }
 
     private NpcTank spawnNpcTank(float posX, float posY) {
@@ -324,6 +272,25 @@ public class Level {
 
         aliveNpcTanks.add(npcTank);
         return npcTank;
+    }
+
+    private void configureNpcTankFixture(TankType type, boolean isAlly) {
+        if(isAlly) {
+            tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_TANK;
+            tankFixtureDef.filter.maskBits = Constants.MASK_ALLY_TANK;
+        }else{
+            tankFixtureDef.filter.categoryBits = Constants.CATEGORY_ENEMY_TANK;
+            tankFixtureDef.filter.maskBits = Constants.MASK_ENEMY_TANK;
+        }
+
+        switch (type){
+            case LIGHT_TANK:
+                tankFixtureDef.density = Constants.LIGHT_TANK_DENSITY;
+                break;
+            case HEAVY_TANK:
+                tankFixtureDef.density = Constants.HEAVY_TANK_DENSITY;
+                break;
+        }
     }
     //end npc
     //bullet
@@ -375,10 +342,10 @@ public class Level {
 
     private void spawnDefinedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
         Bullet bullet = spawnBullet(posX,posY);
-        configureBulletFixture(direction, isAlly);
-        configureBulletType(bullet, type);
-        bullet.body.createFixture(bulletFixtureDef);
-        launchBullet(bullet, direction);
+        configureBulletFixture(direction, type, isAlly);
+        bullet.configureBulletType(bulletFixtureDef.filter.categoryBits, type);
+        bullet.createFixture(bulletFixtureDef);
+        bullet.launch(direction);
     }
 
     private void spawnDefinedDoubleBullet(float posX, float posY, DoubleBulletType type, Direction direction, boolean isAlly) {
@@ -394,21 +361,22 @@ public class Level {
                 break;
         }
         Bullet bullet2 = spawnBullet(posX,posY);
-        configureBulletFixture(direction, isAlly);
         switch(type){
             case DOUBLE_NORMAL_BULLET:
-                configureBulletType(bullet1, BulletType.NORMAL_BULLET);
-                configureBulletType(bullet2, BulletType.NORMAL_BULLET);
+                configureBulletFixture(direction, BulletType.NORMAL_BULLET, isAlly);
+                bullet1.configureBulletType(bulletFixtureDef.filter.categoryBits, BulletType.NORMAL_BULLET);
+                bullet2.configureBulletType(bulletFixtureDef.filter.categoryBits, BulletType.NORMAL_BULLET);
                 break;
             case DOUBLE_PLASMA_BULLET:
-                configureBulletType(bullet1, BulletType.PLASMA_BULLET);
-                configureBulletType(bullet2, BulletType.PLASMA_BULLET);
+                configureBulletFixture(direction, BulletType.PLASMA_BULLET, isAlly);
+                bullet1.configureBulletType(bulletFixtureDef.filter.categoryBits, BulletType.PLASMA_BULLET);
+                bullet2.configureBulletType(bulletFixtureDef.filter.categoryBits, BulletType.PLASMA_BULLET);
                 break;
         }
-        bullet1.body.createFixture(bulletFixtureDef);
-        bullet2.body.createFixture(bulletFixtureDef);
-        launchBullet(bullet1, direction);
-        launchBullet(bullet2, direction);
+        bullet1.createFixture(bulletFixtureDef);
+        bullet2.createFixture(bulletFixtureDef);
+        bullet1.launch(direction);
+        bullet2.launch(direction);
     }
 
     private Bullet spawnBullet(float posX, float posY) {
@@ -423,7 +391,7 @@ public class Level {
         return bullet;
     }
 
-    private void configureBulletFixture(Direction direction, boolean isAlly) {
+    private void configureBulletFixture(Direction direction, BulletType type, boolean isAlly) {
         if(isAlly) {
             bulletFixtureDef.filter.categoryBits = Constants.CATEGORY_ALLY_BULLET;
             bulletFixtureDef.filter.maskBits = Constants.MASK_ALLY_BULLET;
@@ -442,50 +410,22 @@ public class Level {
                 bulletFixtureDef.shape = horizontalBulletRectangle;
                 break;
         }
-    }
 
-    private void configureBulletType(Bullet bullet, BulletType type) {
         switch (type){
             case NORMAL_BULLET:
-                bullet.type = BulletType.NORMAL_BULLET;
-                bullet.hp = Constants.NORMAL_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.NORMAL_BULLET_DENSITY;
                 break;
             case PLASMA_BULLET:
-                bullet.type = BulletType.PLASMA_BULLET;
-                bullet.hp = Constants.PLASMA_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.PLASMA_BULLET_DENSITY;
                 break;
             case AP_BULLET:
-                bullet.type = BulletType.AP_BULLET;
-                bullet.hp = Constants.AP_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
                 break;
             case RAP_BULLET:
-                bullet.type = BulletType.RAP_BULLET;
-                bullet.hp = Constants.RAP_BULLET_MAX_HP;
                 bulletFixtureDef.density = Constants.AP_BULLET_DENSITY;
                 break;
         }
     }
-
-    private void launchBullet(Bullet bullet, Direction direction){
-        switch (direction) {
-            case UP:
-                bullet.body.applyLinearImpulse(Constants.BULLET_UP_IMPULSE, bullet.body.getWorldCenter(), true);
-                break;
-            case DOWN:
-                bullet.body.applyLinearImpulse(Constants.BULLET_DOWN_IMPULSE, bullet.body.getWorldCenter(), true);
-                break;
-            case LEFT:
-                bullet.body.applyLinearImpulse(Constants.BULLET_LEFT_IMPULSE, bullet.body.getWorldCenter(), true);
-                break;
-            case RIGHT:
-                bullet.body.applyLinearImpulse(Constants.BULLET_RIGHT_IMPULSE, bullet.body.getWorldCenter(), true);
-                break;
-        }
-    }
-
     // end bullet
 
     public void update(float delta) {

@@ -14,7 +14,7 @@ public class Constants {
     public static final int WORLD_VISIBLE_HEIGHT = 32;
     public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
     public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
-    public static final float CHASE_CAMERA_FOLLOWING_MOVE_SPEED = 2f;
+    public static final float CHASE_CAMERA_FOLLOWING_MOVE_SPEED = 4f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
     // Physics settings
@@ -44,7 +44,7 @@ public class Constants {
     public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE,0);
     public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE,0);
 
-    public static final float TANK_IMPULSE = 4.0f;
+    public static final float TANK_IMPULSE = 5.0f;
     public static final Vector2 TANK_UP_IMPULSE = new Vector2(0,TANK_IMPULSE);
     public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0,-TANK_IMPULSE);
     public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE,0);
@@ -64,6 +64,7 @@ public class Constants {
     public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
     // Wall settings
+    public static int STONE_WALL_HP_MAX = 1000;
     public static int WOODEN_WALL_HP_MAX = 4;
     public static int BUSH_WALL_HP_MAX = 1;
     public static float BUSH_WALL_RADIUS = 0.5f;

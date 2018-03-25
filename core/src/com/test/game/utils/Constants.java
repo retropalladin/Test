@@ -11,10 +11,10 @@ public class Constants {
     public static final float FRAME_TIME_MAX = 0.25f;
 
     // LevelRenderer settings
-    public static final int WORLD_VISIBLE_HEIGHT = 32;
     public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
     public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
-    public static final float CHASE_CAMERA_FOLLOWING_MOVE_SPEED = 4f;
+    public static final float WORLD_VISIBLE_HEIGHT = 32;
+    public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 4f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
     // Physics settings

@@ -3,54 +3,43 @@ package com.test.game.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.test.game.Level;
+import com.test.game.LevelInputManager;
 
 public class ChaseCamera {
 
-    public OrthographicCamera camera;
-    private Vector2 playerTankPosition;
-    private Vector2 cameraPosition;
-    private Vector2 cameraDestination;
     private Boolean following;
     private float tmpDif;
     private float tmpSgn;
+    private float viewportWidthH;
+    private float viewportHeightH;
+    private Vector2 playerTankPosition;
+    private Vector2 cameraDestination;
+    public OrthographicCamera camera;
 
     public ChaseCamera() {
         camera = new OrthographicCamera();
+        camera.viewportHeight = Constants.WORLD_VISIBLE_HEIGHT;
+        viewportHeightH = Constants.WORLD_VISIBLE_HEIGHT / 2;
         cameraDestination = new Vector2();
-        cameraPosition = new Vector2();
         following = true;
     }
 
     public void update(float delta, Level level) {
-        if (Constants.DEBUG & Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Constants.DEBUG & Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             following = !following;
         }
         if (following) {
-            recalculateCameraDestination(level);
-            recalculateCameraPosition(delta);
+            recalculateDestination(level);
+            moveToDestination(delta);
         } else {
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                camera.position.x -= delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                camera.position.x += delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-                camera.position.y += delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-                camera.position.y -= delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
-            }
+            debugMove(delta);
         }
         camera.update();
     }
 
-    private void recalculateCameraDestination(Level level) {
-        cameraPosition.x = camera.position.x;
-        cameraPosition.y = camera.position.y;
+    private void recalculateDestination(Level level) {
         playerTankPosition = level.playerTank.body.getWorldCenter();
         cameraDestination.x = playerTankPosition.x;
         cameraDestination.y = playerTankPosition.y;
@@ -68,42 +57,57 @@ public class ChaseCamera {
                 cameraDestination.y -= Constants.CELL_SIZE * Constants.CHASE_CAMERA_VERTICAL_CELLS_SHIFT;
                 break;
         }
-        if(cameraDestination.x < camera.viewportWidth/2 + Constants.CELL_SIZE)
-            cameraDestination.x = camera.viewportWidth/2 + Constants.CELL_SIZE;
+        if(cameraDestination.x < viewportWidthH + Constants.CELL_SIZE)
+            cameraDestination.x = viewportWidthH + Constants.CELL_SIZE;
         else
-        if(cameraDestination.x > level.levelWidth - camera.viewportWidth/2 - Constants.CELL_SIZE)
-            cameraDestination.x = level.levelWidth - camera.viewportWidth/2 - Constants.CELL_SIZE;
-        if(cameraDestination.y < camera.viewportHeight/2 + Constants.CELL_SIZE)
-            cameraDestination.y = camera.viewportHeight/2 + Constants.CELL_SIZE;
+        if(cameraDestination.x > level.levelWidth - viewportWidthH - Constants.CELL_SIZE)
+            cameraDestination.x = level.levelWidth - viewportWidthH - Constants.CELL_SIZE;
+        if(cameraDestination.y < viewportHeightH + Constants.CELL_SIZE)
+            cameraDestination.y = viewportHeightH + Constants.CELL_SIZE;
         else
         if(cameraDestination.y > level.levelHeigt - camera.viewportHeight/2 - Constants.CELL_SIZE)
             cameraDestination.y = level.levelHeigt - camera.viewportHeight/2 - Constants.CELL_SIZE;
 
     }
 
-    private void recalculateCameraPosition(float delta){
-        tmpDif = cameraDestination.x - cameraPosition.x;
+    private void moveToDestination(float delta){
+        tmpDif = cameraDestination.x - camera.position.x;
         tmpSgn = Math.signum(tmpDif);
         tmpDif = Math.abs(tmpDif);
-        if(tmpDif < Constants.CHASE_CAMERA_FOLLOWING_MOVE_SPEED)
-            if (tmpDif < Constants.CHASE_CAMERA_FOLLOWING_MOVE_SPEED * delta) {
+        if(tmpDif < Constants.CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED)
+            if (tmpDif < Constants.CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED * delta) {
                 camera.position.x = cameraDestination.x;
             }else{
-                camera.position.x += delta * tmpSgn * Constants.CHASE_CAMERA_FOLLOWING_MOVE_SPEED;
+                camera.position.x += delta * tmpSgn * Constants.CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED;
             }
         else
             camera.position.x += tmpDif * tmpSgn * delta;
-        tmpDif = cameraDestination.y - cameraPosition.y;
+        tmpDif = cameraDestination.y - camera.position.y;
         tmpSgn = Math.signum(tmpDif);
         tmpDif = Math.abs(tmpDif);
-        if(tmpDif < Constants.CHASE_CAMERA_FOLLOWING_MOVE_SPEED)
-            if (tmpDif < Constants.CHASE_CAMERA_FOLLOWING_MOVE_SPEED * delta) {
+        if(tmpDif < Constants.CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED)
+            if (tmpDif < Constants.CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED * delta) {
                 camera.position.y = cameraDestination.y;
             }else{
-                camera.position.y += delta * tmpSgn * Constants.CHASE_CAMERA_FOLLOWING_MOVE_SPEED;
+                camera.position.y += delta * tmpSgn * Constants.CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED;
             }
         else
             camera.position.y += tmpDif  * tmpSgn * delta;
+    }
+
+    private void debugMove(float delta){
+        if (LevelInputManager.input.debugCameraMoveLeft()) {
+            camera.position.x -= delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
+        }
+        if (LevelInputManager.input.debugCameraMoveRight()) {
+            camera.position.x += delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
+        }
+        if (LevelInputManager.input.debugCameraMoveUp()) {
+            camera.position.y += delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
+        }
+        if (LevelInputManager.input.debugCameraMoveDown()) {
+            camera.position.y -= delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
+        }
     }
 
     public void presetCameraPosition(Level level) {
@@ -113,8 +117,8 @@ public class ChaseCamera {
     }
 
     public void updateCameraResolution(int width, int height) {
-        camera.viewportHeight = Constants.WORLD_VISIBLE_HEIGHT;
         camera.viewportWidth = Constants.WORLD_VISIBLE_HEIGHT * 1.0f * width / height;
+        viewportWidthH = camera.viewportWidth / 2;
         camera.update();
     }
 }

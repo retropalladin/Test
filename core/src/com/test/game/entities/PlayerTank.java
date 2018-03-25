@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.Level;
+import com.test.game.LevelInputManager;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums;
 import com.test.game.utils.Enums.Direction;
@@ -20,25 +21,26 @@ public class PlayerTank extends NpcTank {
         this.configureNpcTankType(category,type,direction);
     }
 
-    public void update()
-    {
-        // Demo
+    public void update() {
+
         body.setLinearVelocity(Vector2.Zero);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            direction = Direction.LEFT;
-            body.applyLinearImpulse(Constants.TANK_LEFT_IMPULSE,body.getWorldCenter(),true);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            direction = Direction.RIGHT;
-            body.applyLinearImpulse(Constants.TANK_RIGHT_IMPULSE,body.getWorldCenter(),true);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            direction = Direction.UP;
-            body.applyLinearImpulse(Constants.TANK_UP_IMPULSE,body.getWorldCenter(),true);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            direction = Direction.DOWN;
-            body.applyLinearImpulse(Constants.TANK_DOWN_IMPULSE,body.getWorldCenter(),true);
+        Direction direction = LevelInputManager.input.getPlayerMoveDirection();
+        if (direction != null) {
+            this.direction = direction;
+            switch (direction){
+                case LEFT:
+                    body.applyLinearImpulse(Constants.TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
+                    break;
+                case RIGHT:
+                    body.applyLinearImpulse(Constants.TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
+                    break;
+                case UP:
+                    body.applyLinearImpulse(Constants.TANK_UP_IMPULSE, body.getWorldCenter(), true);
+                    break;
+                case DOWN:
+                    body.applyLinearImpulse(Constants.TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
+                    break;
+            }
         }
     }
 }

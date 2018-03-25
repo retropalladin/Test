@@ -436,7 +436,7 @@ public class Level {
     // end bullet
 
     public void update(float delta) {
-        playerTank.update();
+        playerTank.update(delta);
         frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
         accumulator += frameTime;
         while (accumulator >= Constants.PHYSICS_STEP) {

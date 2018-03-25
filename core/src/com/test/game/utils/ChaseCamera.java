@@ -27,7 +27,7 @@ public class ChaseCamera {
     }
 
     public void update(float delta, Level level) {
-        if (Constants.DEBUG & Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+        if (Constants.DEBUG & LevelInputManager.instance.levelInput.cameraDebugOn()){
             following = !following;
         }
         if (following) {

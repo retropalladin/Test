@@ -1,0 +1,118 @@
+
+TankLight.png
+size: 546,36
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+LightTank0
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank112
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank135
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank158
+  rotate: false
+  xy: 104, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank180
+  rotate: false
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank202
+  rotate: false
+  xy: 172, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank22
+  rotate: false
+  xy: 206, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank225
+  rotate: false
+  xy: 240, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank248
+  rotate: false
+  xy: 274, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank270
+  rotate: false
+  xy: 308, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank292
+  rotate: false
+  xy: 342, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank315
+  rotate: false
+  xy: 376, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank338
+  rotate: false
+  xy: 410, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank45
+  rotate: false
+  xy: 444, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank78
+  rotate: false
+  xy: 478, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+LightTank90
+  rotate: false
+  xy: 512, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

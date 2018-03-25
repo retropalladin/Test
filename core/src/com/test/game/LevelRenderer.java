@@ -2,10 +2,13 @@ package com.test.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.test.game.utils.Assets;
 import com.test.game.utils.ChaseCamera;
 import com.test.game.utils.Constants;
+import com.test.game.utils.Utils;
 
 public class LevelRenderer {
 
@@ -25,6 +28,24 @@ public class LevelRenderer {
         }
         batch.setProjectionMatrix(chaseCamera.camera.combined);
         batch.begin();
+        TextureAtlas.AtlasRegion region = Assets.instance.lightTankAssets.rotationRegions[(int)(level.playerTank.getRotatePosition()/22.5)];
+        batch.draw(
+                region.getTexture(),
+                level.playerTank.getBody().getPosition().x,
+                level.playerTank.getBody().getPosition().y,
+                0,
+                0,
+                Constants.TANK_WIDTH,
+                Constants.TANK_HEIGHT,
+                1,
+                1,
+                0,
+                region.getRegionX(),
+                region.getRegionY(),
+                region.getRegionWidth(),
+                region.getRegionHeight(),
+                false,
+                false);
         batch.end();
     }
 

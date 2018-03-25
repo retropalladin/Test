@@ -13,14 +13,14 @@ public class Constants {
     // LevelRenderer settings
     public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
     public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
-    public static final float WORLD_VISIBLE_HEIGHT = 24;
-    public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 5f;
+    public static final float WORLD_VISIBLE_HEIGHT = 32;
+    public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 7f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
     // Physics settings
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
-    public static final float PHYSICS_STEP = 1/60f;
+    public static final float PHYSICS_STEP = 1 / 60f;
     public static final float CELL_SIZE = 2;
     public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
 
@@ -39,17 +39,19 @@ public class Constants {
     public static final float BULLET_RESTITUTION = 0f;
 
     public static final float BULLET_IMPULSE = 0.0f;
-    public static final Vector2 BULLET_UP_IMPULSE = new Vector2(0,BULLET_IMPULSE);
-    public static final Vector2 BULLET_DOWN_IMPULSE = new Vector2(0,-BULLET_IMPULSE);
-    public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE,0);
-    public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE,0);
+    public static final Vector2 BULLET_UP_IMPULSE = new Vector2(0, BULLET_IMPULSE);
+    public static final Vector2 BULLET_DOWN_IMPULSE = new Vector2(0, -BULLET_IMPULSE);
+    public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE, 0);
+    public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE, 0);
 
     public static final float TANK_IMPULSE = 4.0f;
     public static final float TANK_MOVE_CATCH_EPS = 0.05f;
-    public static final Vector2 TANK_UP_IMPULSE = new Vector2(0,TANK_IMPULSE);
-    public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0,-TANK_IMPULSE);
-    public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE,0);
-    public static final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE,0);
+    public static final float LIGHT_TANK_ROTATION_SPEED = 800f;
+    public static final float HEAVY_TANK_ROTATION_SPEED = 600f;
+    public static final Vector2 TANK_UP_IMPULSE = new Vector2(0, TANK_IMPULSE);
+    public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0, -TANK_IMPULSE);
+    public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE, 0);
+    public static final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE, 0);
 
     public static final short CATEGORY_EMPTY = 1;
     public static final short CATEGORY_WALL = (1 << 2);
@@ -66,6 +68,7 @@ public class Constants {
     public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
     public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY;
+
     // Wall settings
     public static int STONE_WALL_HP_MAX = 1000;
     public static int WOODEN_WALL_HP_MAX = 4;
@@ -78,8 +81,8 @@ public class Constants {
     public static final float TANK_HEIGHT = CELL_SIZE * 0.8f;
     public static final float TANK_HEIGHT_H = TANK_HEIGHT * 0.5f;
     public static final float TANK_MARGIN = CELL_SIZE_H - TANK_HEIGHT_H;
-    // Bullet settings
 
+    // Bullet settings
     public static final int NORMAL_BULLET_MAX_HP = 1;
     public static final int PLASMA_BULLET_MAX_HP = 1;
     public static final int AP_BULLET_MAX_HP = 2;
@@ -93,4 +96,23 @@ public class Constants {
     public static final float BULLET_EPS_SPAWN = 0.1f;
     public static final float DOUBLE_BULLET_EPS_SPAWN = 0.2f;
     public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
+
+    //Texture settings
+    public static final String TEXTURE_ATLAS = "images/TankLight.atlas";
+    public static final String LIGHT_TANK0 = "LightTank0";
+    public static final String LIGHT_TANK22 = "LightTank22";
+    public static final String LIGHT_TANK45 = "LightTank45";
+    public static final String LIGHT_TANK78 = "LightTank78";
+    public static final String LIGHT_TANK90 = "LightTank90";
+    public static final String LIGHT_TANK112 = "LightTank112";
+    public static final String LIGHT_TANK135 = "LightTank135";
+    public static final String LIGHT_TANK158 = "LightTank158";
+    public static final String LIGHT_TANK180 = "LightTank180";
+    public static final String LIGHT_TANK202 = "LightTank202";
+    public static final String LIGHT_TANK225 = "LightTank225";
+    public static final String LIGHT_TANK248 = "LightTank248";
+    public static final String LIGHT_TANK270 = "LightTank270";
+    public static final String LIGHT_TANK292 = "LightTank292";
+    public static final String LIGHT_TANK315 = "LightTank315";
+    public static final String LIGHT_TANK338 = "LightTank338";
 }

@@ -8,10 +8,19 @@ import com.test.game.utils.LevelInput;
 
 public class LevelInputPc extends InputAdapter implements LevelInput {
 
-    final Object sync = new Object();
-    int keyUpPos = 0, keyUpi = 0;
+    private final Object sync = new Object();
+    private int keyUpPos = 0, keyUpi = 0;
     private int[] playerDesiredDirection = new int[5];
+    private boolean cameraDebugOn;
 
+    @Override
+    public boolean cameraDebugOn() {
+        if(cameraDebugOn) {
+            cameraDebugOn = false;
+            return true;
+        }
+        return false;
+    }
     public boolean debugCameraMoveLeft(){
         return Gdx.input.isKeyPressed(Input.Keys.LEFT);
     }
@@ -46,6 +55,8 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     {
         synchronized (sync){
             switch(keycode){
+                case Input.Keys.SPACE:
+                    cameraDebugOn = true;
                 case Input.Keys.W:
                 case Input.Keys.S:
                 case Input.Keys.A:

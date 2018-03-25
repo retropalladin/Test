@@ -1,13 +1,10 @@
 package com.test.game.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.Level;
 import com.test.game.LevelInputManager;
 import com.test.game.utils.Constants;
-import com.test.game.utils.Enums;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 
@@ -24,7 +21,7 @@ public class PlayerTank extends NpcTank {
     public void update() {
 
         body.setLinearVelocity(Vector2.Zero);
-        Direction direction = LevelInputManager.input.getPlayerMoveDirection();
+        Direction direction = LevelInputManager.instance.levelInput.getPlayerMoveDirection();
         if (direction != null) {
             this.direction = direction;
             switch (direction){

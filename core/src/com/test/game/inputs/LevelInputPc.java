@@ -8,7 +8,7 @@ import com.test.game.utils.LevelInput;
 
 public class LevelInputPc extends InputAdapter implements LevelInput {
 
-    int keyUpPos = 0,keyUpi = 0;
+    int keyUpPos = 0, keyUpi = 0;
     private int[] playerDesiredDirection = new int[5];
 
     public boolean debugCameraMoveLeft(){

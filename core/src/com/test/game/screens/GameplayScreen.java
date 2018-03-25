@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.test.game.Level;
 import com.test.game.LevelInputManager;
 import com.test.game.LevelRenderer;
-import com.test.game.inputs.LevelInputPc;
 import com.test.game.utils.Constants;
 import com.test.game.utils.LevelLoader;
 
@@ -23,11 +22,10 @@ public class GameplayScreen implements Screen {
     @Override
     public void show() {
         Box2D.init();
+        LevelInputManager.instance.enable();
         batch = new SpriteBatch();
-        LevelInputManager.setInput(new LevelInputPc());
         setupLevel("123rofl321");
         levelRenderer.presetCameraPosition(level);
-
     }
 
     @Override

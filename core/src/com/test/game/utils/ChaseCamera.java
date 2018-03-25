@@ -96,16 +96,16 @@ public class ChaseCamera {
     }
 
     private void debugMove(float delta){
-        if (LevelInputManager.input.debugCameraMoveLeft()) {
+        if (LevelInputManager.instance.levelInput.debugCameraMoveLeft()) {
             camera.position.x -= delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
-        if (LevelInputManager.input.debugCameraMoveRight()) {
+        if (LevelInputManager.instance.levelInput.debugCameraMoveRight()) {
             camera.position.x += delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
-        if (LevelInputManager.input.debugCameraMoveUp()) {
+        if (LevelInputManager.instance.levelInput.debugCameraMoveUp()) {
             camera.position.y += delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
-        if (LevelInputManager.input.debugCameraMoveDown()) {
+        if (LevelInputManager.instance.levelInput.debugCameraMoveDown()) {
             camera.position.y -= delta * Constants.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
     }

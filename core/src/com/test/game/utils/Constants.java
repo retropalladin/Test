@@ -14,13 +14,13 @@ public class Constants {
     public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
     public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
     public static final float WORLD_VISIBLE_HEIGHT = 32;
-    public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 4f;
+    public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 5f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
     // Physics settings
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
-    public static final float PHYSICS_STEP = 1/45f;
+    public static final float PHYSICS_STEP = 1/60f;
     public static final float CELL_SIZE = 2;
     public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
 
@@ -44,7 +44,8 @@ public class Constants {
     public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE,0);
     public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE,0);
 
-    public static final float TANK_IMPULSE = 5.0f;
+    public static final float TANK_IMPULSE = 4.0f;
+    public static final float TANK_MOVE_CATCH_EPS = 0.05f;
     public static final Vector2 TANK_UP_IMPULSE = new Vector2(0,TANK_IMPULSE);
     public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0,-TANK_IMPULSE);
     public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE,0);

@@ -13,6 +13,8 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     public Direction direction;
     public TankType type;
+    public int x;
+    public int y;
     protected Level level;
 
     public void init(Level level, Body body) {

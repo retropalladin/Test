@@ -26,7 +26,7 @@ public class Level {
 
     public PlayerTank playerTank;
 
-    public short[][] objectsMatrix = null;
+    public short[][] objectsMatrix = null; //warning : she is reversed. coord x = 0, y = 0 is equal objectMatrix[y,x] so y axis is reversed.
     public int objectMatrixWidth = 0;
     public float levelWidth = 0;
     public int objectMatrixHeight = 0;
@@ -143,16 +143,19 @@ public class Level {
         spawnGridDefinedWall(6,3, WallType.WOODEN_WALL);
         spawnGridDefinedWall(10,10, WallType.WOODEN_WALL);
 
-        playerTank = spawnGridDefinedPlayerTank(23,25,TankType.LIGHT_TANK, Direction.RIGHT);
+        playerTank = spawnGridDefinedPlayerTank(21,29,TankType.LIGHT_TANK, Direction.RIGHT);
         spawnGridDefinedNpcTank(27, 25,TankType.LIGHT_TANK,Direction.LEFT,false);
         }
 
 
     //player
     private PlayerTank spawnGridDefinedPlayerTank(int posX, int posY, TankType type, Direction direction){
-        if(objectsMatrix[objectMatrixHeight - posY][posX] == 0) {
-            objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_ALLY_TANK;
-            return spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction);
+        if(objectsMatrix[posY][posX] == 0) {
+            objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
+            PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction);
+            playerTank.x = posX;
+            playerTank.y = posY;
+            return playerTank;
         }
         return null;
     }
@@ -200,7 +203,7 @@ public class Level {
             throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
         for(int i = 0; i < posX.length; i++)
         {
-            objectsMatrix[objectMatrixHeight - (int)posY[i]][(int)posX[i]] = Constants.CATEGORY_WALL;
+            objectsMatrix[(int)posY[i]][(int)posX[i]] = Constants.CATEGORY_WALL;
             posX[i] *= Constants.CELL_SIZE;
             posY[i] *= Constants.CELL_SIZE;
         }
@@ -220,8 +223,8 @@ public class Level {
     }
 
     private void spawnGridDefinedWall(int posX, int posY, WallType type) {
-        if(objectsMatrix[objectMatrixHeight - posY][posX] == 0) {
-            objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_WALL;
+        if(objectsMatrix[posY][posX] == 0) {
+            objectsMatrix[posY][posX] = Constants.CATEGORY_WALL;
             spawnDefinedWall(posX * Constants.CELL_SIZE, posY * Constants.CELL_SIZE, type);
         }
     }
@@ -246,20 +249,23 @@ public class Level {
     //end wall
     //npc
     private void spawnGridDefinedNpcTank(int posX, int posY, TankType type, Direction direction, boolean isAlly){
-        if(objectsMatrix[objectMatrixHeight - posY][posX] == 0) {
+        if(objectsMatrix[posY][posX] == 0) {
             if (isAlly)
-                objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_ALLY_TANK;
+                objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             else
-                objectsMatrix[objectMatrixHeight - posY][posX] = Constants.CATEGORY_ENEMY_TANK;
-            spawnDefinedNpcTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction, isAlly);
+                objectsMatrix[posY][posX] = Constants.CATEGORY_ENEMY_TANK;
+            NpcTank npcTank = spawnDefinedNpcTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction, isAlly);
+            npcTank.x = posX;
+            npcTank.y = posY;
         }
     }
 
-    private void spawnDefinedNpcTank(float posX, float posY, TankType type, Direction direction, boolean isAlly) {
+    private NpcTank spawnDefinedNpcTank(float posX, float posY, TankType type, Direction direction, boolean isAlly) {
         NpcTank npcTank = spawnNpcTank(posX,posY);
         configureNpcTankFixture(type, isAlly);
         npcTank.configureNpcTankType(tankFixtureDef.filter.categoryBits, type, direction);
         npcTank.createFixture(tankFixtureDef);
+        return npcTank;
     }
 
     private NpcTank spawnNpcTank(float posX, float posY) {

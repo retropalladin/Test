@@ -24,16 +24,18 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
         return Gdx.input.isKeyPressed(Input.Keys.DOWN);
     }
     public Direction getPlayerMoveDirection(){
-        switch (playerDesiredDirection[0])
-        {
-            case Input.Keys.W:
-                return Direction.UP;
-            case Input.Keys.S:
-                return Direction.DOWN;
-            case Input.Keys.A:
-                return Direction.LEFT;
-            case Input.Keys.D:
-                return Direction.RIGHT;
+        synchronized (playerDesiredDirection){
+            switch (playerDesiredDirection[0])
+            {
+                case Input.Keys.W:
+                    return Direction.UP;
+                case Input.Keys.S:
+                    return Direction.DOWN;
+                case Input.Keys.A:
+                    return Direction.LEFT;
+                case Input.Keys.D:
+                    return Direction.RIGHT;
+            }
         }
         return null;
     }
@@ -41,16 +43,18 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     @Override
     public boolean keyDown(int keycode)
     {
-        switch(keycode){
-            case Input.Keys.W:
-            case Input.Keys.S:
-            case Input.Keys.A:
-            case Input.Keys.D:
-                playerDesiredDirection[3] = playerDesiredDirection[2];
-                playerDesiredDirection[2] = playerDesiredDirection[1];
-                playerDesiredDirection[1] = playerDesiredDirection[0];
-                playerDesiredDirection[0] = keycode;
-                break;
+        synchronized (playerDesiredDirection){
+            switch(keycode){
+                case Input.Keys.W:
+                case Input.Keys.S:
+                case Input.Keys.A:
+                case Input.Keys.D:
+                    playerDesiredDirection[3] = playerDesiredDirection[2];
+                    playerDesiredDirection[2] = playerDesiredDirection[1];
+                    playerDesiredDirection[1] = playerDesiredDirection[0];
+                    playerDesiredDirection[0] = keycode;
+                    break;
+            }
         }
         return true;
     }
@@ -58,21 +62,22 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     @Override
     public boolean keyUp (int keycode)
     {
-
-        switch(keycode){
-            case Input.Keys.W:
-            case Input.Keys.S:
-            case Input.Keys.A:
-            case Input.Keys.D:
-                for(keyUpi = 0; keyUpi < 4; keyUpi++)
-                    if(playerDesiredDirection[keyUpi]==keycode)
-                    {
-                        keyUpPos = keyUpi;
-                        break;
-                    }
-                for(keyUpi = keyUpPos; keyUpi <= 3; keyUpi++)
-                    playerDesiredDirection[keyUpi] = playerDesiredDirection[keyUpi+1];
-                break;
+        synchronized (playerDesiredDirection){
+            switch(keycode){
+                case Input.Keys.W:
+                case Input.Keys.S:
+                case Input.Keys.A:
+                case Input.Keys.D:
+                    for(keyUpi = 0; keyUpi < 4; keyUpi++)
+                        if(playerDesiredDirection[keyUpi]==keycode)
+                        {
+                            keyUpPos = keyUpi;
+                            break;
+                        }
+                    for(keyUpi = keyUpPos; keyUpi <= 3; keyUpi++)
+                        playerDesiredDirection[keyUpi] = playerDesiredDirection[keyUpi+1];
+                    break;
+            }
         }
         return true;
     }

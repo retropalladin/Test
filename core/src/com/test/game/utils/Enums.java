@@ -2,6 +2,11 @@ package com.test.game.utils;
 
 
 public class Enums {
+
+    public enum TankState {
+        WAITING, ON_MOVE, ROTATING
+    }
+
     public enum TankType {
         LIGHT_TANK, HEAVY_TANK
     }

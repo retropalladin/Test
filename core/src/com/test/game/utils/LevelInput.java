@@ -1,11 +1,12 @@
 package com.test.game.utils;
 
 import com.badlogic.gdx.InputProcessor;
+import com.test.game.utils.Enums.Direction;
 
 public interface LevelInput extends InputProcessor{
-    public boolean debugCameraMoveLeft();
-    public boolean debugCameraMoveRight();
-    public boolean debugCameraMoveUp();
-    public boolean debugCameraMoveDown();
-    public Enums.Direction getPlayerMoveDirection();
+    boolean debugCameraMoveLeft();
+    boolean debugCameraMoveRight();
+    boolean debugCameraMoveUp();
+    boolean debugCameraMoveDown();
+    Direction getPlayerDesiredDirectiond();
 }

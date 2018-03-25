@@ -15,6 +15,7 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
     public void init(Body body) {
         this.setAlive(true);
         this.setBody(body);
+        this.setGridCoordinates((short)-1, (short)-1);
         immortal = true;
     }
 

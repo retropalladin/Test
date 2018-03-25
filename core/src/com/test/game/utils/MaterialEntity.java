@@ -8,6 +8,8 @@ public abstract class MaterialEntity {
     protected short category;
     protected int hp;
     protected Body body;
+    protected short gridX;
+    protected short gridY;
 
     public boolean isAlive(){
         return alive;
@@ -25,6 +27,10 @@ public abstract class MaterialEntity {
         if(hp < 0)
             hp = 0;
         this.hp = hp;
+    }
+    public void setGridCoordinates(short gridX, short gridY){
+        this.gridX = gridX;
+        this.gridY = gridY;
     }
 
     public Body getBody(){

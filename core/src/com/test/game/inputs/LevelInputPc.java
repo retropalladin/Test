@@ -8,6 +8,7 @@ import com.test.game.utils.LevelInput;
 
 public class LevelInputPc extends InputAdapter implements LevelInput {
 
+    final Object sync = new Object();
     int keyUpPos = 0, keyUpi = 0;
     private int[] playerDesiredDirection = new int[5];
 
@@ -23,8 +24,8 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     public boolean debugCameraMoveDown(){
         return Gdx.input.isKeyPressed(Input.Keys.DOWN);
     }
-    public Direction getPlayerMoveDirection(){
-        synchronized (playerDesiredDirection){
+    public Direction getPlayerDesiredDirectiond(){
+        synchronized (sync){
             switch (playerDesiredDirection[0])
             {
                 case Input.Keys.W:
@@ -43,7 +44,7 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     @Override
     public boolean keyDown(int keycode)
     {
-        synchronized (playerDesiredDirection){
+        synchronized (sync){
             switch(keycode){
                 case Input.Keys.W:
                 case Input.Keys.S:
@@ -62,7 +63,7 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     @Override
     public boolean keyUp (int keycode)
     {
-        synchronized (playerDesiredDirection){
+        synchronized (sync){
             switch(keycode){
                 case Input.Keys.W:
                 case Input.Keys.S:

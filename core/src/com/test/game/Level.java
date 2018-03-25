@@ -26,10 +26,10 @@ public class Level {
 
     public PlayerTank playerTank;
 
-    public short[][] objectsMatrix = null; //warning : she is reversed. coord x = 0, y = 0 is equal objectMatrix[y,x] so y axis is reversed.
-    public int objectMatrixWidth = 0;
+    public short[][] objectsMatrix = null; //warning : she is reversed. coord gridX = 0, gridY = 0 is equal objectMatrix[gridY,gridX] so gridY axis is reversed.
+    public short objectMatrixWidth = 0;
     public float levelWidth = 0;
-    public int objectMatrixHeight = 0;
+    public short objectMatrixHeight = 0;
     public float levelHeigt = 0;
 
     public Array<Bullet> aliveBullets;
@@ -127,34 +127,29 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        int height = 50;
-        int width = 50;
+        short height = 50;
+        short width = 50;
         objectsMatrix = new short[height][width];
-        objectMatrixHeight = height - 1;
+        objectMatrixHeight = (short) (height - 1);
         levelHeigt = (height - 2) * Constants.CELL_SIZE;
-        objectMatrixWidth = width - 1;
+        objectMatrixWidth = (short) (width - 1);
         levelWidth = (width - 2) * Constants.CELL_SIZE;
         float[] x = new float[]{20,20,20,20,20,20,20,20,20,20,20,21,22,23,24,25,26,27,28,29,30,30,30,30,30,30,30,30,30,30,30,29,28,27,26,25,24,23,22,21};
         float[] y = new float[]{30,29,28,27,26,25,24,23,22,21,20,20,20,20,20,20,20,20,20,20,20,21,22,23,24,25,26,27,28,29,30,30,30,30,30,30,30,30,30,30};
 
         spawnGridDefinedWalls(x,y,WallType.STONE_WALL);
-        spawnGridDefinedWall(3,6, WallType.WOODEN_WALL);
-        spawnGridDefinedWall( 5,5, WallType.BUSH_WALL);
-        spawnGridDefinedWall(6,3, WallType.WOODEN_WALL);
-        spawnGridDefinedWall(10,10, WallType.WOODEN_WALL);
 
-        playerTank = spawnGridDefinedPlayerTank(21,29,TankType.LIGHT_TANK, Direction.RIGHT);
-        spawnGridDefinedNpcTank(27, 25,TankType.LIGHT_TANK,Direction.LEFT,false);
+        playerTank = spawnGridDefinedPlayerTank((short)21,(short)29,TankType.LIGHT_TANK, Direction.RIGHT);
+        spawnGridDefinedNpcTank((short)27,(short)25,TankType.LIGHT_TANK,Direction.LEFT,false);
         }
 
 
     //player
-    private PlayerTank spawnGridDefinedPlayerTank(int posX, int posY, TankType type, Direction direction){
+    private PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, TankType type, Direction direction){
         if(objectsMatrix[posY][posX] == 0) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction);
-            playerTank.x = posX;
-            playerTank.y = posY;
+            playerTank.setGridCoordinates(posX, posY);
             return playerTank;
         }
         return null;
@@ -195,7 +190,8 @@ public class Level {
     //end player
     //wall
     //warning: this method doesn't take care about objectMatrix[i][j] == 0. Just brutal spawn!
-    //warning: arrays should consist of integer values (2. , 3. , etc)!
+    //warning: arrays should consist of short values (2. , 3. , etc)!
+    //warning: this method doesn't set grid coordinates.
     public void spawnGridDefinedWalls(float[] posX, float[] posY, WallType type) {
         if(posX == null || posY == null)
             throw new NullPointerException("spawnDefineWall(s): null array reference");
@@ -203,7 +199,7 @@ public class Level {
             throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
         for(int i = 0; i < posX.length; i++)
         {
-            objectsMatrix[(int)posY[i]][(int)posX[i]] = Constants.CATEGORY_WALL;
+            objectsMatrix[(short)posY[i]][(short)posX[i]] = Constants.CATEGORY_WALL;
             posX[i] *= Constants.CELL_SIZE;
             posY[i] *= Constants.CELL_SIZE;
         }
@@ -222,17 +218,19 @@ public class Level {
         }
     }
 
-    private void spawnGridDefinedWall(int posX, int posY, WallType type) {
+    private void spawnGridDefinedWall(short posX, short posY, WallType type) {
         if(objectsMatrix[posY][posX] == 0) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_WALL;
-            spawnDefinedWall(posX * Constants.CELL_SIZE, posY * Constants.CELL_SIZE, type);
+            Wall wall = spawnDefinedWall(posX * Constants.CELL_SIZE, posY * Constants.CELL_SIZE, type);
+            wall.setGridCoordinates(posX, posY);
         }
     }
 
-    private void spawnDefinedWall(float posX, float posY, WallType type) {
+    private Wall spawnDefinedWall(float posX, float posY, WallType type) {
         Wall wall = spawnWall(posX,posY);
         wall.configureWallType(Constants.CATEGORY_WALL, type);
         wall.createFixture(wallFixtureDef);
+        return wall;
     }
 
     private Wall spawnWall(float posX, float posY) {
@@ -248,15 +246,14 @@ public class Level {
     }
     //end wall
     //npc
-    private void spawnGridDefinedNpcTank(int posX, int posY, TankType type, Direction direction, boolean isAlly){
+    private void spawnGridDefinedNpcTank(short posX, short posY, TankType type, Direction direction, boolean isAlly){
         if(objectsMatrix[posY][posX] == 0) {
             if (isAlly)
                 objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             else
                 objectsMatrix[posY][posX] = Constants.CATEGORY_ENEMY_TANK;
             NpcTank npcTank = spawnDefinedNpcTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction, isAlly);
-            npcTank.x = posX;
-            npcTank.y = posY;
+            npcTank.setGridCoordinates(posX, posY);
         }
     }
 
@@ -300,6 +297,7 @@ public class Level {
     }
     //end npc
     //bullet
+    //warning: bullet doesn't have grid coordinates
     private void spawnCorrectedBullet(float posX, float posY, BulletType type, Direction direction, boolean isAlly) {
         switch (direction)
         {

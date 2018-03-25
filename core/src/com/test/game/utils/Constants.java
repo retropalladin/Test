@@ -13,7 +13,7 @@ public class Constants {
     // LevelRenderer settings
     public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
     public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
-    public static final float WORLD_VISIBLE_HEIGHT = 32;
+    public static final float WORLD_VISIBLE_HEIGHT = 24;
     public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 5f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
 
@@ -51,10 +51,11 @@ public class Constants {
     public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE,0);
     public static final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE,0);
 
-    public static final short CATEGORY_WALL = 1;
-    public static final short CATEGORY_ALLY_TANK = (1 << 1);
-    public static final short CATEGORY_ENEMY_TANK = (1 << 2);
-    public static final short CATEGORY_TANK_ON_MOVE = (1 << 3);
+    public static final short CATEGORY_EMPTY = 1;
+    public static final short CATEGORY_WALL = (1 << 2);
+    public static final short CATEGORY_ALLY_TANK = (1 << 3);
+    public static final short CATEGORY_ENEMY_TANK = (1 << 4);
+    public static final short CATEGORY_TANK_ON_MOVE = (1 << 5);
     public static final short CATEGORY_ALLY_BULLET = (1 << 13);
     public static final short CATEGORY_ENEMY_BULLET = (1 << 14);
 
@@ -64,6 +65,7 @@ public class Constants {
     public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
     public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
+    public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY;
     // Wall settings
     public static int STONE_WALL_HP_MAX = 1000;
     public static int WOODEN_WALL_HP_MAX = 4;

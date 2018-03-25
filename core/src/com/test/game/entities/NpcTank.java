@@ -35,10 +35,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         this.type = type;
     }
 
-    protected boolean beginMove() {
+    protected boolean beginMove(short MoveMask) {
         switch (direction){
             case LEFT:
-                if(level.objectsMatrix[gridY][gridX-1] == 0) {
+                if((level.objectsMatrix[gridY][gridX-1] & MoveMask) != 0) {
                     state = TankState.ON_MOVE;
                     destination.x = Constants.CELL_SIZE * (gridX - 1) + Constants.TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
@@ -47,7 +47,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case RIGHT:
-                if(level.objectsMatrix[gridY][gridX+1] == 0) {
+                if((level.objectsMatrix[gridY][gridX+1] & MoveMask) != 0) {
                     state = TankState.ON_MOVE;
                     destination.x = Constants.CELL_SIZE * (gridX + 1) + Constants.TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
@@ -56,7 +56,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case UP:
-                if(level.objectsMatrix[gridY+1][gridX] == 0) {
+                if((level.objectsMatrix[gridY+1][gridX] & MoveMask) != 0) {
                     state = TankState.ON_MOVE;
                     destination.y = Constants.CELL_SIZE * (gridY + 1) + Constants.TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
@@ -65,7 +65,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case DOWN:
-                if(level.objectsMatrix[gridY-1][gridX] == 0) {
+                if((level.objectsMatrix[gridY-1][gridX] & MoveMask) != 0) {
                     state = TankState.ON_MOVE;
                     destination.y = Constants.CELL_SIZE * (gridY - 1) + Constants.TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
@@ -88,25 +88,25 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
             case LEFT:
                 if(deltaX < Constants.TANK_MOVE_CATCH_EPS) {
                     state = TankState.WAITING;
-                    level.objectsMatrix[gridY][gridX +1] = 0;
+                    level.objectsMatrix[gridY][gridX +1] = Constants.CATEGORY_EMPTY;
                 }
                 break;
             case RIGHT:
                 if(deltaX > -Constants.TANK_MOVE_CATCH_EPS) {
                     state = TankState.WAITING;
-                    level.objectsMatrix[gridY][gridX -1] = 0;
+                    level.objectsMatrix[gridY][gridX -1] = Constants.CATEGORY_EMPTY;
                 }
                 break;
             case UP:
                 if(deltaY > -Constants.TANK_MOVE_CATCH_EPS) {
                     state = TankState.WAITING;
-                    level.objectsMatrix[gridY -1][gridX] = 0;
+                    level.objectsMatrix[gridY -1][gridX] = Constants.CATEGORY_EMPTY;
                 }
                 break;
             case DOWN:
                 if(deltaY < Constants.TANK_MOVE_CATCH_EPS) {
                     state = TankState.WAITING;
-                    level.objectsMatrix[gridY +1][gridX] = 0;
+                    level.objectsMatrix[gridY +1][gridX] = Constants.CATEGORY_EMPTY;
                 }
                 break;
         }

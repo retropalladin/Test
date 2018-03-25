@@ -130,6 +130,9 @@ public class Level {
         short height = 50;
         short width = 50;
         objectsMatrix = new short[height][width];
+        for(int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++)
+                objectsMatrix[i][j] = Constants.CATEGORY_EMPTY;
         objectMatrixHeight = (short) (height - 1);
         levelHeigt = (height - 2) * Constants.CELL_SIZE;
         objectMatrixWidth = (short) (width - 1);
@@ -146,7 +149,7 @@ public class Level {
 
     //player
     private PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, TankType type, Direction direction){
-        if(objectsMatrix[posY][posX] == 0) {
+        if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, direction);
             playerTank.setGridCoordinates(posX, posY);
@@ -219,7 +222,7 @@ public class Level {
     }
 
     private void spawnGridDefinedWall(short posX, short posY, WallType type) {
-        if(objectsMatrix[posY][posX] == 0) {
+        if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_WALL;
             Wall wall = spawnDefinedWall(posX * Constants.CELL_SIZE, posY * Constants.CELL_SIZE, type);
             wall.setGridCoordinates(posX, posY);
@@ -247,7 +250,7 @@ public class Level {
     //end wall
     //npc
     private void spawnGridDefinedNpcTank(short posX, short posY, TankType type, Direction direction, boolean isAlly){
-        if(objectsMatrix[posY][posX] == 0) {
+        if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             if (isAlly)
                 objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             else

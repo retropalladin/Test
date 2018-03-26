@@ -14,6 +14,8 @@ public class LevelRenderer {
 
     private ChaseCamera chaseCamera;
     private Box2DDebugRenderer debugRenderer;
+    private TextureAtlas.AtlasRegion currentRegion;
+    private float rotatePositionTmp;
 
     public LevelRenderer() {
         chaseCamera = new ChaseCamera();
@@ -28,25 +30,27 @@ public class LevelRenderer {
         }
         batch.setProjectionMatrix(chaseCamera.camera.combined);
         batch.begin();
-        TextureAtlas.AtlasRegion region = Assets.instance.lightTankAssets.rotationRegions[(int)(level.playerTank.getRotatePosition()/22.5)];
-        batch.draw(
-                region.getTexture(),
-                level.playerTank.getBody().getPosition().x,
-                level.playerTank.getBody().getPosition().y,
-                0,
-                0,
-                Constants.TANK_WIDTH,
-                Constants.TANK_HEIGHT,
-                1,
-                1,
-                0,
-                region.getRegionX(),
-                region.getRegionY(),
-                region.getRegionWidth(),
-                region.getRegionHeight(),
-                false,
-                false);
+        drawPlayerTank(level, batch);
         batch.end();
+    }
+
+    public void drawPlayerTank(Level level, SpriteBatch batch){
+        rotatePositionTmp = level.playerTank.getRotatePosition() + Constants.ROTATE_SECTOR_H;
+        if(rotatePositionTmp >= 360)
+            rotatePositionTmp -=360;
+        switch (level.playerTank.type){
+            case LIGHT_TANK:
+                currentRegion = Assets.instance.lightTankAssets.rotationRegions[(int)(rotatePositionTmp/Constants.ROTATE_SECTOR)];
+                break;
+            case HEAVY_TANK:
+                currentRegion = Assets.instance.heavyTankAssets.rotationRegions[(int)(rotatePositionTmp/Constants.ROTATE_SECTOR)];
+                break;
+        }
+        batch.draw(currentRegion.getTexture(), level.playerTank.getBody().getPosition().x, level.playerTank.getBody().getPosition().y,
+                0, 0, Constants.TANK_WIDTH, Constants.TANK_HEIGHT,
+                1, 1, 0, currentRegion.getRegionX(), currentRegion.getRegionY(),
+                currentRegion.getRegionWidth(), currentRegion.getRegionHeight(),
+                false, false);
     }
 
     public void presetCameraPosition(Level level) {

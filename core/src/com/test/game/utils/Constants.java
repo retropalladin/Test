@@ -16,6 +16,8 @@ public class Constants {
     public static final float WORLD_VISIBLE_HEIGHT = 32;
     public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 7f;
     public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
+    public static final float ROTATE_SECTOR = 22.5f;
+    public static final float ROTATE_SECTOR_H = ROTATE_SECTOR * 0.5f;
 
     // Physics settings
     public static final int VELOCITY_ITERATIONS = 6;
@@ -28,7 +30,7 @@ public class Constants {
     public static final float WALL_RESTITUTION = 0f;
 
     public static final float LIGHT_TANK_DENSITY = 0.3f;
-    public static final float HEAVY_TANK_DENSITY = 0.6f;
+    public static final float HEAVY_TANK_DENSITY = 0.4f;
     public static final float TANK_FRICTION = 0f;
     public static final float TANK_RESTITUTION = 0f;
 
@@ -46,8 +48,8 @@ public class Constants {
 
     public static final float TANK_IMPULSE = 4.0f;
     public static final float TANK_MOVE_CATCH_EPS = 0.05f;
-    public static final float LIGHT_TANK_ROTATION_SPEED = 800f;
-    public static final float HEAVY_TANK_ROTATION_SPEED = 600f;
+    public static final float LIGHT_TANK_ROTATION_SPEED = 600f;
+    public static final float HEAVY_TANK_ROTATION_SPEED = 500f;
     public static final Vector2 TANK_UP_IMPULSE = new Vector2(0, TANK_IMPULSE);
     public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0, -TANK_IMPULSE);
     public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE, 0);
@@ -98,7 +100,8 @@ public class Constants {
     public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
 
     //Texture settings
-    public static final String TEXTURE_ATLAS = "images/TankLight.atlas";
+    public static final String TEXTURE_ATLAS = "images/TankAtlas.atlas";
+    
     public static final String LIGHT_TANK0 = "LightTank0";
     public static final String LIGHT_TANK22 = "LightTank22";
     public static final String LIGHT_TANK45 = "LightTank45";
@@ -115,4 +118,21 @@ public class Constants {
     public static final String LIGHT_TANK292 = "LightTank292";
     public static final String LIGHT_TANK315 = "LightTank315";
     public static final String LIGHT_TANK338 = "LightTank338";
+
+    public static final String HEAVY_TANK0 = "HeavyTank0";
+    public static final String HEAVY_TANK22 = "HeavyTank22";
+    public static final String HEAVY_TANK45 = "HeavyTank45";
+    public static final String HEAVY_TANK78 = "HeavyTank78";
+    public static final String HEAVY_TANK90 = "HeavyTank90";
+    public static final String HEAVY_TANK112 = "HeavyTank112";
+    public static final String HEAVY_TANK135 = "HeavyTank135";
+    public static final String HEAVY_TANK158 = "HeavyTank158";
+    public static final String HEAVY_TANK180 = "HeavyTank180";
+    public static final String HEAVY_TANK202 = "HeavyTank202";
+    public static final String HEAVY_TANK225 = "HeavyTank225";
+    public static final String HEAVY_TANK248 = "HeavyTank248";
+    public static final String HEAVY_TANK270 = "HeavyTank270";
+    public static final String HEAVY_TANK292 = "HeavyTank292";
+    public static final String HEAVY_TANK315 = "HeavyTank315";
+    public static final String HEAVY_TANK338 = "HeavyTank338";
 }

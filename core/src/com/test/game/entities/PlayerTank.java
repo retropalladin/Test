@@ -14,6 +14,8 @@ import com.test.game.utils.Utils;
 
 public class PlayerTank extends NpcTank {
 
+    private Direction inputDirection;
+
     public PlayerTank(Level level, Body body) {
         super.init(level, body);
         state = TankState.WAITING;
@@ -31,13 +33,13 @@ public class PlayerTank extends NpcTank {
             endRotate(delta);
         }
 
-        Direction direction = LevelInputManager.instance.levelInput.getPlayerDesiredDirectiond();
+        inputDirection = LevelInputManager.instance.levelInput.getPlayerDesiredDirectiond();
 
-        if(direction != null && this.direction != direction && state != TankState.ON_MOVE) {
-            beginRotate(direction);
+        if(inputDirection != null && this.direction != inputDirection && state != TankState.ON_MOVE) {
+            beginRotate(inputDirection);
         }
 
-        if (direction != null && state != TankState.ON_MOVE && state!= TankState.ROTATING) {
+        if (inputDirection != null && state != TankState.ON_MOVE && state!= TankState.ROTATING) {
             beginMove(Constants.PLAYER_TANK_MOVE_MASK);
         }
     }

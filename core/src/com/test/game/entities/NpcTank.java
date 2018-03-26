@@ -27,7 +27,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     private float rotateDestination;
     private float rotationSpeed;
 
-    protected TankType type;
+    public TankType type;
     protected TankState state;
     protected Level level;
 

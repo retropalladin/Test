@@ -14,6 +14,7 @@ public class Assets implements Disposable, AssetErrorListener {
     public static final Assets instance = new Assets();
 
     public LightTankAssets lightTankAssets;
+    public HeavyTankAssets heavyTankAssets;
 
     private AssetManager assetManager;
 
@@ -28,6 +29,7 @@ public class Assets implements Disposable, AssetErrorListener {
 
         TextureAtlas atlas = assetManager.get(Constants.TEXTURE_ATLAS);
         lightTankAssets = new LightTankAssets(atlas);
+        heavyTankAssets = new HeavyTankAssets(atlas);
     }
 
     @Override
@@ -62,6 +64,31 @@ public class Assets implements Disposable, AssetErrorListener {
             rotationRegions[13] = atlas.findRegion(Constants.LIGHT_TANK292);
             rotationRegions[14] = atlas.findRegion(Constants.LIGHT_TANK315);
             rotationRegions[15] = atlas.findRegion(Constants.LIGHT_TANK338);
+        }
+    }
+
+    public class HeavyTankAssets{
+
+        public final TextureAtlas.AtlasRegion[] rotationRegions;
+
+        public HeavyTankAssets(TextureAtlas atlas) {
+            rotationRegions = new TextureAtlas.AtlasRegion[16];
+            rotationRegions[0] = atlas.findRegion(Constants.HEAVY_TANK0);
+            rotationRegions[1] = atlas.findRegion(Constants.HEAVY_TANK22);
+            rotationRegions[2] = atlas.findRegion(Constants.HEAVY_TANK45);
+            rotationRegions[3] = atlas.findRegion(Constants.HEAVY_TANK78);
+            rotationRegions[4] = atlas.findRegion(Constants.HEAVY_TANK90);
+            rotationRegions[5] = atlas.findRegion(Constants.HEAVY_TANK112);
+            rotationRegions[6] = atlas.findRegion(Constants.HEAVY_TANK135);
+            rotationRegions[7] = atlas.findRegion(Constants.HEAVY_TANK158);
+            rotationRegions[8] = atlas.findRegion(Constants.HEAVY_TANK180);
+            rotationRegions[9] = atlas.findRegion(Constants.HEAVY_TANK202);
+            rotationRegions[10] = atlas.findRegion(Constants.HEAVY_TANK225);
+            rotationRegions[11] = atlas.findRegion(Constants.HEAVY_TANK248);
+            rotationRegions[12] = atlas.findRegion(Constants.HEAVY_TANK270);
+            rotationRegions[13] = atlas.findRegion(Constants.HEAVY_TANK292);
+            rotationRegions[14] = atlas.findRegion(Constants.HEAVY_TANK315);
+            rotationRegions[15] = atlas.findRegion(Constants.HEAVY_TANK338);
         }
     }
 }

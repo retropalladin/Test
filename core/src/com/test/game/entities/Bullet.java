@@ -3,14 +3,13 @@ package com.test.game.entities;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
 import com.test.game.utils.Constants;
-import com.test.game.utils.Enums;
-import com.test.game.utils.Enums.BulletType;
+import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.MaterialEntity;
 
 public class Bullet extends MaterialEntity implements Pool.Poolable {
 
-    public BulletType type;
+    public AmmoType type;
 
     public void init(Body body) {
         this.setAlive(true);
@@ -18,9 +17,8 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
         this.setGridCoordinates((short)-1, (short)-1);
     }
 
-    public void configureBulletType(short category, BulletType type) {
+    public boolean configureBulletType(short category, AmmoType type) {
         this.setCategory(category);
-        this.type = type;
         switch (type){
             case NORMAL_BULLET:
                 hp = Constants.NORMAL_BULLET_MAX_HP;
@@ -34,7 +32,11 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
             case RAP_BULLET:
                 hp = Constants.RAP_BULLET_MAX_HP;
                 break;
+            default:
+                return false;
         }
+        this.type = type;
+        return true;
     }
 
     public void launch(Direction direction){

@@ -15,6 +15,10 @@ public class LevelInputMobile extends InputAdapter implements LevelInput{
     private Rectangle down = new Rectangle(tmpconst,3*tmpconst,tmpconst,tmpconst);
     private Rectangle left = new Rectangle(0,2*tmpconst,tmpconst,tmpconst);
     private Rectangle right = new Rectangle(2*tmpconst,2*tmpconst,tmpconst,tmpconst);
+
+    public boolean shoot() {
+        return false;
+    }
     public boolean cameraDebugOn() {
         return false;
     }
@@ -30,7 +34,7 @@ public class LevelInputMobile extends InputAdapter implements LevelInput{
     public boolean debugCameraMoveDown() {
         return false;
     }
-    public Direction getPlayerDesiredDirectiond() {
+    public Direction getPlayerDesiredDirection() {
         return playerDesiredDirection;
     }
 

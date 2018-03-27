@@ -1,16 +1,14 @@
 package com.test.game.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
 import com.test.game.Level;
 import com.test.game.LevelInputManager;
 import com.test.game.utils.Constants;
+import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
-import com.test.game.utils.Enums.TankState;
+import com.test.game.utils.Enums.TankMoveState;
+import com.test.game.utils.Enums.TankShootState;
 import com.test.game.utils.Enums.TankType;
-import com.test.game.utils.Utils;
 
 public class PlayerTank extends NpcTank {
 
@@ -18,29 +16,35 @@ public class PlayerTank extends NpcTank {
 
     public PlayerTank(Level level, Body body) {
         super.init(level, body);
-        state = TankState.WAITING;
+        moveState = TankMoveState.WAITING;
     }
 
-    public void configurePlayerTankType(short category, TankType type, Direction direction) {
-        this.configureNpcTankType(category,type,direction);
+    public void configurePlayerTankType(short category, TankType type, AmmoType ammoType, Direction direction) {
+        this.configureNpcTankType(category,type,ammoType,direction);
     }
 
     public void update(float delta) {
-        if (state == TankState.ON_MOVE){
+        if (shootState == TankShootState.RELOADING) {
+            endShoot(delta);
+        }
+        if (moveState == TankMoveState.ON_MOVE){
             endMove();
         }
-        if (state == TankState.ROTATING) {
+        if (moveState == TankMoveState.ROTATING) {
             endRotate(delta);
         }
 
-        inputDirection = LevelInputManager.instance.levelInput.getPlayerDesiredDirectiond();
+        inputDirection = LevelInputManager.instance.levelInput.getPlayerDesiredDirection();
 
-        if(inputDirection != null && this.direction != inputDirection && state != TankState.ON_MOVE) {
+        if(inputDirection != null && this.direction != inputDirection && moveState != TankMoveState.ON_MOVE) {
             beginRotate(inputDirection);
         }
-
-        if (inputDirection != null && state != TankState.ON_MOVE && state!= TankState.ROTATING) {
+        if (inputDirection != null && moveState != TankMoveState.ON_MOVE && moveState != TankMoveState.ROTATING) {
             beginMove(Constants.PLAYER_TANK_MOVE_MASK);
+        }
+
+        if((moveState != TankMoveState.ROTATING) && (shootState == TankShootState.READY) && LevelInputManager.instance.levelInput.shoot()){
+            beginShoot(true);
         }
     }
 }

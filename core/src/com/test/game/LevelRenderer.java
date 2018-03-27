@@ -1,14 +1,11 @@
 package com.test.game;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.test.game.utils.Assets;
 import com.test.game.utils.ChaseCamera;
 import com.test.game.utils.Constants;
-import com.test.game.utils.Utils;
 
 public class LevelRenderer {
 
@@ -38,7 +35,7 @@ public class LevelRenderer {
         rotatePositionTmp = level.playerTank.getRotatePosition() + Constants.ROTATE_SECTOR_H;
         if(rotatePositionTmp >= 360)
             rotatePositionTmp -=360;
-        switch (level.playerTank.type){
+        switch (level.playerTank.tankType){
             case LIGHT_TANK:
                 currentRegion = Assets.instance.lightTankAssets.rotationRegions[(int)(rotatePositionTmp/Constants.ROTATE_SECTOR)];
                 break;

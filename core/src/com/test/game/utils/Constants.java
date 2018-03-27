@@ -40,7 +40,7 @@ public class Constants {
     public static final float BULLET_FRICTION = 0f;
     public static final float BULLET_RESTITUTION = 0f;
 
-    public static final float BULLET_IMPULSE = 0.0f;
+    public static final float BULLET_IMPULSE = 2.0f;
     public static final Vector2 BULLET_UP_IMPULSE = new Vector2(0, BULLET_IMPULSE);
     public static final Vector2 BULLET_DOWN_IMPULSE = new Vector2(0, -BULLET_IMPULSE);
     public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE, 0);
@@ -99,6 +99,12 @@ public class Constants {
     public static final float DOUBLE_BULLET_EPS_SPAWN = 0.2f;
     public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
 
+    public static final float DOUBLE_NORMAL_BULLET_RELOAD = 1.0f;
+    public static final float DOUBLE_PLASMA_BULLET_RELOAD = 0.75f;
+    public static final float NORMAL_BULLET_RELOAD = 1.0f;
+    public static final float PLASMA_BULLET_RELOAD = 0.75f;
+    public static final float AP_NORMAL_BULLET_RELOAD = 1.0f;
+    public static final float RAP_BULLET_RELOAD = 1.0f;
     //Texture settings
     public static final String TEXTURE_ATLAS = "images/TankAtlas.atlas";
     

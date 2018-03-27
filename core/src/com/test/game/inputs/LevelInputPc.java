@@ -33,7 +33,8 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     public boolean debugCameraMoveDown(){
         return Gdx.input.isKeyPressed(Input.Keys.DOWN);
     }
-    public Direction getPlayerDesiredDirectiond(){
+    public boolean shoot() { return Gdx.input.isKeyPressed(Input.Keys.SPACE);}
+    public Direction getPlayerDesiredDirection(){
         synchronized (sync){
             switch (playerDesiredDirection[0])
             {
@@ -55,7 +56,7 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
     {
         synchronized (sync){
             switch(keycode){
-                case Input.Keys.SPACE:
+                case Input.Keys.ENTER:
                     cameraDebugOn = true;
                 case Input.Keys.W:
                 case Input.Keys.S:

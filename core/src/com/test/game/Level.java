@@ -1,5 +1,6 @@
 package com.test.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -19,6 +20,8 @@ import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.Enums.WallType;
+import com.test.game.utils.LevelContactListener;
+import com.test.game.utils.MaterialEntity;
 
 
 public class Level {
@@ -33,14 +36,18 @@ public class Level {
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
-
     public Array<NpcTank> aliveNpcTanks;
     private static Pool<NpcTank> npcTankPool = Pools.get(NpcTank.class);
-
     public Array<Wall> aliveWalls;
     private static Pool<Wall> wallPool = Pools.get(Wall.class);
+    private int aliveIterator;
+
+    private Array<MaterialEntity> deadEntities;
+    private MaterialEntity deadEntity;
+    private int deadIterator;
 
     public World world;
+    public LevelContactListener levelContactListener;
 
     private float frameTime;
     private float accumulator;
@@ -68,8 +75,11 @@ public class Level {
         aliveBullets = new Array<Bullet>();
         aliveNpcTanks = new Array<NpcTank>();
         aliveWalls = new Array<Wall>();
+        deadEntities = new Array<MaterialEntity>();
 
         world = new World(Vector2.Zero, false);
+        levelContactListener = new LevelContactListener(this);
+        world.setContactListener(levelContactListener);
 
         wallRectangleCenter = new Vector2(Constants.CELL_SIZE * 0.5f, Constants.CELL_SIZE * 0.5f);
 
@@ -137,31 +147,30 @@ public class Level {
         levelHeigt = (height - 2) * Constants.CELL_SIZE;
         objectMatrixWidth = (short) (width - 1);
         levelWidth = (width - 2) * Constants.CELL_SIZE;
-        float[] x = new float[]{20,20,20,20,20,20,20,20,20,20,20,21,22,23,24,25,26,27,28,29,30,30,30,30,30,30,30,30,30,30,30,29,28,27,26,25,24,23,22,21};
-        float[] y = new float[]{30,29,28,27,26,25,24,23,22,21,20,20,20,20,20,20,20,20,20,20,20,21,22,23,24,25,26,27,28,29,30,30,30,30,30,30,30,30,30,30};
-
-        spawnGridDefinedWalls(x,y,WallType.STONE_WALL);
-
-        playerTank = spawnGridDefinedPlayerTank((short)21,(short)29,TankType.HEAVY_TANK, AmmoType.RAP_BULLET, Direction.RIGHT);
-        spawnGridDefinedNpcTank((short)27,(short)25,TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, false);
+        playerTank = spawnGridDefinedPlayerTank((short)21,(short)29, 100, 0, TankType.LIGHT_TANK, AmmoType.DOUBLE_NORMAL_BULLET, Direction.RIGHT);
+        spawnGridDefinedWall((short)20,(short)20,WallType.WOODEN_WALL);
+        spawnGridDefinedWall((short)20,(short)21,WallType.WOODEN_WALL);
+        spawnGridDefinedWall((short)20,(short)22,WallType.WOODEN_WALL);
+        //spawnGridDefinedNpcTank((short)27,(short)25, 7, 0, TankType.LIGHT_TANK, AmmoType.DOUBLE_NORMAL_BULLET, Direction.LEFT, false);
         }
 
 
     //player
-    private PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, TankType type, AmmoType ammoType, Direction direction){
+    private PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction){
         if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
-            PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, ammoType, direction);
+            PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN,
+                    hp, shieldHp, type, ammoType, direction);
             playerTank.setGridCoordinates(posX, posY);
             return playerTank;
         }
         return null;
     }
 
-    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, TankType type, AmmoType ammoType, Direction direction) {
+    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, int hp, int shieldHp,TankType type, AmmoType ammoType, Direction direction) {
         PlayerTank playerTank = spawnPlayerTank(posX,posY);
         configurePlayerTankFixture(type);
-        playerTank.configurePlayerTankType(Constants.CATEGORY_ALLY_TANK, type, ammoType, direction);
+        playerTank.configurePlayerTankType(Constants.CATEGORY_ALLY_TANK, hp, shieldHp, type, ammoType, direction);
         playerTank.createFixture(tankFixtureDef);
         return playerTank;
     }
@@ -195,32 +204,6 @@ public class Level {
     //warning: this method doesn't take care about objectMatrix[i][j] == 0. Just brutal spawn!
     //warning: arrays should consist of short values (2. , 3. , etc)!
     //warning: this method doesn't set grid coordinates.
-    private void spawnGridDefinedWalls(float[] posX, float[] posY, WallType type) {
-        if(posX == null || posY == null)
-            throw new NullPointerException("spawnDefineWall(s): null array reference");
-        if(posX.length != posY.length)
-            throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
-        for(int i = 0; i < posX.length; i++)
-        {
-            objectsMatrix[(short)posY[i]][(short)posX[i]] = Constants.CATEGORY_WALL;
-            posX[i] *= Constants.CELL_SIZE;
-            posY[i] *= Constants.CELL_SIZE;
-        }
-        spawnDefinedWalls(posX, posY, type);
-    }
-
-    private void spawnDefinedWalls(float[] posX, float[] posY, WallType type) {
-        if(posX == null || posY == null)
-            throw new NullPointerException("spawnDefineWall(s): null array reference");
-        if(posX.length != posY.length)
-            throw  new IllegalArgumentException("spawnDefineWall(s): different arrays length ");
-        for(int i = 0; i < posX.length; i++) {
-            Wall wall = spawnWall(posX[i],posY[i]);
-            wall.configureWallType(Constants.CATEGORY_WALL, type);
-            wall.createFixture(wallFixtureDef);
-        }
-    }
-
     private void spawnGridDefinedWall(short posX, short posY, WallType type) {
         if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_WALL;
@@ -241,7 +224,7 @@ public class Level {
         Body body = world.createBody(wallBodyDef);
         Wall wall = wallPool.obtain();
 
-        wall.init(body);
+        wall.init(this, body);
         body.setUserData(wall);
 
         aliveWalls.add(wall);
@@ -249,21 +232,22 @@ public class Level {
     }
     //end wall
     //npc
-    private void spawnGridDefinedNpcTank(short posX, short posY, TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
+    private void spawnGridDefinedNpcTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
         if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             if (isAlly)
                 objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             else
                 objectsMatrix[posY][posX] = Constants.CATEGORY_ENEMY_TANK;
-            NpcTank npcTank = spawnDefinedNpcTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN, type, ammoType, direction, isAlly);
+            NpcTank npcTank = spawnDefinedNpcTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN,
+                    hp, shieldHp, type, ammoType, direction, isAlly);
             npcTank.setGridCoordinates(posX, posY);
         }
     }
 
-    private NpcTank spawnDefinedNpcTank(float posX, float posY, TankType type, AmmoType ammoType,Direction direction, boolean isAlly) {
+    private NpcTank spawnDefinedNpcTank(float posX, float posY, int hp, int shieldHp, TankType type, AmmoType ammoType,Direction direction, boolean isAlly) {
         NpcTank npcTank = spawnNpcTank(posX,posY);
         configureNpcTankFixture(type, isAlly);
-        npcTank.configureNpcTankType(tankFixtureDef.filter.categoryBits, type, ammoType, direction);
+        npcTank.configureNpcTankType(tankFixtureDef.filter.categoryBits, hp, shieldHp, type, ammoType, direction);
         npcTank.createFixture(tankFixtureDef);
         return npcTank;
     }
@@ -448,17 +432,102 @@ public class Level {
         return true;
     }
     // end bullet
+    // collisions
+    public void bulletAndTankCollisionProcedure(Bullet bullet, NpcTank tank) {
+        switch (bullet.type){
+            case NORMAL_BULLET:
+                tank.takeDamage(Constants.NORMAL_BULLET_DAMAGE);
+                break;
+            case PLASMA_BULLET:
+                tank.takeDamage(Constants.PLASMA_BULLET_DAMAGE);
+                break;
+            case AP_BULLET:
+                tank.takeDamage(Constants.AP_BULLET_DAMAGE);
+                break;
+            case RAP_BULLET:
+                tank.takeDamage(Constants.RAP_BULLET_DAMAGE);
+                break;
+        }
+        bullet.takeDamage();
+        if(!bullet.isAlive()){
+            deadEntities.add(bullet);
+        }
+        if(!tank.isAlive()){
+            if(tank != playerTank) {
+                deadEntities.add(tank);
+            }
+        }
+    }
 
+    public void bulletAndWallCollisionProcedure(Bullet bullet, Wall wall) {
+        switch (bullet.type){
+            case NORMAL_BULLET:
+                wall.takeDamage(Constants.NORMAL_BULLET_DAMAGE);
+                break;
+            case PLASMA_BULLET:
+                wall.takeDamage(Constants.PLASMA_BULLET_DAMAGE);
+                break;
+            case AP_BULLET:
+                wall.takeDamage(Constants.AP_BULLET_DAMAGE);
+                break;
+            case RAP_BULLET:
+                wall.takeDamage(Constants.RAP_BULLET_DAMAGE);
+                break;
+        }
+        bullet.takeDamage();
+        if(!bullet.isAlive()){
+            deadEntities.add(bullet);
+        }
+        if(!wall.isAlive()){
+            deadEntities.add(wall);
+        }
+    }
+
+    public void bulletAndBulletCollisionProcedure(Bullet bullet1, Bullet bullet2) {
+        bullet1.takeDamage();
+        if(!bullet1.isAlive()){
+            deadEntities.add(bullet1);
+        }
+        bullet2.takeDamage();
+        if(!bullet2.isAlive()){
+            deadEntities.add(bullet2);
+        }
+    }
+    // end collisions
     public void update(float delta) {
-        playerTank.update(delta);
+        for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
+            aliveNpcTanks.get(aliveIterator).update(delta);
         frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
         accumulator += frameTime;
         while (accumulator >= Constants.PHYSICS_STEP) {
             world.step(Constants.PHYSICS_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
-            // processing collisions
+            removeDeads();
             accumulator -= Constants.PHYSICS_STEP;
         }
+    }
 
+    public void removeDeads(){
+        for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){
+            deadEntity = deadEntities.get(deadIterator);
+            world.destroyBody(deadEntity.getBody());
+            switch (deadEntity.getCategory()){
+                case Constants.CATEGORY_ALLY_BULLET:
+                case Constants.CATEGORY_ENEMY_BULLET:
+                    aliveBullets.removeValue((Bullet) deadEntity, true);
+                    bulletPool.free((Bullet) deadEntity);
+                    break;
+                case Constants.CATEGORY_ALLY_TANK:
+                case Constants.CATEGORY_ENEMY_TANK:
+                    aliveNpcTanks.removeValue((NpcTank) deadEntity,true);
+                    npcTankPool.free((NpcTank) deadEntity);
+                    break;
+                case Constants.CATEGORY_WALL:
+                    aliveWalls.removeValue((Wall) deadEntity,true);
+                    wallPool.free((Wall) deadEntity);
+                    break;
+            }
+        }
+        deadEntities.clear();
     }
 
     public void dispose() {

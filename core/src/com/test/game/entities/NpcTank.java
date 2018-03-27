@@ -17,6 +17,9 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     public Direction direction;
 
+    private boolean isAlly;
+    private int shieldHp;
+
     private float deltaX;
     private float deltaY;
     private Vector2 moveDestination;
@@ -45,10 +48,20 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         ammoType = AmmoType.NORMAL_BULLET;
     }
 
-    public void configureNpcTankType(short category, TankType tankType, AmmoType ammoType, Direction direction) {
+    public void configureNpcTankType(short category, int hp, int shieldHp,TankType tankType, AmmoType ammoType, Direction direction) {
         this.direction = direction;
+        switch (category){
+            case Constants.CATEGORY_ALLY_TANK:
+                isAlly = true;
+                break;
+            case Constants.CATEGORY_ENEMY_TANK:
+                isAlly = false;
+                break;
+        }
         this.setCategory(category);
         this.tankType = tankType;
+        this.hp = hp;
+        this.shieldHp = shieldHp;
         switch (tankType){
             case LIGHT_TANK:
                 rotationSpeed = Constants.LIGHT_TANK_ROTATION_SPEED;
@@ -72,6 +85,26 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 break;
         }
         this.ammoType = ammoType;
+    }
+
+    public void update(float delta){
+        if(shootState == TankShootState.RELOADING)
+            endShoot(delta);
+        if(shootState == TankShootState.READY)
+            beginShoot();
+    }
+
+    public void takeDamage(int damage){
+        shieldHp -= damage;
+        if(shieldHp < 0)
+        {
+            hp += shieldHp;
+            shieldHp = 0;
+        }
+        if(hp <= 0) {
+            level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
+            alive = false;
+        }
     }
 
     public float getRotatePosition(){
@@ -227,7 +260,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         return false;
     }
 
-    protected boolean beginShoot(boolean isAlly){
+    protected boolean beginShoot(){
         switch(ammoType){
                 case NORMAL_BULLET:
                     reloadTime = Constants.NORMAL_BULLET_RELOAD;
@@ -271,6 +304,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     @Override
     public void reset() {
+        this.level = null;
         this.setAlive(false);
         this.setBody(null);
         this.setCategory((short) 0);

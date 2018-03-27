@@ -56,6 +56,12 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
         }
     }
 
+    public void takeDamage(){
+        hp -= 1;
+        if(hp <= 0)
+            alive = false;
+    }
+
     @Override
     public void reset() {
         this.setAlive(false);

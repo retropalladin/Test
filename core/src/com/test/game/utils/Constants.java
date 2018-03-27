@@ -9,6 +9,7 @@ public class Constants {
 
     // Level settings
     public static final float FRAME_TIME_MAX = 0.25f;
+    public static final float PLAYER_RELOAD_MUL = 1.25f;
 
     // LevelRenderer settings
     public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
@@ -89,6 +90,11 @@ public class Constants {
     public static final int PLASMA_BULLET_MAX_HP = 1;
     public static final int AP_BULLET_MAX_HP = 2;
     public static final int RAP_BULLET_MAX_HP = 2;
+
+    public static final int NORMAL_BULLET_DAMAGE = 1;
+    public static final int PLASMA_BULLET_DAMAGE = 1;
+    public static final int AP_BULLET_DAMAGE = 3;
+    public static final int RAP_BULLET_DAMAGE = 5;
 
     public static final float BULLET_WIDTH = 0.7f;
     public static final float BULLET_HEIGHT = 0.35f;

@@ -19,13 +19,13 @@ public class PlayerTank extends NpcTank {
         moveState = TankMoveState.WAITING;
     }
 
-    public void configurePlayerTankType(short category, TankType type, AmmoType ammoType, Direction direction) {
-        this.configureNpcTankType(category,type,ammoType,direction);
+    public void configurePlayerTankType(short category, int hp, int shieldHp,TankType type, AmmoType ammoType, Direction direction) {
+        this.configureNpcTankType(category, hp, shieldHp,type,ammoType,direction);
     }
 
     public void update(float delta) {
         if (shootState == TankShootState.RELOADING) {
-            endShoot(delta);
+            endShoot(delta * Constants.PLAYER_RELOAD_MUL);
         }
         if (moveState == TankMoveState.ON_MOVE){
             endMove();
@@ -43,8 +43,8 @@ public class PlayerTank extends NpcTank {
             beginMove(Constants.PLAYER_TANK_MOVE_MASK);
         }
 
-        if((moveState != TankMoveState.ROTATING) && (shootState == TankShootState.READY) && LevelInputManager.instance.levelInput.shoot()){
-            beginShoot(true);
+        if(moveState != TankMoveState.ROTATING && shootState == TankShootState.READY && LevelInputManager.instance.levelInput.shoot()){
+            beginShoot();
         }
     }
 }

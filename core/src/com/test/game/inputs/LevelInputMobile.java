@@ -17,7 +17,7 @@ public class LevelInputMobile extends InputAdapter implements LevelInput{
     private Rectangle right = new Rectangle(2*tmpconst,2*tmpconst,tmpconst,tmpconst);
 
     public boolean shoot() {
-        return false;
+        return true;
     }
     public boolean cameraDebugOn() {
         return false;

@@ -2,6 +2,7 @@ package com.test.game.entities;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
+import com.test.game.Level;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums;
 import com.test.game.utils.Enums.WallType;
@@ -12,7 +13,10 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
     public boolean immortal;
     public WallType type;
 
-    public void init(Body body) {
+    private Level level;
+
+    public void init(Level level, Body body) {
+        this.level = level;
         this.setAlive(true);
         this.setBody(body);
         this.setGridCoordinates((short)-1, (short)-1);
@@ -38,8 +42,20 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
         }
     }
 
+    public void takeDamage(int damage){
+        if(immortal)
+            return;
+        hp -= damage;
+        if(hp <= 0)
+        {
+            level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
+            alive = false;
+        }
+    }
+
     @Override
     public void reset() {
+        this.level = null;
         this.setAlive(false);
         this.setBody(null);
         this.setCategory((short) 0);

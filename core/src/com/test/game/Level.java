@@ -27,11 +27,17 @@ import com.test.game.utils.MaterialEntity;
 public class Level {
 
     public PlayerTank playerTank;
+    public boolean needRespawn = false;
+    public short allySpawnX;
+    public short allySpawnY;
 
     public short[][] objectsMatrix = null; //warning : she is reversed. coord gridX = 0, gridY = 0 is equal objectMatrix[gridY,gridX] so gridY axis is reversed.
-    public short objectMatrixWidth = 0;
+    public short[][] landMatrix = null;
+
+    public short matrixWidth = 0;
+    public short matrixHeight = 0;
+
     public float levelWidth = 0;
-    public short objectMatrixHeight = 0;
     public float levelHeigt = 0;
 
     public Array<Bullet> aliveBullets;
@@ -51,7 +57,6 @@ public class Level {
 
     private float frameTime;
     private float accumulator;
-
 
     private Vector2 wallRectangleCenter;
 
@@ -137,27 +142,42 @@ public class Level {
     }
 
     private void initializeDebugLevel() {
-        short height = 50;
-        short width = 50;
+        short height = 10;
+        short width = 10;
         objectsMatrix = new short[height][width];
+        landMatrix = new short[height][width];
         for(int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++)
+            for (int j = 0; j < width; j++) {
                 objectsMatrix[i][j] = Constants.CATEGORY_EMPTY;
-        objectMatrixHeight = (short) (height - 1);
+                landMatrix[i][j] = Constants.LAND_GROUND;
+            }
+        matrixHeight = (short) (height - 1);
         levelHeigt = (height - 2) * Constants.CELL_SIZE;
-        objectMatrixWidth = (short) (width - 1);
+        matrixWidth = (short) (width - 1);
         levelWidth = (width - 2) * Constants.CELL_SIZE;
-        playerTank = spawnGridDefinedPlayerTank((short)21,(short)29, 100, 0, TankType.LIGHT_TANK, AmmoType.DOUBLE_NORMAL_BULLET, Direction.RIGHT);
-        spawnGridDefinedWall((short)20,(short)20,WallType.WOODEN_WALL);
-        spawnGridDefinedWall((short)20,(short)21,WallType.WOODEN_WALL);
-        spawnGridDefinedWall((short)20,(short)22,WallType.WOODEN_WALL);
-        //spawnGridDefinedNpcTank((short)27,(short)25, 7, 0, TankType.LIGHT_TANK, AmmoType.DOUBLE_NORMAL_BULLET, Direction.LEFT, false);
+        spawnLevelBorders();
+        allySpawnX = 1;
+        allySpawnY = 1;
+        objectsMatrix[allySpawnY][allySpawnX] = Constants.CATEGORY_SPAWN;
+        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, 5, 2, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.UP);
+
+        //spawnGridDefinedWall((short)20,(short)20,WallType.WOODEN_WALL);
+        //spawnGridDefinedWall((short)20,(short)21,WallType.WOODEN_WALL);
+        //spawnGridDefinedWall((short)20,(short)22,WallType.WOODEN_WALL);
+        objectsMatrix[5][5] = Constants.CATEGORY_SPAWN;
+        spawnGridDefinedNpcTank((short)5,(short)5, 5, 0, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, false);
         }
 
 
     //player
+    private void respawnPlayer(){
+        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, 5, 0, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.UP);
+        if(playerTank != null)
+            needRespawn = false;
+    }
+
     private PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction){
-        if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
+        if(objectsMatrix[posY][posX] == Constants.CATEGORY_SPAWN) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.CELL_SIZE + Constants.TANK_MARGIN, posY * Constants.CELL_SIZE + Constants.TANK_MARGIN,
                     hp, shieldHp, type, ammoType, direction);
@@ -201,9 +221,20 @@ public class Level {
     }
     //end player
     //wall
-    //warning: this method doesn't take care about objectMatrix[i][j] == 0. Just brutal spawn!
-    //warning: arrays should consist of short values (2. , 3. , etc)!
-    //warning: this method doesn't set grid coordinates.
+    private void spawnLevelBorders(){
+        short i;
+        for(i = 0; i <= matrixWidth; i++)
+        {
+            spawnGridDefinedWall(i, (short) 0,WallType.LEVEL_BORDER);
+            spawnGridDefinedWall(i, matrixHeight,WallType.LEVEL_BORDER);
+        }
+        for(i = 1; i < matrixHeight; i++)
+        {
+            spawnGridDefinedWall((short) 0, i,WallType.LEVEL_BORDER);
+            spawnGridDefinedWall(matrixWidth, i,WallType.LEVEL_BORDER);
+        }
+    }
+
     private void spawnGridDefinedWall(short posX, short posY, WallType type) {
         if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
             objectsMatrix[posY][posX] = Constants.CATEGORY_WALL;
@@ -233,7 +264,7 @@ public class Level {
     //end wall
     //npc
     private void spawnGridDefinedNpcTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
-        if(objectsMatrix[posY][posX] == Constants.CATEGORY_EMPTY) {
+        if(objectsMatrix[posY][posX] == Constants.CATEGORY_SPAWN) {
             if (isAlly)
                 objectsMatrix[posY][posX] = Constants.CATEGORY_ALLY_TANK;
             else
@@ -448,13 +479,14 @@ public class Level {
                 tank.takeDamage(Constants.RAP_BULLET_DAMAGE);
                 break;
         }
-        bullet.takeDamage();
-        if(!bullet.isAlive()){
+        if(!bullet.takeDamage(Constants.GOD_DAMAGE)){
             deadEntities.add(bullet);
         }
         if(!tank.isAlive()){
-            if(tank != playerTank) {
-                deadEntities.add(tank);
+            deadEntities.add(tank);
+            if(tank == playerTank) {
+                playerTank = null;
+                needRespawn = true;
             }
         }
     }
@@ -474,8 +506,7 @@ public class Level {
                 wall.takeDamage(Constants.RAP_BULLET_DAMAGE);
                 break;
         }
-        bullet.takeDamage();
-        if(!bullet.isAlive()){
+        if(!bullet.takeDamage(Constants.GOD_DAMAGE)){
             deadEntities.add(bullet);
         }
         if(!wall.isAlive()){
@@ -484,29 +515,29 @@ public class Level {
     }
 
     public void bulletAndBulletCollisionProcedure(Bullet bullet1, Bullet bullet2) {
-        bullet1.takeDamage();
-        if(!bullet1.isAlive()){
+        if(!bullet1.takeDamage(1)){
             deadEntities.add(bullet1);
         }
-        bullet2.takeDamage();
-        if(!bullet2.isAlive()){
+        if(!bullet2.takeDamage(1)){
             deadEntities.add(bullet2);
         }
     }
     // end collisions
     public void update(float delta) {
+        if(needRespawn)
+            respawnPlayer();
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
             aliveNpcTanks.get(aliveIterator).update(delta);
         frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
         accumulator += frameTime;
         while (accumulator >= Constants.PHYSICS_STEP) {
             world.step(Constants.PHYSICS_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
-            removeDeads();
+            removeDead();
             accumulator -= Constants.PHYSICS_STEP;
         }
     }
 
-    public void removeDeads(){
+    public void removeDead(){
         for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){
             deadEntity = deadEntities.get(deadIterator);
             world.destroyBody(deadEntity.getBody());

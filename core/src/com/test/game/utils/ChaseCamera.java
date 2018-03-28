@@ -10,6 +10,10 @@ import com.test.game.LevelInputManager;
 public class ChaseCamera {
 
     private Boolean following;
+    private int horizontalShift;
+    private int verticalShift;
+    private float levelWidth;
+    private float levelHeight;
     private float tmpDif;
     private float tmpSgn;
     private float viewportWidthH;
@@ -40,34 +44,39 @@ public class ChaseCamera {
     }
 
     private void recalculateDestination(Level level) {
-        playerTankPosition = level.playerTank.body.getWorldCenter();
-        cameraDestination.x = playerTankPosition.x;
-        cameraDestination.y = playerTankPosition.y;
-        switch(level.playerTank.direction) {
-            case LEFT:
-                cameraDestination.x -= Constants.CELL_SIZE * Constants.CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT;
-                break;
-            case RIGHT:
-                cameraDestination.x += Constants.CELL_SIZE * Constants.CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT;
-                break;
-            case UP:
-                cameraDestination.y += Constants.CELL_SIZE * Constants.CHASE_CAMERA_VERTICAL_CELLS_SHIFT;
-                break;
-            case DOWN:
-                cameraDestination.y -= Constants.CELL_SIZE * Constants.CHASE_CAMERA_VERTICAL_CELLS_SHIFT;
-                break;
+        if(level.playerTank == null){
+            cameraDestination.x = level.allySpawnX * Constants.CELL_SIZE + Constants.TANK_WIDTH_H;
+            cameraDestination.y = level.allySpawnY * Constants.CELL_SIZE + Constants.TANK_HEIGHT_H;
+        }else {
+            playerTankPosition = level.playerTank.body.getWorldCenter();
+            cameraDestination.x = playerTankPosition.x;
+            cameraDestination.y = playerTankPosition.y;
+            switch (level.playerTank.direction) {
+                case LEFT:
+                    cameraDestination.x -= Constants.CELL_SIZE * horizontalShift;
+                    break;
+                case RIGHT:
+                    cameraDestination.x += Constants.CELL_SIZE * horizontalShift;
+                    break;
+                case UP:
+                    cameraDestination.y += Constants.CELL_SIZE * verticalShift;
+                    break;
+                case DOWN:
+                    cameraDestination.y -= Constants.CELL_SIZE * verticalShift;
+                    break;
+            }
         }
-        if(cameraDestination.x < viewportWidthH + Constants.CELL_SIZE)
-            cameraDestination.x = viewportWidthH + Constants.CELL_SIZE;
-        else
-        if(cameraDestination.x > level.levelWidth - viewportWidthH - Constants.CELL_SIZE)
-            cameraDestination.x = level.levelWidth - viewportWidthH - Constants.CELL_SIZE;
-        if(cameraDestination.y < viewportHeightH + Constants.CELL_SIZE)
-            cameraDestination.y = viewportHeightH + Constants.CELL_SIZE;
-        else
-        if(cameraDestination.y > level.levelHeigt - camera.viewportHeight/2 - Constants.CELL_SIZE)
-            cameraDestination.y = level.levelHeigt - camera.viewportHeight/2 - Constants.CELL_SIZE;
 
+        if(horizontalShift != 0)
+            if (cameraDestination.x < viewportWidthH + Constants.CELL_SIZE)
+                cameraDestination.x = viewportWidthH + Constants.CELL_SIZE;
+            else if (cameraDestination.x > level.levelWidth - viewportWidthH + Constants.CELL_SIZE)
+                cameraDestination.x = level.levelWidth - viewportWidthH + Constants.CELL_SIZE;
+        if (verticalShift != 0)
+            if( cameraDestination.y < viewportHeightH + Constants.CELL_SIZE)
+                cameraDestination.y = viewportHeightH + Constants.CELL_SIZE;
+            else if (cameraDestination.y > level.levelHeigt - camera.viewportHeight / 2 + Constants.CELL_SIZE)
+                cameraDestination.y = level.levelHeigt - camera.viewportHeight / 2 + Constants.CELL_SIZE;
     }
 
     private void moveToDestination(float delta){
@@ -111,14 +120,26 @@ public class ChaseCamera {
     }
 
     public void presetCameraPosition(Level level) {
+        levelWidth = level.levelWidth;
+        levelHeight = level.levelHeigt;
         camera.position.x = level.levelWidth/2;
         camera.position.y = level.levelHeigt/2;
         camera.update();
     }
 
     public void updateCameraResolution(int width, int height) {
+        if(levelHeight < Constants.WORLD_VISIBLE_HEIGHT) {
+            verticalShift = 0;
+        } else {
+            verticalShift = Constants.CHASE_CAMERA_VERTICAL_CELLS_SHIFT;
+        }
         camera.viewportWidth = Constants.WORLD_VISIBLE_HEIGHT * 1.0f * width / height;
         viewportWidthH = camera.viewportWidth / 2;
+        if(levelWidth < camera.viewportWidth){
+            horizontalShift = 0;
+        } else {
+            horizontalShift = Constants.CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT;
+        }
         camera.update();
     }
 }

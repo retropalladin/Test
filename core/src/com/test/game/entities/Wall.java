@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
 import com.test.game.Level;
 import com.test.game.utils.Constants;
-import com.test.game.utils.Enums;
 import com.test.game.utils.Enums.WallType;
 import com.test.game.utils.MaterialEntity;
 
@@ -35,21 +34,19 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
                 hp = Constants.STONE_WALL_HP_MAX;
                 immortal = false;
                 break;
-            case BUSH_WALL:
-                hp = Constants.BUSH_WALL_HP_MAX;
-                immortal = false;
-                break;
+            case LEVEL_BORDER:
+                hp = Integer.MAX_VALUE;
+                immortal = true;
         }
     }
 
     public void takeDamage(int damage){
         if(immortal)
-            return;
-        hp -= damage;
-        if(hp <= 0)
-        {
-            level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
-            alive = false;
+            decreaseHp(0);
+        else{
+            if(!decreaseHp(damage)){
+                level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
+            }
         }
     }
 

@@ -8,6 +8,7 @@ public class Constants {
     public static final boolean DEBUG_PHYSICS_RENDER = true;
 
     // Level settings
+    public static final int GOD_DAMAGE = 100000;
     public static final float FRAME_TIME_MAX = 0.25f;
     public static final float PLAYER_RELOAD_MUL = 1.25f;
 
@@ -56,11 +57,15 @@ public class Constants {
     public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE, 0);
     public static final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE, 0);
 
+    public static final short LAND_GROUND = 1;
+    public static final short LAND_SAND = (1 << 2);
+
     public static final short CATEGORY_EMPTY = 1;
     public static final short CATEGORY_WALL = (1 << 2);
     public static final short CATEGORY_ALLY_TANK = (1 << 3);
     public static final short CATEGORY_ENEMY_TANK = (1 << 4);
     public static final short CATEGORY_TANK_ON_MOVE = (1 << 5);
+    public static final short CATEGORY_SPAWN = (1 << 6);
     public static final short CATEGORY_ALLY_BULLET = (1 << 13);
     public static final short CATEGORY_ENEMY_BULLET = (1 << 14);
 
@@ -70,13 +75,11 @@ public class Constants {
     public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
     public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
-    public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY;
+    public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY | CATEGORY_SPAWN;
 
     // Wall settings
     public static int STONE_WALL_HP_MAX = 1000;
     public static int WOODEN_WALL_HP_MAX = 4;
-    public static int BUSH_WALL_HP_MAX = 1;
-    public static float BUSH_WALL_RADIUS = 0.5f;
 
     // Tank settings
     public static final float TANK_WIDTH = CELL_SIZE * 0.8f;

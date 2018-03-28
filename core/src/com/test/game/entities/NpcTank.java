@@ -1,5 +1,6 @@
 package com.test.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
@@ -13,12 +14,17 @@ import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.MaterialEntity;
 import com.test.game.utils.Utils;
 
+import java.util.Locale;
+
 public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     public Direction direction;
 
     private boolean isAlly;
     private int shieldHp;
+
+    private short prevCategory;
+    private short nextCategory;
 
     private float deltaX;
     private float deltaY;
@@ -96,14 +102,12 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     public void takeDamage(int damage){
         shieldHp -= damage;
-        if(shieldHp < 0)
+        if(shieldHp <= 0)
         {
-            hp += shieldHp;
+            if(!decreaseHp(-shieldHp)){
+                level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
+            }
             shieldHp = 0;
-        }
-        if(hp <= 0) {
-            level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
-            alive = false;
         }
     }
 
@@ -121,7 +125,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 if((level.objectsMatrix[gridY][gridX-1] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.x = Constants.CELL_SIZE * (gridX - 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridX--;
                     body.applyLinearImpulse(Constants.TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
                 }
@@ -130,7 +134,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 if((level.objectsMatrix[gridY][gridX+1] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.x = Constants.CELL_SIZE * (gridX + 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridX++;
                     body.applyLinearImpulse(Constants.TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
                 }
@@ -139,7 +143,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 if((level.objectsMatrix[gridY+1][gridX] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.y = Constants.CELL_SIZE * (gridY + 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridY++;
                     body.applyLinearImpulse(Constants.TANK_UP_IMPULSE, body.getWorldCenter(), true);
                 }
@@ -148,14 +152,15 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 if((level.objectsMatrix[gridY-1][gridX] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.y = Constants.CELL_SIZE * (gridY - 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_TANK_ON_MOVE;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridY--;
                     body.applyLinearImpulse(Constants.TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
                 }
                 break;
         }
         if(moveState == TankMoveState.ON_MOVE){
-            level.objectsMatrix[gridY][gridX] = category;
+            nextCategory = level.objectsMatrix[gridY][gridX];
+            level.objectsMatrix[gridY][gridX] = (short) (category | level.objectsMatrix[gridY][gridX]);
             return true;
         }
         return false;
@@ -168,30 +173,31 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
             case LEFT:
                 if(deltaX < Constants.TANK_MOVE_CATCH_EPS) {
                     moveState = TankMoveState.WAITING;
-                    level.objectsMatrix[gridY][gridX +1] = Constants.CATEGORY_EMPTY;
+                    level.objectsMatrix[gridY][gridX +1] = prevCategory;
                 }
                 break;
             case RIGHT:
                 if(deltaX > -Constants.TANK_MOVE_CATCH_EPS) {
                     moveState = TankMoveState.WAITING;
-                    level.objectsMatrix[gridY][gridX -1] = Constants.CATEGORY_EMPTY;
+                    level.objectsMatrix[gridY][gridX -1] = prevCategory;
                 }
                 break;
             case UP:
                 if(deltaY > -Constants.TANK_MOVE_CATCH_EPS) {
                     moveState = TankMoveState.WAITING;
-                    level.objectsMatrix[gridY -1][gridX] = Constants.CATEGORY_EMPTY;
+                    level.objectsMatrix[gridY -1][gridX] = prevCategory;
                 }
                 break;
             case DOWN:
                 if(deltaY < Constants.TANK_MOVE_CATCH_EPS) {
                     moveState = TankMoveState.WAITING;
-                    level.objectsMatrix[gridY +1][gridX] = Constants.CATEGORY_EMPTY;
+                    level.objectsMatrix[gridY +1][gridX] = prevCategory;
                 }
                 break;
         }
         if(moveState == TankMoveState.WAITING)
         {
+            prevCategory = nextCategory;
             body.setLinearVelocity(Vector2.Zero);
             body.setTransform(moveDestination,0);
             return true;
@@ -297,9 +303,17 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         reloadTime -= delta;
         if(reloadTime < 0) {
             shootState = TankShootState.READY;
-        return true;
+            return true;
         }
         return false;
+    }
+
+
+    @Override
+    public void setGridCoordinates(short gridX, short gridY){
+        this.gridX = gridX;
+        this.gridY = gridY;
+        prevCategory = Constants.CATEGORY_SPAWN;
     }
 
     @Override

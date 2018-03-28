@@ -14,7 +14,16 @@ public abstract class MaterialEntity {
     public boolean isAlive(){
         return alive;
     }
-    public void  setAlive(boolean alive){
+    public boolean decreaseHp(int damage){
+        hp-=damage;
+        if(hp<=0){
+            hp = 0;
+            alive = false;
+        }
+        return alive;
+    }
+
+    public void setAlive(boolean alive){
         this.alive = alive;
     }
     public void setBody(Body body){

@@ -166,30 +166,30 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         return false;
     }
 
-    protected boolean endMove(){
-        deltaX = body.getPosition().x - moveDestination.x;
-        deltaY = body.getPosition().y - moveDestination.y;
+    protected boolean endMove(float delta){
+        deltaX = moveDestination.x - body.getPosition().x;
+        deltaY = moveDestination.y - body.getPosition().y;
         switch (direction){
             case LEFT:
-                if(deltaX < Constants.TANK_MOVE_CATCH_EPS) {
+                if(deltaX > body.getLinearVelocity().x * delta) {
                     moveState = TankMoveState.WAITING;
                     level.objectsMatrix[gridY][gridX +1] = prevCategory;
                 }
                 break;
             case RIGHT:
-                if(deltaX > -Constants.TANK_MOVE_CATCH_EPS) {
+                if(deltaX < body.getLinearVelocity().x * delta) {
                     moveState = TankMoveState.WAITING;
                     level.objectsMatrix[gridY][gridX -1] = prevCategory;
                 }
                 break;
             case UP:
-                if(deltaY > -Constants.TANK_MOVE_CATCH_EPS) {
+                if(deltaY < body.getLinearVelocity().y * delta) {
                     moveState = TankMoveState.WAITING;
                     level.objectsMatrix[gridY -1][gridX] = prevCategory;
                 }
                 break;
             case DOWN:
-                if(deltaY < Constants.TANK_MOVE_CATCH_EPS) {
+                if(deltaY > body.getLinearVelocity().x * delta) {
                     moveState = TankMoveState.WAITING;
                     level.objectsMatrix[gridY +1][gridX] = prevCategory;
                 }

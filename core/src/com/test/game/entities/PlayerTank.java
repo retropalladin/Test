@@ -28,7 +28,7 @@ public class PlayerTank extends NpcTank {
             endShoot(delta * Constants.PLAYER_RELOAD_MUL);
         }
         if (moveState == TankMoveState.ON_MOVE){
-            endMove();
+            endMove(delta);
         }
         if (moveState == TankMoveState.ROTATING) {
             endRotate(delta);

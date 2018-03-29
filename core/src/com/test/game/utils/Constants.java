@@ -49,7 +49,6 @@ public class Constants {
     public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE, 0);
 
     public static final float TANK_IMPULSE = 4.0f;
-    public static final float TANK_MOVE_CATCH_EPS = 0.05f;
     public static final float LIGHT_TANK_ROTATION_SPEED = 600f;
     public static final float HEAVY_TANK_ROTATION_SPEED = 500f;
     public static final Vector2 TANK_UP_IMPULSE = new Vector2(0, TANK_IMPULSE);

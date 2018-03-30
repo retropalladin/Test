@@ -24,14 +24,15 @@ public class PlayerTank extends NpcTank {
     }
 
     public void update(float delta) {
-        if (shootState == TankShootState.RELOADING) {
+        if (shootState == TankShootState.RELOADING)
             endShoot(delta * Constants.PLAYER_RELOAD_MUL);
-        }
-        if (moveState == TankMoveState.ON_MOVE){
-            endMove(delta);
-        }
+
         if (moveState == TankMoveState.ROTATING) {
             endRotate(delta);
+        }
+
+        if(moveState != TankMoveState.ROTATING && shootState == TankShootState.READY && LevelInputManager.instance.levelInput.shoot()){
+            beginShoot();
         }
 
         inputDirection = LevelInputManager.instance.levelInput.getPlayerDesiredDirection();
@@ -39,12 +40,13 @@ public class PlayerTank extends NpcTank {
         if(inputDirection != null && this.direction != inputDirection && moveState != TankMoveState.ON_MOVE) {
             beginRotate(inputDirection);
         }
-        if (inputDirection != null && moveState != TankMoveState.ON_MOVE && moveState != TankMoveState.ROTATING) {
-            beginMove(Constants.PLAYER_TANK_MOVE_MASK);
-        }
 
-        if(moveState != TankMoveState.ROTATING && shootState == TankShootState.READY && LevelInputManager.instance.levelInput.shoot()){
-            beginShoot();
+        if (moveState == TankMoveState.ON_MOVE){
+            endMove(Constants.PLAYER_TANK_MOVE_MASK, delta, inputDirection);
+        } else {
+            if (inputDirection != null && moveState != TankMoveState.ROTATING) {
+                beginMove(Constants.PLAYER_TANK_MOVE_MASK);
+            }
         }
     }
 }

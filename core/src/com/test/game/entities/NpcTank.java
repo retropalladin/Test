@@ -166,7 +166,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         return false;
     }
 
-    protected boolean endMove(float delta){
+    protected boolean endMove(short MoveMask, float delta, Direction inputDirection){
         deltaX = moveDestination.x - body.getPosition().x;
         deltaY = moveDestination.y - body.getPosition().y;
         switch (direction){
@@ -189,7 +189,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case DOWN:
-                if(deltaY > body.getLinearVelocity().x * delta) {
+                if(deltaY > body.getLinearVelocity().y * delta) {
                     moveState = TankMoveState.WAITING;
                     level.objectsMatrix[gridY +1][gridX] = prevCategory;
                 }
@@ -197,10 +197,15 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         }
         if(moveState == TankMoveState.WAITING)
         {
-            prevCategory = nextCategory;
-            body.setLinearVelocity(Vector2.Zero);
-            body.setTransform(moveDestination,0);
-            return true;
+            if(inputDirection == direction){
+                body.setLinearVelocity(Vector2.Zero);
+                beginMove(MoveMask);
+            }else {
+                prevCategory = nextCategory;
+                body.setLinearVelocity(Vector2.Zero);
+                body.setTransform(moveDestination, 0);
+                return true;
+            }
         }
         return false;
     }

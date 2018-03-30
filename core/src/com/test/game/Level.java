@@ -524,11 +524,11 @@ public class Level {
     }
     // end collisions
     public void update(float delta) {
+        frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
         if(needRespawn)
             respawnPlayer();
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
-            aliveNpcTanks.get(aliveIterator).update(delta);
-        frameTime = Math.min(delta, Constants.FRAME_TIME_MAX);
+            aliveNpcTanks.get(aliveIterator).update(frameTime);
         accumulator += frameTime;
         while (accumulator >= Constants.PHYSICS_STEP) {
             world.step(Constants.PHYSICS_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
@@ -538,27 +538,29 @@ public class Level {
     }
 
     public void removeDead(){
-        for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){
-            deadEntity = deadEntities.get(deadIterator);
-            world.destroyBody(deadEntity.getBody());
-            switch (deadEntity.getCategory()){
-                case Constants.CATEGORY_ALLY_BULLET:
-                case Constants.CATEGORY_ENEMY_BULLET:
-                    aliveBullets.removeValue((Bullet) deadEntity, true);
-                    bulletPool.free((Bullet) deadEntity);
-                    break;
-                case Constants.CATEGORY_ALLY_TANK:
-                case Constants.CATEGORY_ENEMY_TANK:
-                    aliveNpcTanks.removeValue((NpcTank) deadEntity,true);
-                    npcTankPool.free((NpcTank) deadEntity);
-                    break;
-                case Constants.CATEGORY_WALL:
-                    aliveWalls.removeValue((Wall) deadEntity,true);
-                    wallPool.free((Wall) deadEntity);
-                    break;
+        if(deadEntities.size != 0) {
+            for (deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--) {
+                deadEntity = deadEntities.get(deadIterator);
+                world.destroyBody(deadEntity.getBody());
+                switch (deadEntity.getCategory()) {
+                    case Constants.CATEGORY_ALLY_BULLET:
+                    case Constants.CATEGORY_ENEMY_BULLET:
+                        aliveBullets.removeValue((Bullet) deadEntity, true);
+                        bulletPool.free((Bullet) deadEntity);
+                        break;
+                    case Constants.CATEGORY_ALLY_TANK:
+                    case Constants.CATEGORY_ENEMY_TANK:
+                        aliveNpcTanks.removeValue((NpcTank) deadEntity, true);
+                        npcTankPool.free((NpcTank) deadEntity);
+                        break;
+                    case Constants.CATEGORY_WALL:
+                        aliveWalls.removeValue((Wall) deadEntity, true);
+                        wallPool.free((Wall) deadEntity);
+                        break;
+                }
             }
+            deadEntities.clear();
         }
-        deadEntities.clear();
     }
 
     public void dispose() {

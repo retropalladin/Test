@@ -36,6 +36,8 @@ public class ChaseCamera {
             following = !following;
         }
         if (following) {
+            //camera.position.x = level.playerTank.getBody().getPosition().x;
+            //camera.position.y = level.playerTank.getBody().getPosition().y;
             recalculateDestination(level);
             moveToDestination(delta);
         } else {

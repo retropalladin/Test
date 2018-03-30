@@ -29,7 +29,7 @@ public class LevelRenderer {
         batch.setProjectionMatrix(chaseCamera.camera.combined);
         batch.begin();
         if(level.playerTank != null)
-            drawPlayerTank(level, batch);
+           drawPlayerTank(level, batch);
         batch.end();
     }
 

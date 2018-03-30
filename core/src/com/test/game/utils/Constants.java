@@ -3,150 +3,135 @@ package com.test.game.utils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Constants {
-    // developing
-    public static final boolean DEBUG = true;
-    public static final boolean DEBUG_PHYSICS_RENDER = true;
+    private Constants() {}
 
-    // Level settings
-    public static final int GOD_DAMAGE = 100000;
-    public static final float FRAME_TIME_MAX = 0.25f;
-    public static final float PLAYER_RELOAD_MUL = 1.25f;
+    public final class Developing {
+        private Developing() {
+        }
 
-    // LevelRenderer settings
-    public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
-    public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
-    public static final float WORLD_VISIBLE_HEIGHT = 32;
-    public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 7f;
-    public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
-    public static final float ROTATE_SECTOR = 22.5f;
-    public static final float ROTATE_SECTOR_H = ROTATE_SECTOR * 0.5f;
+        public static final boolean DEBUG = true;
+        public static final boolean DEBUG_PHYSICS_RENDER = true;
+    }
+    public final class Settings {
+        private Settings() {
+        }
 
-    // Physics settings
-    public static final int VELOCITY_ITERATIONS = 6;
-    public static final int POSITION_ITERATIONS = 2;
-    public static final float PHYSICS_STEP = 1 / 60f;
-    public static final float CELL_SIZE = 2;
-    public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
+        public static final int GOD_DAMAGE = 100000;
+        public static final float PLAYER_RELOAD_MUL = 1.25f;
+        public static final float FRAME_TIME_MAX = 0.25f;
+    }
 
-    public static final float WALL_FRICTION = 0f;
-    public static final float WALL_RESTITUTION = 0f;
+    public final class Renderer {
+        private Renderer() {
+        }
 
-    public static final float LIGHT_TANK_DENSITY = 0.3f;
-    public static final float HEAVY_TANK_DENSITY = 0.4f;
-    public static final float TANK_FRICTION = 0f;
-    public static final float TANK_RESTITUTION = 0f;
+        public static final int CHASE_CAMERA_HORIZONTAL_CELLS_SHIFT = 2;
+        public static final int CHASE_CAMERA_VERTICAL_CELLS_SHIFT = 2;
+        public static final float WORLD_VISIBLE_HEIGHT = 32;
+        public static final float CHASE_CAMERA_AUTO_FOLLOWING_MOVE_SPEED = 7f;
+        public static final float CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED = 10.0f;
+        public static final float ROTATE_SECTOR = 22.5f;
+        public static final float ROTATE_SECTOR_H = ROTATE_SECTOR * 0.5f;
+    }
 
-    public static final float NORMAL_BULLET_DENSITY = 0.7f;
-    public static final float PLASMA_BULLET_DENSITY = 0.5f;
-    public static final float AP_BULLET_DENSITY = 0.3f; // RAP_BULLET_DENSITY is equal
-    public static final float BULLET_FRICTION = 0f;
-    public static final float BULLET_RESTITUTION = 0f;
+    public final class Physics {
+        private Physics() {
+        }
 
-    public static final float BULLET_IMPULSE = 2.0f;
-    public static final Vector2 BULLET_UP_IMPULSE = new Vector2(0, BULLET_IMPULSE);
-    public static final Vector2 BULLET_DOWN_IMPULSE = new Vector2(0, -BULLET_IMPULSE);
-    public static final Vector2 BULLET_RIGHT_IMPULSE = new Vector2(BULLET_IMPULSE, 0);
-    public static final Vector2 BULLET_LEFT_IMPULSE = new Vector2(-BULLET_IMPULSE, 0);
+        public static final int VELOCITY_ITERATIONS = 6;
+        public static final int POSITION_ITERATIONS = 2;
+        public static final float PHYSICS_STEP = 1 / 60f;
+        public static final float CELL_SIZE = 2;
+        public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
 
-    public static final float TANK_IMPULSE = 4.0f;
-    public static final float LIGHT_TANK_ROTATION_SPEED = 600f;
-    public static final float HEAVY_TANK_ROTATION_SPEED = 500f;
-    public static final Vector2 TANK_UP_IMPULSE = new Vector2(0, TANK_IMPULSE);
-    public static final Vector2 TANK_DOWN_IMPULSE = new Vector2(0, -TANK_IMPULSE);
-    public static final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE, 0);
-    public static final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE, 0);
+        public static final short LAND_GROUND = 1;
+        public static final short LAND_SAND = (1 << 2);
 
-    public static final short LAND_GROUND = 1;
-    public static final short LAND_SAND = (1 << 2);
+        public static final short CATEGORY_EMPTY = 1;
+        public static final short CATEGORY_WALL = (1 << 2);
+        public static final short CATEGORY_ALLY_TANK = (1 << 3);
+        public static final short CATEGORY_ENEMY_TANK = (1 << 4);
+        public static final short CATEGORY_TANK_ON_MOVE = (1 << 5);
+        public static final short CATEGORY_SPAWN = (1 << 6);
+        public static final short CATEGORY_ALLY_BULLET = (1 << 13);
+        public static final short CATEGORY_ENEMY_BULLET = (1 << 14);
 
-    public static final short CATEGORY_EMPTY = 1;
-    public static final short CATEGORY_WALL = (1 << 2);
-    public static final short CATEGORY_ALLY_TANK = (1 << 3);
-    public static final short CATEGORY_ENEMY_TANK = (1 << 4);
-    public static final short CATEGORY_TANK_ON_MOVE = (1 << 5);
-    public static final short CATEGORY_SPAWN = (1 << 6);
-    public static final short CATEGORY_ALLY_BULLET = (1 << 13);
-    public static final short CATEGORY_ENEMY_BULLET = (1 << 14);
+        public static final short MASK_WALL = CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET | CATEGORY_ENEMY_BULLET;
+        public static final short MASK_ALLY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
+        public static final short MASK_ENEMY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET;
+        public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
+        public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
-    public static final short MASK_WALL = CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET | CATEGORY_ENEMY_BULLET;
-    public static final short MASK_ALLY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
-    public static final short MASK_ENEMY_TANK = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ENEMY_TANK | CATEGORY_ALLY_BULLET;
-    public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
-    public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
+        public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY;
+    }
 
-    public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY | CATEGORY_SPAWN;
+    public final class Sounds {
+        private Sounds(){
+        }
+    }
 
-    // Wall settings
-    public static int STONE_WALL_HP_MAX = 1000;
-    public static int WOODEN_WALL_HP_MAX = 4;
+    public final class Textures {
+        private Textures() {
+        }
 
-    // Tank settings
-    public static final float TANK_WIDTH = CELL_SIZE * 0.8f;
-    public static final float TANK_WIDTH_H = TANK_WIDTH * 0.5f;
-    public static final float TANK_HEIGHT = CELL_SIZE * 0.8f;
-    public static final float TANK_HEIGHT_H = TANK_HEIGHT * 0.5f;
-    public static final float TANK_MARGIN = CELL_SIZE_H - TANK_HEIGHT_H;
+        public final class BattleItems {
+            private BattleItems() {
+            }
 
-    // Bullet settings
-    public static final int NORMAL_BULLET_MAX_HP = 1;
-    public static final int PLASMA_BULLET_MAX_HP = 1;
-    public static final int AP_BULLET_MAX_HP = 2;
-    public static final int RAP_BULLET_MAX_HP = 2;
+            public static final String TEXTURE_ATLAS = "images/TankAtlas.atlas";
 
-    public static final int NORMAL_BULLET_DAMAGE = 1;
-    public static final int PLASMA_BULLET_DAMAGE = 1;
-    public static final int AP_BULLET_DAMAGE = 3;
-    public static final int RAP_BULLET_DAMAGE = 5;
+            public static final String LIGHT_TANK0 = "LightTank0";
+            public static final String LIGHT_TANK22 = "LightTank22";
+            public static final String LIGHT_TANK45 = "LightTank45";
+            public static final String LIGHT_TANK78 = "LightTank78";
+            public static final String LIGHT_TANK90 = "LightTank90";
+            public static final String LIGHT_TANK112 = "LightTank112";
+            public static final String LIGHT_TANK135 = "LightTank135";
+            public static final String LIGHT_TANK158 = "LightTank158";
+            public static final String LIGHT_TANK180 = "LightTank180";
+            public static final String LIGHT_TANK202 = "LightTank202";
+            public static final String LIGHT_TANK225 = "LightTank225";
+            public static final String LIGHT_TANK248 = "LightTank248";
+            public static final String LIGHT_TANK270 = "LightTank270";
+            public static final String LIGHT_TANK292 = "LightTank292";
+            public static final String LIGHT_TANK315 = "LightTank315";
+            public static final String LIGHT_TANK338 = "LightTank338";
 
-    public static final float BULLET_WIDTH = 0.7f;
-    public static final float BULLET_HEIGHT = 0.35f;
-    public static final float BULLET_WIDTH_H = BULLET_WIDTH * 0.5f;
-    public static final float BULLET_HEIGHT_H = BULLET_HEIGHT * 0.5f;
+            public static final String HEAVY_TANK0 = "HeavyTank0";
+            public static final String HEAVY_TANK22 = "HeavyTank22";
+            public static final String HEAVY_TANK45 = "HeavyTank45";
+            public static final String HEAVY_TANK78 = "HeavyTank78";
+            public static final String HEAVY_TANK90 = "HeavyTank90";
+            public static final String HEAVY_TANK112 = "HeavyTank112";
+            public static final String HEAVY_TANK135 = "HeavyTank135";
+            public static final String HEAVY_TANK158 = "HeavyTank158";
+            public static final String HEAVY_TANK180 = "HeavyTank180";
+            public static final String HEAVY_TANK202 = "HeavyTank202";
+            public static final String HEAVY_TANK225 = "HeavyTank225";
+            public static final String HEAVY_TANK248 = "HeavyTank248";
+            public static final String HEAVY_TANK270 = "HeavyTank270";
+            public static final String HEAVY_TANK292 = "HeavyTank292";
+            public static final String HEAVY_TANK315 = "HeavyTank315";
+            public static final String HEAVY_TANK338 = "HeavyTank338";
+        }
 
-    public static final float BULLET_EPS_SPAWN = 0.1f;
-    public static final float DOUBLE_BULLET_EPS_SPAWN = 0.2f;
-    public static final float DOUBLE_BULLET_EPS_SPAWN_H = DOUBLE_BULLET_EPS_SPAWN * 0.5f;
+        public final class InterfaceItems {
+            private InterfaceItems() {
+            }
+        }
 
-    public static final float DOUBLE_NORMAL_BULLET_RELOAD = 1.0f;
-    public static final float DOUBLE_PLASMA_BULLET_RELOAD = 0.75f;
-    public static final float NORMAL_BULLET_RELOAD = 1.0f;
-    public static final float PLASMA_BULLET_RELOAD = 0.75f;
-    public static final float AP_NORMAL_BULLET_RELOAD = 1.0f;
-    public static final float RAP_BULLET_RELOAD = 1.0f;
-    //Texture settings
-    public static final String TEXTURE_ATLAS = "images/TankAtlas.atlas";
-    
-    public static final String LIGHT_TANK0 = "LightTank0";
-    public static final String LIGHT_TANK22 = "LightTank22";
-    public static final String LIGHT_TANK45 = "LightTank45";
-    public static final String LIGHT_TANK78 = "LightTank78";
-    public static final String LIGHT_TANK90 = "LightTank90";
-    public static final String LIGHT_TANK112 = "LightTank112";
-    public static final String LIGHT_TANK135 = "LightTank135";
-    public static final String LIGHT_TANK158 = "LightTank158";
-    public static final String LIGHT_TANK180 = "LightTank180";
-    public static final String LIGHT_TANK202 = "LightTank202";
-    public static final String LIGHT_TANK225 = "LightTank225";
-    public static final String LIGHT_TANK248 = "LightTank248";
-    public static final String LIGHT_TANK270 = "LightTank270";
-    public static final String LIGHT_TANK292 = "LightTank292";
-    public static final String LIGHT_TANK315 = "LightTank315";
-    public static final String LIGHT_TANK338 = "LightTank338";
+        public final class DecorationItems {
+            private DecorationItems() {
+            }
+        }
+    }
 
-    public static final String HEAVY_TANK0 = "HeavyTank0";
-    public static final String HEAVY_TANK22 = "HeavyTank22";
-    public static final String HEAVY_TANK45 = "HeavyTank45";
-    public static final String HEAVY_TANK78 = "HeavyTank78";
-    public static final String HEAVY_TANK90 = "HeavyTank90";
-    public static final String HEAVY_TANK112 = "HeavyTank112";
-    public static final String HEAVY_TANK135 = "HeavyTank135";
-    public static final String HEAVY_TANK158 = "HeavyTank158";
-    public static final String HEAVY_TANK180 = "HeavyTank180";
-    public static final String HEAVY_TANK202 = "HeavyTank202";
-    public static final String HEAVY_TANK225 = "HeavyTank225";
-    public static final String HEAVY_TANK248 = "HeavyTank248";
-    public static final String HEAVY_TANK270 = "HeavyTank270";
-    public static final String HEAVY_TANK292 = "HeavyTank292";
-    public static final String HEAVY_TANK315 = "HeavyTank315";
-    public static final String HEAVY_TANK338 = "HeavyTank338";
+    public final class Screens {
+        private Screens() {
+        }
+
+        public static final int INTRODUCTION_SCREEN = 0;
+        public static final int MAINMENU_SCREEN = 1;
+        public static final int GAMEPLAY_SCREEN = 2;
+    }
 }

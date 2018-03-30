@@ -75,7 +75,7 @@ public class GameplayScreen implements Screen {
 
     private void setupLevel(String levelName) {
         if(!load) {
-            if(Constants.DEBUG)
+            if(Constants.Developing.DEBUG)
                 level = Level.debugLevel();
             else
                 level = LevelLoader.load(levelName);

@@ -1,6 +1,5 @@
 package com.test.game.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
@@ -14,9 +13,41 @@ import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.MaterialEntity;
 import com.test.game.utils.Utils;
 
-import java.util.Locale;
 
 public class NpcTank extends MaterialEntity implements Pool.Poolable {
+
+    ///////////////////////////////////////////
+    /// Constants Settings                  ///
+    ///////////////////////////////////////////
+
+    public static final float TANK_WIDTH = Constants.Physics.CELL_SIZE * 0.8f;
+    public static final float TANK_WIDTH_H = TANK_WIDTH * 0.5f;
+    public static final float TANK_HEIGHT = Constants.Physics.CELL_SIZE * 0.8f;
+    public static final float TANK_HEIGHT_H = TANK_HEIGHT * 0.5f;
+    public static final float TANK_MARGIN = Constants.Physics.CELL_SIZE_H - TANK_HEIGHT_H;
+
+    ///////////////////////////////////////////
+    /// Constants Physics                   ///
+    ///////////////////////////////////////////
+
+    public static final float LIGHT_TANK_DENSITY = 0.3f;
+    public static final float HEAVY_TANK_DENSITY = 0.4f;
+    public static final float TANK_FRICTION = 0f;
+    public static final float TANK_RESTITUTION = 0f;
+
+    public static final float TANK_IMPULSE = 4.0f;
+    public static final float TANK_MOVE_CATCH_EPS = 0.05f;
+    public static final float LIGHT_TANK_ROTATION_SPEED = 600f;
+    public static final float HEAVY_TANK_ROTATION_SPEED = 500f;
+
+    public final Vector2 TANK_UP_IMPULSE = new Vector2(0, TANK_IMPULSE);
+    public final Vector2 TANK_DOWN_IMPULSE = new Vector2(0, -TANK_IMPULSE);
+    public final Vector2 TANK_RIGHT_IMPULSE = new Vector2(TANK_IMPULSE, 0);
+    public final Vector2 TANK_LEFT_IMPULSE = new Vector2(-TANK_IMPULSE, 0);
+
+    ///////////////////////////////////////////
+    /// END CONSTANTS                       ///
+    ///////////////////////////////////////////
 
     public Direction direction;
 
@@ -57,10 +88,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     public void configureNpcTankType(short category, int hp, int shieldHp,TankType tankType, AmmoType ammoType, Direction direction) {
         this.direction = direction;
         switch (category){
-            case Constants.CATEGORY_ALLY_TANK:
+            case Constants.Physics.CATEGORY_ALLY_TANK:
                 isAlly = true;
                 break;
-            case Constants.CATEGORY_ENEMY_TANK:
+            case Constants.Physics.CATEGORY_ENEMY_TANK:
                 isAlly = false;
                 break;
         }
@@ -70,10 +101,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         this.shieldHp = shieldHp;
         switch (tankType){
             case LIGHT_TANK:
-                rotationSpeed = Constants.LIGHT_TANK_ROTATION_SPEED;
+                rotationSpeed = LIGHT_TANK_ROTATION_SPEED;
                 break;
             case HEAVY_TANK:
-                rotationSpeed = Constants.HEAVY_TANK_ROTATION_SPEED;
+                rotationSpeed = HEAVY_TANK_ROTATION_SPEED;
                 break;
         }
         switch(direction){
@@ -105,7 +136,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         if(shieldHp <= 0)
         {
             if(!decreaseHp(-shieldHp)){
-                level.objectsMatrix[gridY][gridX] = Constants.CATEGORY_EMPTY;
+                level.objectsMatrix[gridY][gridX] = Constants.Physics.CATEGORY_EMPTY;
             }
             shieldHp = 0;
         }
@@ -124,37 +155,37 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
             case LEFT:
                 if((level.objectsMatrix[gridY][gridX-1] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
-                    moveDestination.x = Constants.CELL_SIZE * (gridX - 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
+                    moveDestination.x = Constants.Physics.CELL_SIZE * (gridX - 1) + TANK_MARGIN;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridX--;
-                    body.applyLinearImpulse(Constants.TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
+                    body.applyLinearImpulse(TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
                 }
                 break;
             case RIGHT:
                 if((level.objectsMatrix[gridY][gridX+1] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
-                    moveDestination.x = Constants.CELL_SIZE * (gridX + 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
+                    moveDestination.x = Constants.Physics.CELL_SIZE * (gridX + 1) + TANK_MARGIN;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridX++;
-                    body.applyLinearImpulse(Constants.TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
+                    body.applyLinearImpulse(TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
                 }
                 break;
             case UP:
                 if((level.objectsMatrix[gridY+1][gridX] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
-                    moveDestination.y = Constants.CELL_SIZE * (gridY + 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
+                    moveDestination.y = Constants.Physics.CELL_SIZE * (gridY + 1) + TANK_MARGIN;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridY++;
-                    body.applyLinearImpulse(Constants.TANK_UP_IMPULSE, body.getWorldCenter(), true);
+                    body.applyLinearImpulse(TANK_UP_IMPULSE, body.getWorldCenter(), true);
                 }
                 break;
             case DOWN:
                 if((level.objectsMatrix[gridY-1][gridX] & MoveMask) != 0) {
                     moveState = TankMoveState.ON_MOVE;
-                    moveDestination.y = Constants.CELL_SIZE * (gridY - 1) + Constants.TANK_MARGIN;
-                    level.objectsMatrix[gridY][gridX] = (short) (Constants.CATEGORY_TANK_ON_MOVE | prevCategory);
+                    moveDestination.y = Constants.Physics.CELL_SIZE * (gridY - 1) + TANK_MARGIN;
+                    level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     gridY--;
-                    body.applyLinearImpulse(Constants.TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
+                    body.applyLinearImpulse(TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
                 }
                 break;
         }
@@ -269,27 +300,27 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     protected boolean beginShoot(){
         switch(ammoType){
                 case NORMAL_BULLET:
-                    reloadTime = Constants.NORMAL_BULLET_RELOAD;
+                    reloadTime = Bullet.NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
                     break;
                 case PLASMA_BULLET:
-                    reloadTime = Constants.PLASMA_BULLET_RELOAD;
+                    reloadTime = Bullet.PLASMA_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
                     break;
                 case AP_BULLET:
-                    reloadTime = Constants.AP_NORMAL_BULLET_RELOAD;
+                    reloadTime = Bullet.AP_NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
                     break;
                 case RAP_BULLET:
-                    reloadTime = Constants.RAP_BULLET_RELOAD;
+                    reloadTime = Bullet.RAP_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
                     break;
                 case DOUBLE_NORMAL_BULLET:
-                    reloadTime = Constants.DOUBLE_NORMAL_BULLET_RELOAD;
+                    reloadTime = Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType,direction, isAlly);
                     break;
                 case DOUBLE_PLASMA_BULLET:
-                    reloadTime = Constants.DOUBLE_PLASMA_BULLET_RELOAD;
+                    reloadTime = Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
                     level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType,direction, isAlly);
                     break;
                 default:
@@ -313,7 +344,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     public void setGridCoordinates(short gridX, short gridY){
         this.gridX = gridX;
         this.gridY = gridY;
-        prevCategory = Constants.CATEGORY_SPAWN;
+        prevCategory = Constants.Physics.CATEGORY_SPAWN;
     }
 
     @Override

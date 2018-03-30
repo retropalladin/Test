@@ -27,26 +27,26 @@ public class LevelContactListener implements ContactListener {
         materialEntityA = (MaterialEntity)contact.getFixtureA().getBody().getUserData();
         materialEntityB = (MaterialEntity)contact.getFixtureB().getBody().getUserData();
         if(materialEntityA.isAlive() & materialEntityB.isAlive()){
-            if(materialEntityA.category == Constants.CATEGORY_ALLY_BULLET && materialEntityB.category == Constants.CATEGORY_ENEMY_TANK ||
-                    materialEntityA.category == Constants.CATEGORY_ENEMY_BULLET && materialEntityB.category == Constants.CATEGORY_ALLY_TANK){
+            if(materialEntityA.category == Constants.Physics.CATEGORY_ALLY_BULLET && materialEntityB.category == Constants.Physics.CATEGORY_ENEMY_TANK ||
+                    materialEntityA.category == Constants.Physics.CATEGORY_ENEMY_BULLET && materialEntityB.category == Constants.Physics.CATEGORY_ALLY_TANK){
                 level.bulletAndTankCollisionProcedure((Bullet)materialEntityA,(NpcTank)materialEntityB);
                 return;
             }
-            if(materialEntityB.category == Constants.CATEGORY_ALLY_BULLET && materialEntityA.category == Constants.CATEGORY_ENEMY_TANK ||
-                    materialEntityB.category == Constants.CATEGORY_ENEMY_BULLET && materialEntityA.category == Constants.CATEGORY_ALLY_TANK) {
+            if(materialEntityB.category == Constants.Physics.CATEGORY_ALLY_BULLET && materialEntityA.category == Constants.Physics.CATEGORY_ENEMY_TANK ||
+                    materialEntityB.category == Constants.Physics.CATEGORY_ENEMY_BULLET && materialEntityA.category == Constants.Physics.CATEGORY_ALLY_TANK) {
                 level.bulletAndTankCollisionProcedure((Bullet)materialEntityB,(NpcTank)materialEntityA);
                 return;
             }
-            if(materialEntityA.category == Constants.CATEGORY_ALLY_BULLET && materialEntityB.category == Constants.CATEGORY_ENEMY_BULLET ||
-                    materialEntityA.category == Constants.CATEGORY_ENEMY_BULLET && materialEntityB.category == Constants.CATEGORY_ALLY_BULLET){
+            if(materialEntityA.category == Constants.Physics.CATEGORY_ALLY_BULLET && materialEntityB.category == Constants.Physics.CATEGORY_ENEMY_BULLET ||
+                    materialEntityA.category == Constants.Physics.CATEGORY_ENEMY_BULLET && materialEntityB.category == Constants.Physics.CATEGORY_ALLY_BULLET){
                 level.bulletAndBulletCollisionProcedure((Bullet)materialEntityA,(Bullet)materialEntityB);
                 return;
             }
-            if((materialEntityA.category == Constants.CATEGORY_ALLY_BULLET || materialEntityA.category == Constants.CATEGORY_ENEMY_BULLET) && materialEntityB.category == Constants.CATEGORY_WALL){
+            if((materialEntityA.category == Constants.Physics.CATEGORY_ALLY_BULLET || materialEntityA.category == Constants.Physics.CATEGORY_ENEMY_BULLET) && materialEntityB.category == Constants.Physics.CATEGORY_WALL){
                 level.bulletAndWallCollisionProcedure((Bullet)materialEntityA,(Wall)materialEntityB);
                 return;
             }
-            if((materialEntityB.category == Constants.CATEGORY_ALLY_BULLET || materialEntityB.category == Constants.CATEGORY_ENEMY_BULLET) && materialEntityA.category == Constants.CATEGORY_WALL){
+            if((materialEntityB.category == Constants.Physics.CATEGORY_ALLY_BULLET || materialEntityB.category == Constants.Physics.CATEGORY_ENEMY_BULLET) && materialEntityA.category == Constants.Physics.CATEGORY_WALL){
                 level.bulletAndWallCollisionProcedure((Bullet)materialEntityB,(Wall)materialEntityA);
                 return;
             }

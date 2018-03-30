@@ -40,7 +40,7 @@ public class Constants {
 
         public static final int VELOCITY_ITERATIONS = 6;
         public static final int POSITION_ITERATIONS = 2;
-        public static final float PHYSICS_STEP = 1 / 60f;
+        public static final float PHYSICS_STEP = 1 / 300f;
         public static final float CELL_SIZE = 2;
         public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
 

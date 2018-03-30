@@ -25,7 +25,7 @@ public class PlayerTank extends NpcTank {
 
     public void update(float delta) {
         if (shootState == TankShootState.RELOADING)
-            endShoot(delta * Constants.PLAYER_RELOAD_MUL);
+            endShoot(delta * Constants.Settings.PLAYER_RELOAD_MUL);
 
         if (moveState == TankMoveState.ROTATING) {
             endRotate(delta);
@@ -42,10 +42,10 @@ public class PlayerTank extends NpcTank {
         }
 
         if (moveState == TankMoveState.ON_MOVE){
-            endMove(Constants.PLAYER_TANK_MOVE_MASK, delta, inputDirection);
+            endMove(Constants.Physics.PLAYER_TANK_MOVE_MASK, delta, inputDirection);
         } else {
             if (inputDirection != null && moveState != TankMoveState.ROTATING) {
-                beginMove(Constants.PLAYER_TANK_MOVE_MASK);
+                beginMove(Constants.Physics.PLAYER_TANK_MOVE_MASK);
             }
         }
     }

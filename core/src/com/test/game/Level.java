@@ -1,6 +1,5 @@
 package com.test.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -38,7 +37,7 @@ public class Level {
     public short matrixHeight = 0;
 
     public float levelWidth = 0;
-    public float levelHeigt = 0;
+    public float levelHeight = 0;
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
@@ -152,7 +151,7 @@ public class Level {
                 landMatrix[i][j] = Constants.Physics.LAND_GROUND;
             }
         matrixHeight = (short) (height - 1);
-        levelHeigt = (height - 2) * Constants.Physics.CELL_SIZE;
+        levelHeight = (height - 2) * Constants.Physics.CELL_SIZE;
         matrixWidth = (short) (width - 1);
         levelWidth = (width - 2) * Constants.Physics.CELL_SIZE;
         spawnLevelBorders();
@@ -524,11 +523,11 @@ public class Level {
     }
     // end collisions
     public void update(float delta) {
+        frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
         if(needRespawn)
             respawnPlayer();
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
-            aliveNpcTanks.get(aliveIterator).update(delta);
-        frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
+            aliveNpcTanks.get(aliveIterator).update(frameTime);
         accumulator += frameTime;
         while (accumulator >= Constants.Physics.PHYSICS_STEP) {
             world.step(Constants.Physics.PHYSICS_STEP,

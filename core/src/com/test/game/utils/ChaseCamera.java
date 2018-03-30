@@ -1,7 +1,5 @@
 package com.test.game.utils;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.test.game.Level;
@@ -36,8 +34,6 @@ public class ChaseCamera {
             following = !following;
         }
         if (following) {
-            //camera.position.x = level.playerTank.getBody().getPosition().x;
-            //camera.position.y = level.playerTank.getBody().getPosition().y;
             recalculateDestination(level);
             moveToDestination(delta);
         } else {
@@ -78,8 +74,8 @@ public class ChaseCamera {
         if (verticalShift != 0)
             if( cameraDestination.y < viewportHeightH + Constants.Physics.CELL_SIZE)
                 cameraDestination.y = viewportHeightH + Constants.Physics.CELL_SIZE;
-            else if (cameraDestination.y > level.levelHeigt - camera.viewportHeight / 2 + Constants.Physics.CELL_SIZE)
-                cameraDestination.y = level.levelHeigt - camera.viewportHeight / 2 + Constants.Physics.CELL_SIZE;
+            else if (cameraDestination.y > level.levelHeight - camera.viewportHeight / 2 + Constants.Physics.CELL_SIZE)
+                cameraDestination.y = level.levelHeight - camera.viewportHeight / 2 + Constants.Physics.CELL_SIZE;
     }
 
     private void moveToDestination(float delta){
@@ -124,9 +120,9 @@ public class ChaseCamera {
 
     public void presetCameraPosition(Level level) {
         levelWidth = level.levelWidth;
-        levelHeight = level.levelHeigt;
+        levelHeight = level.levelHeight;
         camera.position.x = level.levelWidth/2;
-        camera.position.y = level.levelHeigt/2;
+        camera.position.y = level.levelHeight /2;
         camera.update();
     }
 

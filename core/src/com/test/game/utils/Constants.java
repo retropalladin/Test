@@ -22,8 +22,8 @@ public class Constants {
     public static final float ROTATE_SECTOR_H = ROTATE_SECTOR * 0.5f;
 
     // Physics settings
-    public static final int VELOCITY_ITERATIONS = 1;
-    public static final int POSITION_ITERATIONS = 1;
+    public static final int VELOCITY_ITERATIONS = 6;
+    public static final int POSITION_ITERATIONS = 2;
     public static final float PHYSICS_STEP = 1 / 300f;
     public static final float CELL_SIZE = 2;
     public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;

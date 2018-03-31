@@ -24,10 +24,6 @@ import com.test.game.MyTestGame;
 import com.test.game.utils.Constants;
 import com.test.game.utils.ScreensManager;
 
-/**
- * Created by Егор on 22.03.2018.
- */
-
 public class MainMenuScreen implements Screen {
 
     private static MyTestGame game;
@@ -52,8 +48,8 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        Skin mySkin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
-
+        Skin mySkin = new Skin(Gdx.files.internal("game_interface.json"));
+/*
         // Image
         Image image_logo = new Image(new Texture(Gdx.files.internal("intro_pict.png")));
         image_logo.setSize(200,100);
@@ -124,7 +120,7 @@ public class MainMenuScreen implements Screen {
         table.setFillParent(true);
         table.add(scroller).fill().expand();
 
-        this.stage.addActor(table);
+        this.stage.addActor(table);*/
     }
     @Override
     public void render (float delta) {

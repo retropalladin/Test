@@ -17,8 +17,6 @@ import com.test.game.utils.ScreensManager;
 
 public class GameplayScreen implements Screen {
 
-    //public static final GameplayScreen instance = new GameplayScreen();
-
     private static MyTestGame game;
     private static GameplayScreen gameplayScreenInstance;
     public static synchronized GameplayScreen getInstance(MyTestGame game) {

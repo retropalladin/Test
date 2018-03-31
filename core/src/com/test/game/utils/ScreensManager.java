@@ -29,8 +29,8 @@ public class ScreensManager {
     private ScreensManager(MyTestGame game) {
         this.game = game;
 
-        gameplayScreen = GameplayScreen.getInstance(game);
-        mainMenuScreen = MainMenuScreen.getInstance(game);
+        gameplayScreen = new GameplayScreen(game);
+        mainMenuScreen = new MainMenuScreen(game);
     }
 
     public void setScreen(int id){
@@ -43,7 +43,6 @@ public class ScreensManager {
                 break;
         }
     }
-
 
     ////////////////////////////////////////////
 

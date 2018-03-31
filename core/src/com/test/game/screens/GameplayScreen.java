@@ -17,7 +17,7 @@ import com.test.game.utils.ScreensManager;
 
 public class GameplayScreen implements Screen {
 
-    private static MyTestGame game;
+    private MyTestGame game;
     private static GameplayScreen gameplayScreenInstance;
     public static synchronized GameplayScreen getInstance(MyTestGame game) {
 
@@ -28,12 +28,8 @@ public class GameplayScreen implements Screen {
     }
     private GameplayScreen() {
     }
-    private GameplayScreen(MyTestGame game) {
+    public GameplayScreen(MyTestGame game) {
         this.game = game;
-
-        Box2D.init();
-        batch = new SpriteBatch();
-        levelRenderer = new LevelRenderer();
     }
 
     private Level level;
@@ -49,6 +45,9 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void show() {
+        Box2D.init();
+        batch = new SpriteBatch();
+        levelRenderer = new LevelRenderer();
         LevelInputManager.instance.enable();
     }
 

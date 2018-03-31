@@ -1,7 +1,5 @@
 package com.test.game.utils;
 
-import com.badlogic.gdx.math.Vector2;
-
 public class Constants {
     private Constants() {}
 
@@ -118,10 +116,15 @@ public class Constants {
         public final class InterfaceItems {
             private InterfaceItems() {
             }
+
+            public static final String TEXTURE_ATLAS = "images/interface_atlas.atlas";
+
+            public static final String MENU_BACKGROUND = "menu_backgr";
         }
 
         public final class DecorationItems {
             private DecorationItems() {
+
             }
         }
     }

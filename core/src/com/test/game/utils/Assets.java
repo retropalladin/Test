@@ -8,91 +8,15 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Assets implements Disposable, AssetErrorListener {
-/*
-    ///////////////////////////////////////////
-    /// Constants Textures                  ///
-    ///////////////////////////////////////////
-
-    public static final String TEXTURE_ATLAS = "images/TankAtlas.atlas";
-
-    public static final String LIGHT_TANK0 = "LightTank0";
-    public static final String LIGHT_TANK22 = "LightTank22";
-    public static final String LIGHT_TANK45 = "LightTank45";
-    public static final String LIGHT_TANK78 = "LightTank78";
-    public static final String LIGHT_TANK90 = "LightTank90";
-    public static final String LIGHT_TANK112 = "LightTank112";
-    public static final String LIGHT_TANK135 = "LightTank135";
-    public static final String LIGHT_TANK158 = "LightTank158";
-    public static final String LIGHT_TANK180 = "LightTank180";
-    public static final String LIGHT_TANK202 = "LightTank202";
-    public static final String LIGHT_TANK225 = "LightTank225";
-    public static final String LIGHT_TANK248 = "LightTank248";
-    public static final String LIGHT_TANK270 = "LightTank270";
-    public static final String LIGHT_TANK292 = "LightTank292";
-    public static final String LIGHT_TANK315 = "LightTank315";
-    public static final String LIGHT_TANK338 = "LightTank338";
-
-    public static final String HEAVY_TANK0 = "HeavyTank0";
-    public static final String HEAVY_TANK22 = "HeavyTank22";
-    public static final String HEAVY_TANK45 = "HeavyTank45";
-    public static final String HEAVY_TANK78 = "HeavyTank78";
-    public static final String HEAVY_TANK90 = "HeavyTank90";
-    public static final String HEAVY_TANK112 = "HeavyTank112";
-    public static final String HEAVY_TANK135 = "HeavyTank135";
-    public static final String HEAVY_TANK158 = "HeavyTank158";
-    public static final String HEAVY_TANK180 = "HeavyTank180";
-    public static final String HEAVY_TANK202 = "HeavyTank202";
-    public static final String HEAVY_TANK225 = "HeavyTank225";
-    public static final String HEAVY_TANK248 = "HeavyTank248";
-    public static final String HEAVY_TANK270 = "HeavyTank270";
-    public static final String HEAVY_TANK292 = "HeavyTank292";
-    public static final String HEAVY_TANK315 = "HeavyTank315";
-    public static final String HEAVY_TANK338 = "HeavyTank338";
-
-    ///////////////////////////////////////////
-    /// END CONSTANTS                       ///
-    ///////////////////////////////////////////*/
     
     public static final String TAG = Assets.class.getName();
     public static final Assets instance = new Assets();
 
     public LightTankAssets lightTankAssets;
     public HeavyTankAssets heavyTankAssets;
-    //public OnScreenControlsAssets onScreenControlsAssets;
-    //public ButtonAssets buttonAssets;
+    public InterfaceAssets interfaceAssets;
 
     private AssetManager assetManager;
-
-    //////////////////////////////////////////////////////
-    /// обращаться напрямую к инстанс плохо.
-    /// поэтому пусть каждый скрин получает доступ
-    /// к единственному объекту ассетов через getInstance
-    /// обсудим потом
-    //////////////////////////////////////////////////////
-/*
-    private static Assets assetsInstance;
-    public static synchronized Assets getInstance(AssetManager assetManager) {
-
-        if (assetsInstance == null) {
-            assetsInstance = new Assets(assetManager);
-        }
-        return assetsInstance;
-    }
-
-    private Assets() {
-    }
-
-    private Assets(AssetManager assetManager) {
-        this.assetManager = assetManager;
-        assetManager.setErrorListener(this);
-        assetManager.load(Constants.Textures.BattleItems.TEXTURE_ATLAS, TextureAtlas.class);
-        assetManager.finishLoading();
-
-        TextureAtlas atlas = assetManager.get(Constants.Textures.BattleItems.TEXTURE_ATLAS);
-        lightTankAssets = new LightTankAssets(atlas);
-        heavyTankAssets = new HeavyTankAssets(atlas);
-    }*/
-
 
     private Assets() {
     }
@@ -100,12 +24,17 @@ public class Assets implements Disposable, AssetErrorListener {
     public void init(AssetManager assetManager) {
         this.assetManager = assetManager;
         assetManager.setErrorListener(this);
-        assetManager.load(Constants.Textures.BattleItems.TEXTURE_ATLAS, TextureAtlas.class);
-        assetManager.finishLoading();
 
-        TextureAtlas atlas = assetManager.get(Constants.Textures.BattleItems.TEXTURE_ATLAS);
-        lightTankAssets = new LightTankAssets(atlas);
-        heavyTankAssets = new HeavyTankAssets(atlas);
+        assetManager.load(Constants.Textures.BattleItems.TEXTURE_ATLAS, TextureAtlas.class);
+        //assetManager.finishLoading();
+        TextureAtlas atlasTank = assetManager.get(Constants.Textures.BattleItems.TEXTURE_ATLAS);
+        lightTankAssets = new LightTankAssets(atlasTank);
+        heavyTankAssets = new HeavyTankAssets(atlasTank);
+
+        assetManager.load(Constants.Textures.InterfaceItems.TEXTURE_ATLAS, TextureAtlas.class);
+        assetManager.finishLoading();
+        TextureAtlas atlasInterface = assetManager.get(Constants.Textures.InterfaceItems.TEXTURE_ATLAS);
+        interfaceAssets = new InterfaceAssets(atlasInterface);
     }
 
     @Override
@@ -166,6 +95,14 @@ public class Assets implements Disposable, AssetErrorListener {
             rotationRegions[13] = atlas.findRegion(Constants.Textures.BattleItems.HEAVY_TANK292);
             rotationRegions[14] = atlas.findRegion(Constants.Textures.BattleItems.HEAVY_TANK315);
             rotationRegions[15] = atlas.findRegion(Constants.Textures.BattleItems.HEAVY_TANK338);
+        }
+    }
+    public class InterfaceAssets {
+
+        public final TextureAtlas.AtlasRegion background;
+
+        public InterfaceAssets(TextureAtlas atlas) {
+            background = atlas.findRegion(Constants.Textures.InterfaceItems.MENU_BACKGROUND);
         }
     }
 /*

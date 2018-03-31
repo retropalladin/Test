@@ -21,13 +21,15 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.test.game.MyTestGame;
+import com.test.game.utils.Assets;
 import com.test.game.utils.Constants;
 import com.test.game.utils.ScreensManager;
 
 public class MainMenuScreen implements Screen {
 
-    private static MyTestGame game;
-    private static MainMenuScreen mainMenuScreenInstance;
+    private MyTestGame game;
+
+/*    private static MainMenuScreen mainMenuScreenInstance;
     public static synchronized MainMenuScreen getInstance(MyTestGame game) {
 
         if (mainMenuScreenInstance == null) {
@@ -36,8 +38,8 @@ public class MainMenuScreen implements Screen {
         return mainMenuScreenInstance;
     }
     private MainMenuScreen() {
-    }
-    private MainMenuScreen(MyTestGame game) {
+    }*/
+    public MainMenuScreen(MyTestGame game) {
         this.game = game;
     }
 
@@ -48,8 +50,20 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        Skin mySkin = new Skin(Gdx.files.internal("game_interface.json"));
-/*
+        Image image_logo = new Image(Assets.instance.interfaceAssets.background.getTexture());
+        image_logo.setSize(200,100);
+        image_logo.setPosition(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()-100);
+        stage.addActor(image_logo);
+
+
+        //stage.addActor(new Image(Assets.getInstance().interfaceAssets.background));
+
+        /*Image image_logo = new Image(new Texture(Gdx.files.internal("interface_atlas.png")));
+        image_logo.setSize(200,100);
+        image_logo.setPosition(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()-100);
+        stage.addActor(image_logo);
+        *//*Skin mySkin = new Skin(Gdx.files.internal("game_interface.json"));
+
         // Image
         Image image_logo = new Image(new Texture(Gdx.files.internal("intro_pict.png")));
         image_logo.setSize(200,100);
@@ -126,7 +140,6 @@ public class MainMenuScreen implements Screen {
     public void render (float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
-        stage.act();
         stage.draw();
     }
     @Override

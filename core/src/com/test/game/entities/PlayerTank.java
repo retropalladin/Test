@@ -2,7 +2,7 @@ package com.test.game.entities;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.Level;
-import com.test.game.LevelInputManager;
+import com.test.game.utils.LevelInputManager;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;

@@ -175,7 +175,7 @@ public class Level {
             needRespawn = false;
     }
 
-    private PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction){
+    public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
             objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN, posY * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN,
@@ -220,7 +220,7 @@ public class Level {
     }
     //end player
     //wall
-    private void spawnLevelBorders(){
+    public void spawnLevelBorders(){
         short i;
         for(i = 0; i <= matrixWidth; i++)
         {
@@ -234,7 +234,7 @@ public class Level {
         }
     }
 
-    private void spawnGridDefinedWall(short posX, short posY, WallType type) {
+    public void spawnGridDefinedWall(short posX, short posY, WallType type) {
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_EMPTY) {
             objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_WALL;
             Wall wall = spawnDefinedWall(posX * Constants.Physics.CELL_SIZE, posY * Constants.Physics.CELL_SIZE, type);
@@ -262,7 +262,7 @@ public class Level {
     }
     //end wall
     //npc
-    private void spawnGridDefinedNpcTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
+    public void spawnGridDefinedNpcTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
             if (isAlly)
                 objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK;

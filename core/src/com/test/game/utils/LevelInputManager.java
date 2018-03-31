@@ -1,10 +1,9 @@
-package com.test.game;
+package com.test.game.utils;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.test.game.inputs.LevelInputMobile;
 import com.test.game.inputs.LevelInputPc;
-import com.test.game.utils.LevelInput;
 
 public class LevelInputManager {
 
@@ -23,4 +22,5 @@ public class LevelInputManager {
     public void enable(){
         Gdx.input.setInputProcessor(levelInput);
     }
+    public void disable() { Gdx.input.setInputProcessor(null);}
 }

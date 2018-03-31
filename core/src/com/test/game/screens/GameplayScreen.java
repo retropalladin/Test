@@ -7,35 +7,31 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.test.game.Level;
-import com.test.game.LevelInputManager;
+import com.test.game.utils.LevelInputManager;
 import com.test.game.LevelRenderer;
 import com.test.game.utils.Assets;
 import com.test.game.utils.Constants;
 import com.test.game.utils.LevelLoader;
+import com.test.game.utils.ScreensManager;
 
 public class GameplayScreen implements Screen {
 
+    public static final GameplayScreen instance = new GameplayScreen();
+
     private Level level;
-    private LevelRenderer levelRenderer = new LevelRenderer();
-    private boolean load = false;
+    private LevelRenderer levelRenderer;
 
     private SpriteBatch batch;
 
-    public GameplayScreen() {
-        AssetManager am = new AssetManager();
-        Assets.instance.init(am);
-        LevelInputManager.instance.enable();
+    private GameplayScreen() {
         Box2D.init();
+        batch = new SpriteBatch();
+        levelRenderer = new LevelRenderer();
     }
 
     @Override
     public void show() {
-        if(!load){
-            batch = new SpriteBatch();
-            setupLevel("123rofl321");
-            levelRenderer.presetCameraPosition(level);
-            load = true;
-        }
+        LevelInputManager.instance.enable();
     }
 
     @Override
@@ -51,34 +47,37 @@ public class GameplayScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-        Gdx.gl.glClearColor(0,0,0,1);
-    }
+    public void resume() { Gdx.gl.glClearColor(0,0,0,1);}
 
     @Override
     public void hide() {
-
+        LevelInputManager.instance.disable();
     }
 
     @Override
     public void dispose() {
-        level.dispose();
+        ScreensManager.instance.disposeScreens();
+    }
+
+    public void resetScreen(String levelName) {
+        setupLevel(levelName);
+        levelRenderer.presetCameraPosition(level);
+    }
+
+    public void shutdown() {
+        if(level != null)
+            level.dispose();
         levelRenderer.dispose();
         batch.dispose();
-        Assets.instance.dispose();
     }
 
     private void setupLevel(String levelName) {
-        if(!load) {
-            if(Constants.Developing.DEBUG)
-                level = Level.debugLevel();
-            else
-                level = LevelLoader.load(levelName);
-        }
+        if(Constants.Developing.DEBUG)
+            level = Level.debugLevel();
+        else
+            level = LevelLoader.load(levelName);
     }
 }

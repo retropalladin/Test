@@ -3,7 +3,6 @@ package com.test.game.utils;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.test.game.Level;
-import com.test.game.LevelInputManager;
 import com.test.game.entities.NpcTank;
 
 public class ChaseCamera {

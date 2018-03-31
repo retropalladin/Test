@@ -13,7 +13,7 @@ public class ScreensManager {
     private ScreensManager() {
         AssetManager am = new AssetManager();
         Assets.instance.init(am);
-        gameplayScreen = GameplayScreen.instance;
+        gameplayScreen = new GameplayScreen();
     }
 
     public Screen getStartScreen(){

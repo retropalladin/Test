@@ -16,14 +16,12 @@ import com.test.game.utils.ScreensManager;
 
 public class GameplayScreen implements Screen {
 
-    public static final GameplayScreen instance = new GameplayScreen();
-
     private Level level;
     private LevelRenderer levelRenderer;
 
     private SpriteBatch batch;
 
-    private GameplayScreen() {
+    public GameplayScreen() {
         Box2D.init();
         batch = new SpriteBatch();
         levelRenderer = new LevelRenderer();

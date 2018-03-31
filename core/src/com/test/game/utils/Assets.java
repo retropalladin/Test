@@ -63,6 +63,37 @@ public class Assets implements Disposable, AssetErrorListener {
 
     private AssetManager assetManager;
 
+    //////////////////////////////////////////////////////
+    /// обращаться напрямую к инстанс плохо.
+    /// поэтому пусть каждый скрин получает доступ
+    /// к единственному объекту ассетов через getInstance
+    /// обсудим потом
+    //////////////////////////////////////////////////////
+/*
+    private static Assets assetsInstance;
+    public static synchronized Assets getInstance(AssetManager assetManager) {
+
+        if (assetsInstance == null) {
+            assetsInstance = new Assets(assetManager);
+        }
+        return assetsInstance;
+    }
+
+    private Assets() {
+    }
+
+    private Assets(AssetManager assetManager) {
+        this.assetManager = assetManager;
+        assetManager.setErrorListener(this);
+        assetManager.load(Constants.Textures.BattleItems.TEXTURE_ATLAS, TextureAtlas.class);
+        assetManager.finishLoading();
+
+        TextureAtlas atlas = assetManager.get(Constants.Textures.BattleItems.TEXTURE_ATLAS);
+        lightTankAssets = new LightTankAssets(atlas);
+        heavyTankAssets = new HeavyTankAssets(atlas);
+    }*/
+
+
     private Assets() {
     }
 

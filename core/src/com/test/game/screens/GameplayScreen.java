@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.test.game.Level;
+import com.test.game.MyTestGame;
 import com.test.game.utils.LevelInputManager;
 import com.test.game.LevelRenderer;
 import com.test.game.utils.Assets;
@@ -16,18 +17,37 @@ import com.test.game.utils.ScreensManager;
 
 public class GameplayScreen implements Screen {
 
-    public static final GameplayScreen instance = new GameplayScreen();
+    //public static final GameplayScreen instance = new GameplayScreen();
+
+    private static MyTestGame game;
+    private static GameplayScreen gameplayScreenInstance;
+    public static synchronized GameplayScreen getInstance(MyTestGame game) {
+
+        if (gameplayScreenInstance == null) {
+            gameplayScreenInstance = new GameplayScreen(game);
+        }
+        return gameplayScreenInstance;
+    }
+    private GameplayScreen() {
+    }
+    private GameplayScreen(MyTestGame game) {
+        this.game = game;
+
+        Box2D.init();
+        batch = new SpriteBatch();
+        levelRenderer = new LevelRenderer();
+    }
 
     private Level level;
     private LevelRenderer levelRenderer;
 
     private SpriteBatch batch;
 
-    private GameplayScreen() {
+    /*private GameplayScreen() {
         Box2D.init();
         batch = new SpriteBatch();
         levelRenderer = new LevelRenderer();
-    }
+    }*/
 
     @Override
     public void show() {
@@ -59,7 +79,7 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void dispose() {
-        ScreensManager.instance.disposeScreens();
+        ScreensManager.getInstance(game).disposeScreens();
     }
 
     public void resetScreen(String levelName) {

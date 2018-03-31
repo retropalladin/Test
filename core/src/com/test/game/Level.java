@@ -1,5 +1,6 @@
 package com.test.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -25,8 +26,8 @@ import com.test.game.utils.MaterialEntity;
 
 public class Level {
 
-    public PlayerTank playerTank;
-    public boolean needRespawn = false;
+    public boolean needPlayerRespawn = false;
+    public boolean needPlayerDispawn = false;
     public short allySpawnX;
     public short allySpawnY;
 
@@ -38,6 +39,9 @@ public class Level {
 
     public float levelWidth = 0;
     public float levelHeight = 0;
+
+    public PlayerTank playerTank;
+    public PlayerTank deadPlayerTank;
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
@@ -170,14 +174,18 @@ public class Level {
 
     //player
     private void respawnPlayer(){
-        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, 5, 0, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.UP);
-        if(playerTank != null)
-            needRespawn = false;
+        if(objectsMatrix[allySpawnY][allySpawnX] == Constants.Physics.CATEGORY_SPAWN) {
+            playerTank = deadPlayerTank;
+            objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
+            playerTank.respawn(allySpawnX,allySpawnY);
+            deadPlayerTank = null;
+            needPlayerRespawn = false;
+        }
     }
 
     public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
-            objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK;
+            objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN, posY * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN,
                     hp, shieldHp, type, ammoType, direction);
             playerTank.setGridCoordinates(posX, posY);
@@ -201,7 +209,6 @@ public class Level {
         PlayerTank playerTank = new PlayerTank(this, body);
         body.setUserData(playerTank);
 
-        aliveNpcTanks.add(playerTank);
         return playerTank;
     }
 
@@ -482,10 +489,10 @@ public class Level {
             deadEntities.add(bullet);
         }
         if(!tank.isAlive()){
-            deadEntities.add(tank);
             if(tank == playerTank) {
-                playerTank = null;
-                needRespawn = true;
+                needPlayerDispawn = true;
+            } else {
+                deadEntities.add(tank);
             }
         }
     }
@@ -524,8 +531,10 @@ public class Level {
     // end collisions
     public void update(float delta) {
         frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
-        if(needRespawn)
+        if(needPlayerRespawn)
             respawnPlayer();
+        if(playerTank != null)
+            playerTank.update(frameTime);
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
             aliveNpcTanks.get(aliveIterator).update(frameTime);
         accumulator += frameTime;
@@ -539,6 +548,13 @@ public class Level {
     }
 
     public void removeDead(){
+        if(needPlayerDispawn){
+            playerTank.getBody().setTransform(Constants.Physics.FAR_FAR,Constants.Physics.FAR_FAR,0);
+            deadPlayerTank = playerTank;
+            playerTank = null;
+            needPlayerDispawn = false;
+            needPlayerRespawn = true;
+        }
         for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){
             deadEntity = deadEntities.get(deadIterator);
             world.destroyBody(deadEntity.getBody());

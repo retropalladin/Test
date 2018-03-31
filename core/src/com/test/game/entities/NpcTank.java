@@ -56,17 +56,17 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     private short prevCategory;
     private short nextCategory;
 
+    protected Vector2 moveDestination;
     private float deltaX;
     private float deltaY;
-    private Vector2 moveDestination;
 
+    protected float rotatePosition;
+    protected float rotateDestination;
     private int rotateDirection;
-    private float rotatePosition;
-    private float rotateDestination;
     private float rotationSpeed;
 
-    private float reloadTime;
     public AmmoType ammoType;
+    protected float reloadTime;
 
     public TankType tankType;
     protected TankMoveState moveState;
@@ -75,16 +75,16 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     public void init(Level level, Body body) {
         this.level = level;
-        this.setAlive(true);
+        this.setAlive(false);
         this.setBody(body);
         moveDestination = new Vector2(body.getPosition().x, body.getPosition().y);
         moveState = TankMoveState.WAITING;
         shootState = TankShootState.READY;
         reloadTime = 0;
-        ammoType = AmmoType.NORMAL_BULLET;
     }
 
     public void configureNpcTankType(short category, int hp, int shieldHp,TankType tankType, AmmoType ammoType, Direction direction) {
+        this.setAlive(true);
         this.direction = direction;
         switch (category){
             case Constants.Physics.CATEGORY_ALLY_TANK:
@@ -135,7 +135,25 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         if(shieldHp <= 0)
         {
             if(!decreaseHp(-shieldHp)){
-                level.objectsMatrix[gridY][gridX] = Constants.Physics.CATEGORY_EMPTY;
+                if(moveState == TankMoveState.ON_MOVE){
+                    switch (direction){
+                        case LEFT:
+                            level.objectsMatrix[gridY][gridX +1] = prevCategory;
+                            break;
+                        case RIGHT:
+                            level.objectsMatrix[gridY][gridX -1] = prevCategory;
+                            break;
+                        case UP:
+                            level.objectsMatrix[gridY -1][gridX] = prevCategory;
+                            break;
+                        case DOWN:
+                            level.objectsMatrix[gridY +1][gridX] = prevCategory;
+                            break;
+                    }
+                    level.objectsMatrix[gridY][gridX] = nextCategory;
+                } else {
+                    level.objectsMatrix[gridY][gridX] = prevCategory;
+                }
             }
             shieldHp = 0;
         }
@@ -227,11 +245,11 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         }
         if(moveState == TankMoveState.WAITING)
         {
+            prevCategory = nextCategory;
             if(inputDirection == direction){
                 body.setLinearVelocity(Vector2.Zero);
                 beginMove(MoveMask);
             }else {
-                prevCategory = nextCategory;
                 body.setLinearVelocity(Vector2.Zero);
                 body.setTransform(moveDestination, 0);
                 return true;

@@ -8,7 +8,6 @@ public class Constants {
     public final class Developing {
         private Developing() {
         }
-
         public static final boolean DEBUG = true;
         public static final boolean DEBUG_PHYSICS_RENDER = true;
     }
@@ -17,6 +16,7 @@ public class Constants {
         }
 
         public static final int GOD_DAMAGE = 100000;
+        public static final float RESPAWN_INVIS = 3;
         public static final float PLAYER_RELOAD_MUL = 1.25f;
         public static final float FRAME_TIME_MAX = 0.25f;
     }
@@ -43,6 +43,7 @@ public class Constants {
         public static final float PHYSICS_STEP = 1 / 300f;
         public static final float CELL_SIZE = 2;
         public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
+        public static final float FAR_FAR = Renderer.WORLD_VISIBLE_HEIGHT * 100;
 
         public static final short LAND_GROUND = 1;
         public static final short LAND_SAND = (1 << 2);

@@ -15,7 +15,7 @@ public class Constants {
         private Settings() {
         }
 
-        public static final int GOD_DAMAGE = 100000;
+        public static final byte GOD_DAMAGE = Byte.MAX_VALUE;
         public static final float RESPAWN_INVIS = 3;
         public static final float PLAYER_RELOAD_MUL = 1.25f;
         public static final float FRAME_TIME_MAX = 0.25f;

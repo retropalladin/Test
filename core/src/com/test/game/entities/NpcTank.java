@@ -51,7 +51,6 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     public Direction direction;
 
     private boolean isAlly;
-    private int shieldHp;
 
     private short prevCategory;
     private short nextCategory;
@@ -83,7 +82,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         reloadTime = 0;
     }
 
-    public void configureNpcTankType(short category, int hp, int shieldHp,TankType tankType, AmmoType ammoType, Direction direction) {
+    public void configureNpcTankType(short category, byte hp, TankType tankType, AmmoType ammoType, Direction direction) {
         this.setAlive(true);
         this.direction = direction;
         switch (category){
@@ -97,7 +96,6 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         this.setCategory(category);
         this.tankType = tankType;
         this.hp = hp;
-        this.shieldHp = shieldHp;
         switch (tankType){
             case LIGHT_TANK:
                 rotationSpeed = LIGHT_TANK_ROTATION_SPEED;
@@ -130,32 +128,27 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
             beginShoot();
     }
 
-    public void takeDamage(int damage){
-        shieldHp -= damage;
-        if(shieldHp <= 0)
-        {
-            if(!decreaseHp(-shieldHp)){
-                if(moveState == TankMoveState.ON_MOVE){
-                    switch (direction){
-                        case LEFT:
-                            level.objectsMatrix[gridY][gridX +1] = prevCategory;
-                            break;
-                        case RIGHT:
-                            level.objectsMatrix[gridY][gridX -1] = prevCategory;
-                            break;
-                        case UP:
-                            level.objectsMatrix[gridY -1][gridX] = prevCategory;
-                            break;
-                        case DOWN:
-                            level.objectsMatrix[gridY +1][gridX] = prevCategory;
-                            break;
-                    }
-                    level.objectsMatrix[gridY][gridX] = nextCategory;
-                } else {
-                    level.objectsMatrix[gridY][gridX] = prevCategory;
+    public void takeDamage(byte damage){
+        if(!decreaseHp(damage)){
+            if(moveState == TankMoveState.ON_MOVE){
+                switch (direction){
+                    case LEFT:
+                        level.objectsMatrix[gridY][gridX +1] = prevCategory;
+                        break;
+                    case RIGHT:
+                        level.objectsMatrix[gridY][gridX -1] = prevCategory;
+                        break;
+                    case UP:
+                        level.objectsMatrix[gridY -1][gridX] = prevCategory;
+                        break;
+                    case DOWN:
+                        level.objectsMatrix[gridY +1][gridX] = prevCategory;
+                        break;
                 }
+                level.objectsMatrix[gridY][gridX] = nextCategory;
+            } else {
+                level.objectsMatrix[gridY][gridX] = prevCategory;
             }
-            shieldHp = 0;
         }
     }
 
@@ -320,34 +313,40 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     }
 
     protected boolean beginShoot(){
+        if(category == Constants.Physics.CATEGORY_ALLY_TANK){
+            if(level.playerTank != null)
+                ammoType = level.playerTank.playerStatsManager.shootCurrentAllyAmmo();
+            else
+                ammoType = level.deadPlayerTank.playerStatsManager.shootCurrentAllyAmmo();
+        }
         switch(ammoType){
-                case NORMAL_BULLET:
-                    reloadTime = Bullet.NORMAL_BULLET_RELOAD;
-                    level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
-                    break;
-                case PLASMA_BULLET:
-                    reloadTime = Bullet.PLASMA_BULLET_RELOAD;
-                    level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
-                    break;
-                case AP_BULLET:
-                    reloadTime = Bullet.AP_NORMAL_BULLET_RELOAD;
-                    level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
-                    break;
-                case RAP_BULLET:
-                    reloadTime = Bullet.RAP_BULLET_RELOAD;
-                    level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
-                    break;
-                case DOUBLE_NORMAL_BULLET:
-                    reloadTime = Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
-                    level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType,direction, isAlly);
-                    break;
-                case DOUBLE_PLASMA_BULLET:
-                    reloadTime = Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
-                    level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType,direction, isAlly);
-                    break;
-                default:
-                    return false;
-            }
+            case NORMAL_BULLET:
+                reloadTime = Bullet.NORMAL_BULLET_RELOAD;
+                level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
+                break;
+            case PLASMA_BULLET:
+                reloadTime = Bullet.PLASMA_BULLET_RELOAD;
+                level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
+                break;
+            case AP_BULLET:
+                reloadTime = Bullet.AP_NORMAL_BULLET_RELOAD;
+                level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
+                break;
+            case RAP_BULLET:
+                reloadTime = Bullet.RAP_BULLET_RELOAD;
+                level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
+                break;
+            case DOUBLE_NORMAL_BULLET:
+                reloadTime = Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
+                level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType,direction, isAlly);
+                break;
+            case DOUBLE_PLASMA_BULLET:
+                reloadTime = Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
+                level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType,direction, isAlly);
+                break;
+            default:
+                return false;
+        }
         shootState = TankShootState.RELOADING;
         return true;
     }
@@ -375,6 +374,6 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         this.setAlive(false);
         this.setBody(null);
         this.setCategory((short) 0);
-        this.setHp(0);
+        this.setHp((byte) 0);
     }
 }

@@ -14,15 +14,15 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
     /// Constants Settings                  ///
     ///////////////////////////////////////////
 
-    public static final int NORMAL_BULLET_MAX_HP = 1;
-    public static final int PLASMA_BULLET_MAX_HP = 1;
-    public static final int AP_BULLET_MAX_HP = 2;
-    public static final int RAP_BULLET_MAX_HP = 2;
+    public static final byte NORMAL_BULLET_MAX_HP = 1;
+    public static final byte PLASMA_BULLET_MAX_HP = 1;
+    public static final byte AP_BULLET_MAX_HP = 2;
+    public static final byte RAP_BULLET_MAX_HP = 2;
 
-    public static final int NORMAL_BULLET_DAMAGE = 1;
-    public static final int PLASMA_BULLET_DAMAGE = 1;
-    public static final int AP_BULLET_DAMAGE = 3;
-    public static final int RAP_BULLET_DAMAGE = 5;
+    public static final byte NORMAL_BULLET_DAMAGE = 1;
+    public static final byte PLASMA_BULLET_DAMAGE = 1;
+    public static final byte AP_BULLET_DAMAGE = 3;
+    public static final byte RAP_BULLET_DAMAGE = 5;
 
     public static final float BULLET_WIDTH = 0.7f;
     public static final float BULLET_HEIGHT = 0.35f;
@@ -107,7 +107,7 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
         }
     }
 
-    public boolean takeDamage(int damage){
+    public boolean takeDamage(byte damage){
         return decreaseHp(damage);
     }
 
@@ -116,6 +116,6 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
         this.setAlive(false);
         this.setBody(null);
         this.setCategory((short) 0);
-        this.setHp(0);
+        this.setHp((byte) 0);
     }
 }

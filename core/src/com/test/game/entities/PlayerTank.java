@@ -1,5 +1,6 @@
 package com.test.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.Level;
@@ -10,8 +11,12 @@ import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankMoveState;
 import com.test.game.utils.Enums.TankShootState;
 import com.test.game.utils.Enums.TankType;
+import com.test.game.utils.PlayerStatsManager;
 
 public class PlayerTank extends NpcTank {
+
+
+    public PlayerStatsManager playerStatsManager;
 
     private Direction inputDirection;
     private float respawnInvis;
@@ -21,8 +26,9 @@ public class PlayerTank extends NpcTank {
         moveState = TankMoveState.WAITING;
     }
 
-    public void configurePlayerTankType(short category, int hp, int shieldHp,TankType type, AmmoType ammoType, Direction direction) {
-        this.configureNpcTankType(category, hp, shieldHp,type,ammoType,direction);
+    public void configurePlayerTankType(PlayerStatsManager playerStatsManager, Direction direction) {
+        this.playerStatsManager = playerStatsManager;
+        this.configureNpcTankType(Constants.Physics.CATEGORY_ALLY_TANK, playerStatsManager.getConstHp(), playerStatsManager.getTankType(), playerStatsManager.getPrevLevelAmmoType(),direction);
     }
 
     public void update(float delta) {
@@ -30,7 +36,7 @@ public class PlayerTank extends NpcTank {
             respawnInvis -= delta;
             if(respawnInvis <=0) {
                 this.setAlive(true);
-                this.setHp(3);
+                this.setHp(playerStatsManager.getConstHp());
             }
         }
 
@@ -58,6 +64,17 @@ public class PlayerTank extends NpcTank {
                 beginMove(Constants.Physics.PLAYER_TANK_MOVE_MASK);
             }
         }
+    }
+
+
+    @Override
+    public void takeDamage(byte damage) {
+
+    }
+
+    @Override
+    protected boolean beginShoot(){
+        return true;
     }
 
     public void respawn(short posX, short posY){

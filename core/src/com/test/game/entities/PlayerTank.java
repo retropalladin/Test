@@ -102,7 +102,7 @@ public class PlayerTank extends NpcTank {
                     break;
             }
             shootState = TankShootState.RELOADING;
-           return true;
+            return true;
         } else {
             return false;
         }

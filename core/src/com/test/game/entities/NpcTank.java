@@ -51,6 +51,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     public Direction direction;
 
     private boolean isAlly;
+    private boolean isFreeze;
 
     private short prevCategory;
     private short nextCategory;
@@ -121,38 +122,14 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         this.ammoType = ammoType;
     }
 
-    public void update(float delta, boolean freeze){
-        if(freeze && category == Constants.Physics.CATEGORY_ENEMY_TANK) {
-            if(moveState == TankMoveState.ON_MOVE)
-                body.setLinearVelocity(Vector2.Zero);
-        } else {
-            if(moveState == TankMoveState.ON_MOVE && body.getLinearVelocity().equals(Vector2.Zero)) {
-                switch (direction){
-                    case LEFT:
-                        body.applyLinearImpulse(TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
-                        break;
-                    case RIGHT:
-                        body.applyLinearImpulse(TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
-                        break;
-                    case UP:
-                        body.applyLinearImpulse(TANK_UP_IMPULSE, body.getWorldCenter(), true);
-                        break;
-                    case DOWN:
-                        body.applyLinearImpulse(TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
-                        break;
-                }
-            }
-            if(shootState == TankShootState.RELOADING)
-                endShoot(delta);
-            if(shootState == TankShootState.READY)
+    public void update(float delta){
+        if(!isFreeze) {
+            if (shootState == TankShootState.RELOADING)
+                endShoot(delta * Constants.Settings.PLAYER_RELOAD_MUL);
+            if(moveState != TankMoveState.ROTATING && shootState == TankShootState.READY){
                 beginShoot();
-            if (moveState == TankMoveState.ON_MOVE){
-                endMove(Constants.Physics.ENEMY_TANK_MOVE_MASK, delta, direction);
-            } else {
-                if (moveState != TankMoveState.ROTATING) {
-                    beginMove(Constants.Physics.ENEMY_TANK_MOVE_MASK);
-                }
             }
+
         }
     }
 
@@ -388,7 +365,34 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         return false;
     }
 
+    public void freeze(){
+        if(category == Constants.Physics.CATEGORY_ENEMY_TANK) {
+            body.setLinearVelocity(Vector2.Zero);isFreeze = true;
+            isFreeze = true;
+        }
+    }
 
+    public void unfreeze(){
+        if(category == Constants.Physics.CATEGORY_ENEMY_TANK) {
+            if(moveState == TankMoveState.ON_MOVE && isFreeze) {
+                switch (direction){
+                    case LEFT:
+                        body.applyLinearImpulse(TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                    case RIGHT:
+                        body.applyLinearImpulse(TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                    case UP:
+                        body.applyLinearImpulse(TANK_UP_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                    case DOWN:
+                        body.applyLinearImpulse(TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                }
+            }
+        }
+        isFreeze = false;
+    }
     @Override
     public void setGridCoordinates(short gridX, short gridY){
         this.gridX = gridX;

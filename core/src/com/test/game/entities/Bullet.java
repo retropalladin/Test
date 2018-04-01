@@ -113,6 +113,16 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
         return decreaseHp(damage);
     }
 
+    public void freeze(){
+        if(category == Constants.Physics.CATEGORY_ENEMY_BULLET)
+            body.setLinearVelocity(Vector2.Zero);
+    }
+
+    public void unfreeze(){
+        if(category == Constants.Physics.CATEGORY_ENEMY_BULLET)
+            launch(direction);
+    }
+
     @Override
     public void reset() {
         this.setAlive(false);

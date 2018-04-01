@@ -47,8 +47,6 @@ public class Level {
 
     public PlayerTank playerTank;
     public PlayerTank deadPlayerTank;
-    public NpcTank tmpNpcTank;
-    public Bullet tmpBullet;
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
@@ -536,43 +534,15 @@ public class Level {
     // end collisions
     public void update(float delta) {
         frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
-        if(needPlayerRespawn)
-            respawnPlayer();
-        endEnemyFreeze(frameTime);
-        if(needEnemyUnfreeze){
-            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
-            {
-                tmpBullet = aliveBullets.get(aliveIterator);
-                if(tmpBullet.getCategory() == Constants.Physics.CATEGORY_ENEMY_BULLET)
-                    tmpBullet.launch(tmpBullet.direction);
-            }
-            needEnemyUnfreeze = false;
-        }
+
+        updateLevelState(frameTime);
 
         if(playerTank != null)
             playerTank.update(frameTime);
 
-        if(needEnemyFreeze){
-            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
-            {
-                tmpBullet = aliveBullets.get(aliveIterator);
-                if(tmpBullet.getCategory() == Constants.Physics.CATEGORY_ENEMY_BULLET)
-                    tmpBullet.getBody().setLinearVelocity(Vector2.Zero);
-            }
-            needEnemyFreeze = false;
-        }
-
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
-            aliveNpcTanks.get(aliveIterator).update(frameTime, freezeEnemyTime > 0);
+            aliveNpcTanks.get(aliveIterator).update(frameTime);
 
-        String s = "";
-        for(int i = 0; i <= matrixHeight; i++)
-        {
-            for(int j = 0; j <= matrixWidth; j++)
-                s+=objectsMatrix[i][j] + " ";
-            s+="\n";
-        }
-        Gdx.app.log("",s);
         accumulator += frameTime;
         while (accumulator >= Constants.Physics.PHYSICS_STEP) {
             world.step(Constants.Physics.PHYSICS_STEP,
@@ -583,9 +553,30 @@ public class Level {
         }
     }
 
+    private void updateLevelState(float frameTime) {
+        endEnemyFreeze(frameTime);
+        if(needEnemyUnfreeze){
+            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveBullets.get(aliveIterator).unfreeze();
+            for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveNpcTanks.get(aliveIterator).unfreeze();
+            needEnemyUnfreeze = false;
+        }
+        if(needEnemyFreeze){
+            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveBullets.get(aliveIterator).freeze();
+            for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveNpcTanks.get(aliveIterator).freeze();
+            needEnemyFreeze = false;
+        }
+        if(needPlayerRespawn)
+            respawnPlayer();
+    }
+
     public void beginEnemyFreeze(float freezeEnemyTime){
+        if(this.freezeEnemyTime == 0)
+            needEnemyFreeze = true;
         this.freezeEnemyTime = freezeEnemyTime;
-        needEnemyFreeze = true;
     }
 
     private void endEnemyFreeze(float delta){

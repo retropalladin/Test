@@ -16,9 +16,10 @@ public class PlayerStatsManager {
     private final byte ITEMS_SIZE = 9;
 
     private final byte HEAVY_ID = 0;
-    private final byte CONST_HP_ID = 1;
-    private final byte REAL_HP_ID = 2;
-    private final short STATS_SIZE = 3;
+    private final byte LIVES_ID = 1;
+    private final byte CONST_HP_ID = 2;
+    private final byte REAL_HP_ID = 3;
+    private final byte STATS_SIZE = 4;
 
     public short[] items;
     public byte[] stats;
@@ -43,6 +44,7 @@ public class PlayerStatsManager {
         items[TIME_STOP_ID] = 2;
 
         stats[HEAVY_ID] = 0;
+        stats[LIVES_ID] = 4;
         stats[CONST_HP_ID] = 5;
         stats[REAL_HP_ID] = 5;
 
@@ -51,10 +53,17 @@ public class PlayerStatsManager {
 
     public void updateMarkers(){
         currentAllyAmmo = RAP_BULLETS_ID;
-        currentPlayerAmmo = prevAmmo;
+        setCurrentPlayerAmmo(prevAmmo);
     }
 
-    public byte getConstHp(){return stats[CONST_HP_ID];}
+
+    public byte getConstHp(){
+        return stats[CONST_HP_ID];
+    }
+
+    public byte getLives(){
+        return stats[LIVES_ID];
+    }
 
     public TankType getTankType(){
         if(stats[HEAVY_ID] == 0)
@@ -142,7 +151,9 @@ public class PlayerStatsManager {
         }
     }
 
-    public void setRealHp(byte realHp){stats[REAL_HP_ID] = realHp;}
+    public void setRealHp(byte realHp){
+        stats[REAL_HP_ID] = realHp;
+    }
 
 
     public AmmoType shootCurrentAllyAmmo(){

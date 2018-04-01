@@ -27,6 +27,9 @@ import com.test.game.utils.PlayerStatsManager;
 
 public class Level {
 
+    public boolean levelFail = false;
+    public boolean levelWin = false;
+
     private float freezeEnemyTime = 0;
     private boolean needEnemyFreeze = false;
     private boolean needEnemyUnfreeze = false;
@@ -178,16 +181,6 @@ public class Level {
 
 
     //player
-    private void respawnPlayer(){
-        if(objectsMatrix[allySpawnY][allySpawnX] == Constants.Physics.CATEGORY_SPAWN) {
-            playerTank = deadPlayerTank;
-            objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
-            playerTank.respawn(allySpawnX,allySpawnY);
-            deadPlayerTank = null;
-            needPlayerRespawn = false;
-        }
-    }
-
     public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, PlayerStatsManager playerStatsManager, Direction direction){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
             objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
@@ -532,7 +525,10 @@ public class Level {
         }
     }
     // end collisions
+    // updating level
     public void update(float delta) {
+
+
         frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
 
         updateLevelState(frameTime);
@@ -554,6 +550,7 @@ public class Level {
     }
 
     private void updateLevelState(float frameTime) {
+        checkWinCondition();
         endEnemyFreeze(frameTime);
         if(needEnemyUnfreeze){
             for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
@@ -571,6 +568,19 @@ public class Level {
         }
         if(needPlayerRespawn)
             respawnPlayer();
+    }
+
+    private void checkWinCondition(){
+    }
+
+    private void respawnPlayer(){
+        if(objectsMatrix[allySpawnY][allySpawnX] == Constants.Physics.CATEGORY_SPAWN) {
+            playerTank = deadPlayerTank;
+            objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
+            playerTank.respawn(allySpawnX,allySpawnY);
+            deadPlayerTank = null;
+            needPlayerRespawn = false;
+        }
     }
 
     public void beginEnemyFreeze(float freezeEnemyTime){
@@ -595,7 +605,10 @@ public class Level {
             deadPlayerTank = playerTank;
             playerTank = null;
             needPlayerDispawn = false;
-            needPlayerRespawn = true;
+            if(deadPlayerTank.playerStatsManager.getLives() < 0 && !levelWin)
+                levelFail = true;
+            else
+                needPlayerRespawn = true;
         }
         for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){
             deadEntity = deadEntities.get(deadIterator);
@@ -619,7 +632,8 @@ public class Level {
         }
         deadEntities.clear();
     }
-
+    // updating level end
+    //disposing level
     public void dispose() {
         world.dispose();
         wallRectangle.dispose();
@@ -634,4 +648,5 @@ public class Level {
         npcTankPool.freeAll(aliveNpcTanks);
         wallPool.freeAll(aliveWalls);
     }
+    //disposing level end
 }

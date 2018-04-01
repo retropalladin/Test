@@ -31,15 +31,12 @@ public class PlayerTank extends NpcTank {
 
     public void update(float delta) {
         if(respawnInvis > 0){
-            respawnInvis -= delta;
-            if(respawnInvis <=0) {
-                this.setAlive(true);
-                this.setHp(playerStatsManager.getConstHp());
-            }
+            endRespawn(delta);
         }
 
-        if (shootState == TankShootState.RELOADING)
+        if (shootState == TankShootState.RELOADING) {
             endShoot(delta * Constants.Settings.PLAYER_RELOAD_MUL);
+        }
 
         if (moveState == TankMoveState.ROTATING) {
             endRotate(delta);
@@ -72,7 +69,6 @@ public class PlayerTank extends NpcTank {
 
     @Override
     protected boolean beginShoot() {
-        level.beginEnemyFreeze(5);
         ammoType = playerStatsManager.shootCurrentPlayerAmmo();
         if (ammoType != null){
             switch (ammoType) {
@@ -119,5 +115,13 @@ public class PlayerTank extends NpcTank {
         respawnInvis = Constants.Settings.RESPAWN_INVIS;
         moveState = TankMoveState.WAITING;
         shootState = TankShootState.READY;
+    }
+
+    public void endRespawn(float delta) {
+        respawnInvis -= delta;
+        if(respawnInvis <=0) {
+            this.setAlive(true);
+            this.setHp(playerStatsManager.getConstHp());
+        }
     }
 }

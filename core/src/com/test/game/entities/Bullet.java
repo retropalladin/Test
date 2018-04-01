@@ -61,6 +61,7 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
     ///////////////////////////////////////////
 
     public AmmoType type;
+    public Direction direction;
 
     public void init(Body body) {
         this.setAlive(true);
@@ -91,6 +92,7 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
     }
 
     public void launch(Direction direction){
+        this.direction = direction;
         switch (direction) {
             case UP:
                 body.applyLinearImpulse(BULLET_UP_IMPULSE, body.getWorldCenter(), true);

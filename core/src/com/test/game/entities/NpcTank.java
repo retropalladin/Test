@@ -121,11 +121,39 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         this.ammoType = ammoType;
     }
 
-    public void update(float delta){
-        if(shootState == TankShootState.RELOADING)
-            endShoot(delta);
-        if(shootState == TankShootState.READY)
-            beginShoot();
+    public void update(float delta, boolean freeze){
+        if(freeze && category == Constants.Physics.CATEGORY_ENEMY_TANK) {
+            if(moveState == TankMoveState.ON_MOVE)
+                body.setLinearVelocity(Vector2.Zero);
+        } else {
+            if(moveState == TankMoveState.ON_MOVE && body.getLinearVelocity().equals(Vector2.Zero)) {
+                switch (direction){
+                    case LEFT:
+                        body.applyLinearImpulse(TANK_LEFT_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                    case RIGHT:
+                        body.applyLinearImpulse(TANK_RIGHT_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                    case UP:
+                        body.applyLinearImpulse(TANK_UP_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                    case DOWN:
+                        body.applyLinearImpulse(TANK_DOWN_IMPULSE, body.getWorldCenter(), true);
+                        break;
+                }
+            }
+            if(shootState == TankShootState.RELOADING)
+                endShoot(delta);
+            if(shootState == TankShootState.READY)
+                beginShoot();
+            if (moveState == TankMoveState.ON_MOVE){
+                endMove(Constants.Physics.ENEMY_TANK_MOVE_MASK, delta, direction);
+            } else {
+                if (moveState != TankMoveState.ROTATING) {
+                    beginMove(Constants.Physics.ENEMY_TANK_MOVE_MASK);
+                }
+            }
+        }
     }
 
     public void takeDamage(byte damage){
@@ -163,7 +191,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     protected boolean beginMove(short MoveMask) {
         switch (direction){
             case LEFT:
-                if((level.objectsMatrix[gridY][gridX-1] & MoveMask) != 0) {
+                if((level.objectsMatrix[gridY][gridX-1] & MoveMask) == 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.x = Constants.Physics.CELL_SIZE * (gridX - 1) + TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
@@ -172,7 +200,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case RIGHT:
-                if((level.objectsMatrix[gridY][gridX+1] & MoveMask) != 0) {
+                if((level.objectsMatrix[gridY][gridX+1] & MoveMask) == 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.x = Constants.Physics.CELL_SIZE * (gridX + 1) + TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
@@ -181,7 +209,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case UP:
-                if((level.objectsMatrix[gridY+1][gridX] & MoveMask) != 0) {
+                if((level.objectsMatrix[gridY+1][gridX] & MoveMask) == 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.y = Constants.Physics.CELL_SIZE * (gridY + 1) + TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
@@ -190,7 +218,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 }
                 break;
             case DOWN:
-                if((level.objectsMatrix[gridY-1][gridX] & MoveMask) != 0) {
+                if((level.objectsMatrix[gridY-1][gridX] & MoveMask) == 0) {
                     moveState = TankMoveState.ON_MOVE;
                     moveDestination.y = Constants.Physics.CELL_SIZE * (gridY - 1) + TANK_MARGIN;
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);

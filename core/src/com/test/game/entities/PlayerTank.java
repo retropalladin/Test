@@ -72,6 +72,7 @@ public class PlayerTank extends NpcTank {
 
     @Override
     protected boolean beginShoot() {
+        level.beginEnemyFreeze(5);
         ammoType = playerStatsManager.shootCurrentPlayerAmmo();
         if (ammoType != null){
             switch (ammoType) {

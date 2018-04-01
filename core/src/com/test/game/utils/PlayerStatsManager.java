@@ -1,8 +1,5 @@
 package com.test.game.utils;
 
-
-import com.badlogic.gdx.Gdx;
-import com.sun.org.apache.xpath.internal.operations.String;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.TankType;
 
@@ -15,7 +12,8 @@ public class PlayerStatsManager {
     private final byte RAP_BULLETS_ID = 5;
     private final byte ENERGY_DRINKS_ID = 6;
     private final byte REPAIR_TOOLKIT_ID = 7;
-    private final byte ITEMS_SIZE = 8;
+    private final byte TIME_STOP_ID = 8;
+    private final byte ITEMS_SIZE = 9;
 
     private final byte HEAVY_ID = 0;
     private final byte CONST_HP_ID = 1;
@@ -34,14 +32,15 @@ public class PlayerStatsManager {
         stats = new byte[STATS_SIZE];
         prevAmmo = RAP_BULLETS_ID;
 
-        items[NORMAL_BULLETS_ID] = 3;
+        items[NORMAL_BULLETS_ID] = 99;
         items[PLASMA_BULLETS_ID] = 0;
         items[DOUBLE_NORMAL_ID] = 0;
-        items[DOUBLE_PLASMA_ID] = 10;
+        items[DOUBLE_PLASMA_ID] = 0;
         items[AP_BULLETS_ID] = 0;
-        items[RAP_BULLETS_ID] = 2;
-        items[ENERGY_DRINKS_ID] = 3;
-        items[REPAIR_TOOLKIT_ID] = 3;
+        items[RAP_BULLETS_ID] = 0;
+        items[ENERGY_DRINKS_ID] = 2;
+        items[REPAIR_TOOLKIT_ID] = 2;
+        items[TIME_STOP_ID] = 2;
 
         stats[HEAVY_ID] = 0;
         stats[CONST_HP_ID] = 5;

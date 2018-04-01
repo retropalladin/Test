@@ -63,7 +63,8 @@ public class Constants {
         public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
         public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
-        public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY | CATEGORY_SPAWN;
+        public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_WALL | CATEGORY_TANK_ON_MOVE | CATEGORY_ENEMY_TANK;
+        public static final short ENEMY_TANK_MOVE_MASK = CATEGORY_WALL | CATEGORY_TANK_ON_MOVE | CATEGORY_ALLY_TANK;
     }
 
     public final class Sounds {

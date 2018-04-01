@@ -27,8 +27,12 @@ import com.test.game.utils.PlayerStatsManager;
 
 public class Level {
 
-    public boolean needPlayerRespawn = false;
-    public boolean needPlayerDispawn = false;
+    private float freezeEnemyTime = 0;
+    private boolean needEnemyFreeze = false;
+    private boolean needEnemyUnfreeze = false;
+
+    private boolean needPlayerRespawn = false;
+    private boolean needPlayerDispawn = false;
     public short allySpawnX;
     public short allySpawnY;
 
@@ -43,6 +47,8 @@ public class Level {
 
     public PlayerTank playerTank;
     public PlayerTank deadPlayerTank;
+    public NpcTank tmpNpcTank;
+    public Bullet tmpBullet;
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
@@ -168,8 +174,8 @@ public class Level {
         //spawnGridDefinedWall((short)20,(short)20,WallType.WOODEN_WALL);
         //spawnGridDefinedWall((short)20,(short)21,WallType.WOODEN_WALL);
         //spawnGridDefinedWall((short)20,(short)22,WallType.WOODEN_WALL);
-        objectsMatrix[5][5] = Constants.Physics.CATEGORY_SPAWN;
-        spawnGridDefinedNpcTank((short)5,(short)5, (byte) 5, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, true);
+        objectsMatrix[5][7] = Constants.Physics.CATEGORY_SPAWN;
+        spawnGridDefinedNpcTank((short)7,(short)5, (byte) 5, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, false);
         }
 
 
@@ -532,10 +538,41 @@ public class Level {
         frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
         if(needPlayerRespawn)
             respawnPlayer();
+        endEnemyFreeze(frameTime);
+        if(needEnemyUnfreeze){
+            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
+            {
+                tmpBullet = aliveBullets.get(aliveIterator);
+                if(tmpBullet.getCategory() == Constants.Physics.CATEGORY_ENEMY_BULLET)
+                    tmpBullet.launch(tmpBullet.direction);
+            }
+            needEnemyUnfreeze = false;
+        }
+
         if(playerTank != null)
             playerTank.update(frameTime);
+
+        if(needEnemyFreeze){
+            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
+            {
+                tmpBullet = aliveBullets.get(aliveIterator);
+                if(tmpBullet.getCategory() == Constants.Physics.CATEGORY_ENEMY_BULLET)
+                    tmpBullet.getBody().setLinearVelocity(Vector2.Zero);
+            }
+            needEnemyFreeze = false;
+        }
+
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
-            aliveNpcTanks.get(aliveIterator).update(frameTime);
+            aliveNpcTanks.get(aliveIterator).update(frameTime, freezeEnemyTime > 0);
+
+        String s = "";
+        for(int i = 0; i <= matrixHeight; i++)
+        {
+            for(int j = 0; j <= matrixWidth; j++)
+                s+=objectsMatrix[i][j] + " ";
+            s+="\n";
+        }
+        Gdx.app.log("",s);
         accumulator += frameTime;
         while (accumulator >= Constants.Physics.PHYSICS_STEP) {
             world.step(Constants.Physics.PHYSICS_STEP,
@@ -543,6 +580,21 @@ public class Level {
                     Constants.Physics.POSITION_ITERATIONS);
             removeDead();
             accumulator -= Constants.Physics.PHYSICS_STEP;
+        }
+    }
+
+    public void beginEnemyFreeze(float freezeEnemyTime){
+        this.freezeEnemyTime = freezeEnemyTime;
+        needEnemyFreeze = true;
+    }
+
+    private void endEnemyFreeze(float delta){
+        if(freezeEnemyTime > 0) {
+            freezeEnemyTime -= delta;
+            if(freezeEnemyTime <= 0) {
+                needEnemyUnfreeze = true;
+                freezeEnemyTime = 0;
+            }
         }
     }
 

@@ -3,7 +3,7 @@ package com.test.game.entities;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
-import com.test.game.Level;
+import com.test.game.level.Level;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;

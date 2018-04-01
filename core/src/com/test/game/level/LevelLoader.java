@@ -1,7 +1,6 @@
-package com.test.game.utils;
+package com.test.game.level;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.test.game.Level;
+import com.test.game.level.Level;
 
 public class LevelLoader {
     public static Level load(String levelName) {

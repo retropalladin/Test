@@ -1,15 +1,14 @@
 package com.test.game.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.test.game.Level;
-import com.test.game.utils.LevelInputManager;
+import com.test.game.level.Level;
+import com.test.game.level.LevelInputManager;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankMoveState;
 import com.test.game.utils.Enums.TankShootState;
-import com.test.game.utils.PlayerStatsManager;
+import com.test.game.player.PlayerStatsManager;
 
 public class PlayerTank extends NpcTank {
 

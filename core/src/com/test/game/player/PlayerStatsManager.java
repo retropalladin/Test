@@ -1,4 +1,4 @@
-package com.test.game.utils;
+package com.test.game.player;
 
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.TankType;

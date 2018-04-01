@@ -1,9 +1,9 @@
-package com.test.game.utils;
+package com.test.game.screens;
 
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.test.game.screens.GameplayScreen;
+import com.test.game.utils.Assets;
 
 public class ScreensManager {
 

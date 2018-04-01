@@ -10,6 +10,7 @@ public class Constants {
         }
         public static final boolean DEBUG = true;
         public static final boolean DEBUG_PHYSICS_RENDER = true;
+        public static final boolean DEBUG_OVERLAYS_RENDER = true;
     }
     public final class Settings {
         private Settings() {

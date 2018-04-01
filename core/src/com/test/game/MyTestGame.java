@@ -1,7 +1,7 @@
 package com.test.game;
 
 import com.badlogic.gdx.Game;
-import com.test.game.utils.ScreensManager;
+import com.test.game.screens.ScreensManager;
 
 public class MyTestGame extends Game {
 

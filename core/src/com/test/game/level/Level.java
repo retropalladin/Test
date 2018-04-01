@@ -1,6 +1,5 @@
-package com.test.game;
+package com.test.game.level;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -20,9 +19,8 @@ import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.Enums.WallType;
-import com.test.game.utils.LevelContactListener;
 import com.test.game.utils.MaterialEntity;
-import com.test.game.utils.PlayerStatsManager;
+import com.test.game.player.PlayerStatsManager;
 
 
 public class Level {

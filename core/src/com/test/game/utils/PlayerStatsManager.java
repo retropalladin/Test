@@ -1,6 +1,8 @@
 package com.test.game.utils;
 
 
+import com.badlogic.gdx.Gdx;
+import com.sun.org.apache.xpath.internal.operations.String;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.TankType;
 
@@ -23,19 +25,19 @@ public class PlayerStatsManager {
     public short[] items;
     public byte[] stats;
 
-    public byte currentPlayerAmmo;
+    private byte currentPlayerAmmo;
     private byte prevAmmo;
     private byte currentAllyAmmo;
 
     public PlayerStatsManager(){
         items = new short[ITEMS_SIZE];
         stats = new byte[STATS_SIZE];
-        prevAmmo = NORMAL_BULLETS_ID;
+        prevAmmo = RAP_BULLETS_ID;
 
-        items[NORMAL_BULLETS_ID] = 99;
+        items[NORMAL_BULLETS_ID] = 3;
         items[PLASMA_BULLETS_ID] = 0;
         items[DOUBLE_NORMAL_ID] = 0;
-        items[DOUBLE_PLASMA_ID] = 2;
+        items[DOUBLE_PLASMA_ID] = 10;
         items[AP_BULLETS_ID] = 0;
         items[RAP_BULLETS_ID] = 2;
         items[ENERGY_DRINKS_ID] = 3;
@@ -50,6 +52,7 @@ public class PlayerStatsManager {
 
     public void updateMarkers(){
         currentAllyAmmo = RAP_BULLETS_ID;
+        currentPlayerAmmo = prevAmmo;
     }
 
     public byte getConstHp(){return stats[CONST_HP_ID];}
@@ -61,7 +64,7 @@ public class PlayerStatsManager {
             return TankType.HEAVY_TANK;
     }
 
-    public AmmoType getPrevLevelAmmoType() {
+    public AmmoType getPrevLevelAmmo() {
         switch (prevAmmo) {
             case RAP_BULLETS_ID:
                 if(items[RAP_BULLETS_ID] > 0) {
@@ -93,9 +96,55 @@ public class PlayerStatsManager {
                 return AmmoType.NORMAL_BULLET;
             default:
                 prevAmmo = RAP_BULLETS_ID;
-                return getPrevLevelAmmoType();
+                return getPrevLevelAmmo();
         }
     }
+
+
+    public void setCurrentPlayerAmmo(byte currentPlayerAmmo){
+        switch (currentPlayerAmmo) {
+            case RAP_BULLETS_ID:
+                if(items[RAP_BULLETS_ID] > 0){
+                    this.currentPlayerAmmo = RAP_BULLETS_ID;
+                    this.prevAmmo = currentPlayerAmmo;
+                    break;
+                }
+            case AP_BULLETS_ID:
+                if(items[AP_BULLETS_ID] > 0){
+                    this.currentPlayerAmmo = AP_BULLETS_ID;
+                    this.prevAmmo = currentPlayerAmmo;
+                    break;
+                }
+            case DOUBLE_PLASMA_ID:
+                if(items[DOUBLE_PLASMA_ID] > 0) {
+                    this.currentPlayerAmmo = DOUBLE_PLASMA_ID;
+                    this.prevAmmo = currentPlayerAmmo;
+                    break;
+                }
+            case DOUBLE_NORMAL_ID:
+                if(items[DOUBLE_NORMAL_ID] > 0){
+                    this.currentPlayerAmmo = DOUBLE_NORMAL_ID;
+                    this.prevAmmo = currentPlayerAmmo;
+                    break;
+                }
+            case PLASMA_BULLETS_ID:
+                if(items[PLASMA_BULLETS_ID]> 0){
+                    this.currentPlayerAmmo = PLASMA_BULLETS_ID;
+                    this.prevAmmo = currentPlayerAmmo;
+                    break;
+                }
+            case NORMAL_BULLETS_ID:
+                this.currentPlayerAmmo = NORMAL_BULLETS_ID;
+                this.prevAmmo = currentPlayerAmmo;
+                break;
+            default:
+                currentPlayerAmmo = RAP_BULLETS_ID;
+                setCurrentPlayerAmmo(currentPlayerAmmo);
+        }
+    }
+
+    public void setRealHp(byte realHp){stats[REAL_HP_ID] = realHp;}
+
 
     public AmmoType shootCurrentAllyAmmo(){
         switch(currentAllyAmmo){
@@ -135,41 +184,33 @@ public class PlayerStatsManager {
         }
     }
 
-    public void setCurrentPlayerAmmo(byte currentPlayerAmmo){
-        switch (currentPlayerAmmo) {
+    public AmmoType shootCurrentPlayerAmmo(){
+        setCurrentPlayerAmmo(currentPlayerAmmo);
+        switch(currentPlayerAmmo){
             case RAP_BULLETS_ID:
-                if(items[RAP_BULLETS_ID] > 0){
-                    this.currentPlayerAmmo = currentPlayerAmmo;
-                    this.prevAmmo = currentPlayerAmmo;
-                }
+                items[RAP_BULLETS_ID]--;
+                return AmmoType.RAP_BULLET;
             case AP_BULLETS_ID:
-                if(items[AP_BULLETS_ID] > 0){
-                    this.currentPlayerAmmo = currentPlayerAmmo;
-                    this.prevAmmo = currentPlayerAmmo;
-                }
+                items[AP_BULLETS_ID]--;
+                return AmmoType.AP_BULLET;
             case DOUBLE_PLASMA_ID:
-                if(items[DOUBLE_PLASMA_ID] > 0) {
-                    this.currentPlayerAmmo = currentPlayerAmmo;
-                    this.prevAmmo = currentPlayerAmmo;
-                }
+                items[DOUBLE_PLASMA_ID]--;
+                return AmmoType.DOUBLE_PLASMA_BULLET;
             case DOUBLE_NORMAL_ID:
-                if(items[DOUBLE_NORMAL_ID] > 0){
-                    this.currentPlayerAmmo = currentPlayerAmmo;
-                    this.prevAmmo = currentPlayerAmmo;
-                }
+                items[DOUBLE_NORMAL_ID]--;
+                return AmmoType.DOUBLE_NORMAL_BULLET;
             case PLASMA_BULLETS_ID:
-                if(items[PLASMA_BULLETS_ID]> 0){
-                    this.currentPlayerAmmo = currentPlayerAmmo;
-                    this.prevAmmo = currentPlayerAmmo;
-                }
+                items[PLASMA_BULLETS_ID]--;
+                return AmmoType.PLASMA_BULLET;
             case NORMAL_BULLETS_ID:
-                this.currentPlayerAmmo = currentPlayerAmmo;
-                this.prevAmmo = currentPlayerAmmo;
+                if(items[NORMAL_BULLETS_ID] > 0) {
+                    items[NORMAL_BULLETS_ID]--;
+                    return AmmoType.NORMAL_BULLET;
+                }else{
+                    return null;
+                }
             default:
-                currentPlayerAmmo = RAP_BULLETS_ID;
-                setCurrentPlayerAmmo(currentPlayerAmmo);
+                return null;
         }
     }
-
-    public void setRealHp(byte realHp){stats[REAL_HP_ID] = realHp;}
 }

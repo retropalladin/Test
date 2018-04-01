@@ -6,11 +6,9 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.Level;
 import com.test.game.utils.LevelInputManager;
 import com.test.game.utils.Constants;
-import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankMoveState;
 import com.test.game.utils.Enums.TankShootState;
-import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.PlayerStatsManager;
 
 public class PlayerTank extends NpcTank {
@@ -28,7 +26,7 @@ public class PlayerTank extends NpcTank {
 
     public void configurePlayerTankType(PlayerStatsManager playerStatsManager, Direction direction) {
         this.playerStatsManager = playerStatsManager;
-        this.configureNpcTankType(Constants.Physics.CATEGORY_ALLY_TANK, playerStatsManager.getConstHp(), playerStatsManager.getTankType(), playerStatsManager.getPrevLevelAmmoType(),direction);
+        this.configureNpcTankType(Constants.Physics.CATEGORY_ALLY_TANK, playerStatsManager.getConstHp(), playerStatsManager.getTankType(), playerStatsManager.getPrevLevelAmmo(),direction);
     }
 
     public void update(float delta) {
@@ -73,8 +71,40 @@ public class PlayerTank extends NpcTank {
     }
 
     @Override
-    protected boolean beginShoot(){
-        return true;
+    protected boolean beginShoot() {
+        ammoType = playerStatsManager.shootCurrentPlayerAmmo();
+        if (ammoType != null){
+            switch (ammoType) {
+                case NORMAL_BULLET:
+                    reloadTime = Bullet.NORMAL_BULLET_RELOAD;
+                    level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    break;
+                case PLASMA_BULLET:
+                    reloadTime = Bullet.PLASMA_BULLET_RELOAD;
+                    level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    break;
+                case AP_BULLET:
+                    reloadTime = Bullet.AP_NORMAL_BULLET_RELOAD;
+                    level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    break;
+                case RAP_BULLET:
+                    reloadTime = Bullet.RAP_BULLET_RELOAD;
+                    level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    break;
+                case DOUBLE_NORMAL_BULLET:
+                    reloadTime = Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
+                    level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    break;
+                case DOUBLE_PLASMA_BULLET:
+                    reloadTime = Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
+                    level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    break;
+            }
+            shootState = TankShootState.RELOADING;
+           return true;
+        } else {
+            return false;
+        }
     }
 
     public void respawn(short posX, short posY){

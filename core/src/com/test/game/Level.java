@@ -527,8 +527,6 @@ public class Level {
     // end collisions
     // updating level
     public void update(float delta) {
-
-
         frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
 
         updateLevelState(frameTime);
@@ -551,6 +549,7 @@ public class Level {
 
     private void updateLevelState(float frameTime) {
         checkWinCondition();
+        checkFailCondition();
         endEnemyFreeze(frameTime);
         if(needEnemyUnfreeze){
             for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
@@ -571,6 +570,9 @@ public class Level {
     }
 
     private void checkWinCondition(){
+    }
+
+    private void checkFailCondition(){
     }
 
     private void respawnPlayer(){
@@ -605,9 +607,7 @@ public class Level {
             deadPlayerTank = playerTank;
             playerTank = null;
             needPlayerDispawn = false;
-            if(deadPlayerTank.playerStatsManager.getLives() < 0 && !levelWin)
-                levelFail = true;
-            else
+            if(deadPlayerTank.playerStatsManager.getLives() >= 0 )
                 needPlayerRespawn = true;
         }
         for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){

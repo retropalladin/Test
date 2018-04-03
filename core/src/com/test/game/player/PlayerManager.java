@@ -3,23 +3,25 @@ package com.test.game.player;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.TankType;
 
-public class PlayerStatsManager {
-    private final byte NORMAL_BULLETS_ID = 0;
-    private final byte PLASMA_BULLETS_ID = 1;
-    private final byte DOUBLE_NORMAL_ID = 2;
-    private final byte DOUBLE_PLASMA_ID = 3;
-    private final byte AP_BULLETS_ID = 4;
-    private final byte RAP_BULLETS_ID = 5;
-    private final byte ENERGY_DRINKS_ID = 6;
-    private final byte REPAIR_TOOLKIT_ID = 7;
-    private final byte TIME_STOP_ID = 8;
-    private final byte ITEMS_SIZE = 9;
+public class PlayerManager {
+    private String levelName;
 
-    private final byte HEAVY_ID = 0;
-    private final byte LIVES_ID = 1;
-    private final byte CONST_HP_ID = 2;
-    private final byte REAL_HP_ID = 3;
-    private final byte STATS_SIZE = 4;
+    public static final byte NORMAL_BULLETS_ID = 0;
+    public static final byte PLASMA_BULLETS_ID = 1;
+    public static final byte DOUBLE_NORMAL_ID = 2;
+    public static final byte DOUBLE_PLASMA_ID = 3;
+    public static final byte AP_BULLETS_ID = 4;
+    public static final byte RAP_BULLETS_ID = 5;
+    public static final byte ENERGY_DRINKS_ID = 6;
+    public static final byte REPAIR_TOOLKIT_ID = 7;
+    public static final byte TIME_STOP_ID = 8;
+    public static final byte ITEMS_SIZE = 9;
+
+    public static final byte HEAVY_ID = 0;
+    public static final byte LIVES_ID = 1;
+    public static final byte CONST_HP_ID = 2;
+    public static final byte REAL_HP_ID = 3;
+    public static final byte STATS_SIZE = 4;
 
     public short[] items;
     public byte[] stats;
@@ -28,27 +30,34 @@ public class PlayerStatsManager {
     private byte prevAmmo;
     private byte currentAllyAmmo;
 
-    public PlayerStatsManager(){
+    private PlayerManager(String levelName){
+        if(levelName == null)
+            throw new NullPointerException("Null levelName in PlayerManager ctor");
+        this.levelName = levelName;
         items = new short[ITEMS_SIZE];
         stats = new byte[STATS_SIZE];
         prevAmmo = RAP_BULLETS_ID;
+    }
 
-        items[NORMAL_BULLETS_ID] = 99;
-        items[PLASMA_BULLETS_ID] = 0;
-        items[DOUBLE_NORMAL_ID] = 0;
-        items[DOUBLE_PLASMA_ID] = 0;
-        items[AP_BULLETS_ID] = 0;
-        items[RAP_BULLETS_ID] = 0;
-        items[ENERGY_DRINKS_ID] = 2;
-        items[REPAIR_TOOLKIT_ID] = 2;
-        items[TIME_STOP_ID] = 2;
+    public static PlayerManager debugPlayerManager(){
+        PlayerManager playerManager = new PlayerManager("Debug Level");
+        playerManager.items[NORMAL_BULLETS_ID] = 99;
+        playerManager.items[PLASMA_BULLETS_ID] = 0;
+        playerManager.items[DOUBLE_NORMAL_ID] = 0;
+        playerManager.items[DOUBLE_PLASMA_ID] = 0;
+        playerManager.items[AP_BULLETS_ID] = 0;
+        playerManager.items[RAP_BULLETS_ID] = 0;
+        playerManager.items[ENERGY_DRINKS_ID] = 2;
+        playerManager.items[REPAIR_TOOLKIT_ID] = 2;
+        playerManager.items[TIME_STOP_ID] = 2;
 
-        stats[HEAVY_ID] = 0;
-        stats[LIVES_ID] = 4;
-        stats[CONST_HP_ID] = 5;
-        stats[REAL_HP_ID] = 5;
+        playerManager.stats[HEAVY_ID] = 0;
+        playerManager.stats[LIVES_ID] = 1;
+        playerManager.stats[CONST_HP_ID] = 5;
+        playerManager.stats[REAL_HP_ID] = 5;
 
-        updateMarkers();
+        playerManager.updateMarkers();
+        return playerManager;
     }
 
     public void updateMarkers(){
@@ -63,6 +72,10 @@ public class PlayerStatsManager {
 
     public byte getLives(){
         return stats[LIVES_ID];
+    }
+
+    public String getLevelName(){
+        return levelName;
     }
 
     public TankType getTankType(){
@@ -114,36 +127,36 @@ public class PlayerStatsManager {
             case RAP_BULLETS_ID:
                 if(items[RAP_BULLETS_ID] > 0){
                     this.currentPlayerAmmo = RAP_BULLETS_ID;
-                    this.prevAmmo = currentPlayerAmmo;
+                    this.prevAmmo = RAP_BULLETS_ID;
                     break;
                 }
             case AP_BULLETS_ID:
                 if(items[AP_BULLETS_ID] > 0){
                     this.currentPlayerAmmo = AP_BULLETS_ID;
-                    this.prevAmmo = currentPlayerAmmo;
+                    this.prevAmmo = AP_BULLETS_ID;
                     break;
                 }
             case DOUBLE_PLASMA_ID:
                 if(items[DOUBLE_PLASMA_ID] > 0) {
                     this.currentPlayerAmmo = DOUBLE_PLASMA_ID;
-                    this.prevAmmo = currentPlayerAmmo;
+                    this.prevAmmo = DOUBLE_PLASMA_ID;
                     break;
                 }
             case DOUBLE_NORMAL_ID:
                 if(items[DOUBLE_NORMAL_ID] > 0){
                     this.currentPlayerAmmo = DOUBLE_NORMAL_ID;
-                    this.prevAmmo = currentPlayerAmmo;
+                    this.prevAmmo = DOUBLE_NORMAL_ID;
                     break;
                 }
             case PLASMA_BULLETS_ID:
                 if(items[PLASMA_BULLETS_ID]> 0){
                     this.currentPlayerAmmo = PLASMA_BULLETS_ID;
-                    this.prevAmmo = currentPlayerAmmo;
+                    this.prevAmmo = PLASMA_BULLETS_ID;
                     break;
                 }
             case NORMAL_BULLETS_ID:
                 this.currentPlayerAmmo = NORMAL_BULLETS_ID;
-                this.prevAmmo = currentPlayerAmmo;
+                this.prevAmmo = NORMAL_BULLETS_ID;
                 break;
             default:
                 currentPlayerAmmo = RAP_BULLETS_ID;

@@ -12,21 +12,25 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.test.game.entities.Bullet;
 import com.test.game.entities.NpcTank;
-import com.test.game.entities.PlayerTank;
+import com.test.game.player.PlayerTank;
 import com.test.game.entities.Wall;
+import com.test.game.level.endCheckers.LevelEndCheckerKAorDie;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.Enums.WallType;
+import com.test.game.utils.LevelEndChecker;
 import com.test.game.utils.MaterialEntity;
-import com.test.game.player.PlayerStatsManager;
+import com.test.game.player.PlayerManager;
+import com.test.game.utils.Utils;
 
 
 public class Level {
 
     public boolean levelFail = false;
     public boolean levelWin = false;
+    private LevelEndChecker levelEndChecker;
 
     private float freezeEnemyTime = 0;
     private boolean needEnemyFreeze = false;
@@ -38,7 +42,7 @@ public class Level {
     public short allySpawnY;
 
     public short[][] objectsMatrix = null; //warning : she is reversed. coord gridX = 0, gridY = 0 is equal to objectMatrix[gridY,gridX] so gridY axis is reversed.
-    public short[][] landMatrix = null;
+    public short[][] landMatrix = null; //warning : she is too
 
     public short matrixWidth = 0;
     public short matrixHeight = 0;
@@ -158,7 +162,10 @@ public class Level {
         for(int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
                 objectsMatrix[i][j] = Constants.Physics.CATEGORY_EMPTY;
-                landMatrix[i][j] = Constants.Physics.LAND_GROUND;
+                if(Utils.random.nextBoolean())
+                    landMatrix[i][j] = Constants.Physics.LAND_GROUND;
+                else
+                    landMatrix[i][j] = Constants.Physics.LAND_SAND;
             }
         matrixHeight = (short) (height - 1);
         levelHeight = (height - 2) * Constants.Physics.CELL_SIZE;
@@ -168,32 +175,29 @@ public class Level {
         allySpawnX = 1;
         allySpawnY = 1;
         objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_SPAWN;
-        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, new PlayerStatsManager(), Direction.UP);
-
-        //spawnGridDefinedWall((short)20,(short)20,WallType.WOODEN_WALL);
-        //spawnGridDefinedWall((short)20,(short)21,WallType.WOODEN_WALL);
-        //spawnGridDefinedWall((short)20,(short)22,WallType.WOODEN_WALL);
+        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, PlayerManager.debugPlayerManager(), Direction.UP);
         objectsMatrix[5][7] = Constants.Physics.CATEGORY_SPAWN;
         spawnGridDefinedNpcTank((short)7,(short)5, (byte) 5, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, false);
-        }
+        levelEndChecker = new LevelEndCheckerKAorDie();
+    }
 
 
     //player
-    public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, PlayerStatsManager playerStatsManager, Direction direction){
+    public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, PlayerManager playerManager, Direction direction){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
             objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN, posY * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN,
-                    playerStatsManager, direction);
+                    playerManager, direction);
             playerTank.setGridCoordinates(posX, posY);
             return playerTank;
         }
         return null;
     }
 
-    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, PlayerStatsManager playerStatsManager, Direction direction) {
+    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, PlayerManager playerManager, Direction direction) {
         PlayerTank playerTank = spawnPlayerTank(posX,posY);
-        configurePlayerTankFixture(playerStatsManager.getTankType());
-        playerTank.configurePlayerTankType(playerStatsManager, direction);
+        configurePlayerTankFixture(playerManager.getTankType());
+        playerTank.configurePlayerTankType(playerManager, direction);
         playerTank.createFixture(tankFixtureDef);
         return playerTank;
     }
@@ -467,6 +471,8 @@ public class Level {
     // end bullet
     // collisions
     public void bulletAndTankCollisionProcedure(Bullet bullet, NpcTank tank) {
+        if(tank == playerTank && ((PlayerTank)tank).respawnInvisibility != 0)
+            return;
         switch (bullet.type){
             case NORMAL_BULLET:
                 tank.takeDamage(Bullet.NORMAL_BULLET_DAMAGE);
@@ -546,8 +552,8 @@ public class Level {
     }
 
     private void updateLevelState(float frameTime) {
-        checkWinCondition();
-        checkFailCondition();
+        levelWin = levelEndChecker.checkWinCondition(this);
+        levelFail = levelEndChecker.checkFailCondition(this);
         endEnemyFreeze(frameTime);
         if(needEnemyUnfreeze){
             for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
@@ -567,14 +573,8 @@ public class Level {
             respawnPlayer();
     }
 
-    private void checkWinCondition(){
-    }
-
-    private void checkFailCondition(){
-    }
-
     private void respawnPlayer(){
-        if(objectsMatrix[allySpawnY][allySpawnX] == Constants.Physics.CATEGORY_SPAWN) {
+        if(objectsMatrix[allySpawnY][allySpawnX] == Constants.Physics.CATEGORY_SPAWN && !levelFail) {
             playerTank = deadPlayerTank;
             objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
             playerTank.respawn(allySpawnX,allySpawnY);
@@ -602,10 +602,11 @@ public class Level {
     public void removeDead(){
         if(needPlayerDispawn){
             playerTank.getBody().setTransform(Constants.Physics.FAR_FAR,Constants.Physics.FAR_FAR,0);
+            playerTank.playerManager.stats[PlayerManager.LIVES_ID]--;
             deadPlayerTank = playerTank;
             playerTank = null;
             needPlayerDispawn = false;
-            if(deadPlayerTank.playerStatsManager.getLives() >= 0 )
+            if(deadPlayerTank.playerManager.getLives() >= 0 )
                 needPlayerRespawn = true;
         }
         for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){

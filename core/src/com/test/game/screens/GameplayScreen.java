@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.test.game.level.Level;
 import com.test.game.level.LevelInputManager;
 import com.test.game.level.LevelRenderer;
+import com.test.game.player.PlayerManager;
 import com.test.game.utils.Constants;
 import com.test.game.level.LevelLoader;
 
@@ -57,8 +58,8 @@ public class GameplayScreen implements Screen {
         ScreensManager.instance.disposeScreens();
     }
 
-    public void resetScreen(String levelName) {
-        setupLevel(levelName);
+    public void resetScreen(PlayerManager playerManager) {
+        setupLevel(playerManager);
         levelRenderer.presetCameraPosition(level);
     }
 
@@ -69,10 +70,10 @@ public class GameplayScreen implements Screen {
         batch.dispose();
     }
 
-    private void setupLevel(String levelName) {
+    private void setupLevel(PlayerManager playerManager) {
         if(Constants.Developing.DEBUG)
             level = Level.debugLevel();
         else
-            level = LevelLoader.load(levelName);
+            level = LevelLoader.load(null);
     }
 }

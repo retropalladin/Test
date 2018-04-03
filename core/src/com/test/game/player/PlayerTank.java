@@ -1,35 +1,36 @@
-package com.test.game.entities;
+package com.test.game.player;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.test.game.entities.Bullet;
+import com.test.game.entities.NpcTank;
 import com.test.game.level.Level;
 import com.test.game.level.LevelInputManager;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankMoveState;
 import com.test.game.utils.Enums.TankShootState;
-import com.test.game.player.PlayerStatsManager;
 
 public class PlayerTank extends NpcTank {
 
-
-    public PlayerStatsManager playerStatsManager;
+    public float respawnInvisibility;
+    public PlayerManager playerManager;
 
     private Direction inputDirection;
-    private float respawnInvis;
 
     public PlayerTank(Level level, Body body) {
         super.init(level, body);
         moveState = TankMoveState.WAITING;
+        respawnInvisibility = Constants.Settings.RESPAWN_INVIS;
     }
 
-    public void configurePlayerTankType(PlayerStatsManager playerStatsManager, Direction direction) {
-        this.playerStatsManager = playerStatsManager;
-        this.configureNpcTankType(Constants.Physics.CATEGORY_ALLY_TANK, playerStatsManager.getConstHp(), playerStatsManager.getTankType(), playerStatsManager.getPrevLevelAmmo(),direction);
+    public void configurePlayerTankType(PlayerManager playerManager, Direction direction) {
+        this.playerManager = playerManager;
+        this.configureNpcTankType(Constants.Physics.CATEGORY_ALLY_TANK, playerManager.getConstHp(), playerManager.getTankType(), playerManager.getPrevLevelAmmo(),direction);
     }
 
     public void update(float delta) {
-        if(respawnInvis > 0){
+        if(respawnInvisibility > 0){
             endRespawn(delta);
         }
 
@@ -63,12 +64,13 @@ public class PlayerTank extends NpcTank {
 
     @Override
     public void takeDamage(byte damage) {
-
+        decreaseHp(damage);
+        playerManager.setRealHp(hp);
     }
 
     @Override
     protected boolean beginShoot() {
-        ammoType = playerStatsManager.shootCurrentPlayerAmmo();
+        ammoType = playerManager.shootCurrentPlayerAmmo();
         if (ammoType != null){
             switch (ammoType) {
                 case NORMAL_BULLET:
@@ -111,16 +113,18 @@ public class PlayerTank extends NpcTank {
         moveDestination.y = body.getPosition().y;
         rotatePosition = rotateDestination;
         reloadTime = 0;
-        respawnInvis = Constants.Settings.RESPAWN_INVIS;
+        respawnInvisibility = Constants.Settings.RESPAWN_INVIS;
         moveState = TankMoveState.WAITING;
         shootState = TankShootState.READY;
+        this.setHp(playerManager.getConstHp());
+        playerManager.setRealHp(hp);
+        this.setAlive(true);
     }
 
     public void endRespawn(float delta) {
-        respawnInvis -= delta;
-        if(respawnInvis <=0) {
-            this.setAlive(true);
-            this.setHp(playerStatsManager.getConstHp());
+        respawnInvisibility -= delta;
+        if(respawnInvisibility <=0) {
+            respawnInvisibility = 0;
         }
     }
 }

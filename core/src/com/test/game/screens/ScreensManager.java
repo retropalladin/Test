@@ -17,7 +17,7 @@ public class ScreensManager {
     }
 
     public Screen getStartScreen(){
-        gameplayScreen.resetScreen(null); //here Player should be. LevelName will be incapsulated into Player.
+        gameplayScreen.resetScreen(null); //here PlayerManager should be. LevelName will be incapsulated into PlayerManager.
         return gameplayScreen;
     }
 

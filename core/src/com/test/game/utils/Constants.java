@@ -1,7 +1,5 @@
 package com.test.game.utils;
 
-import com.badlogic.gdx.math.Vector2;
-
 public class Constants {
     private Constants() {}
 

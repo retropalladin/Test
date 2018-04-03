@@ -32,7 +32,13 @@ public class Level {
     public boolean levelWin = false;
     private LevelEndChecker levelEndChecker;
 
+    private float speedUpPlayerTime = 0;
+    private boolean speedUpPlayer = false;
+    private boolean needPlayerSpeedUp;
+    private boolean needPlayerSpeedDown;
+
     private float freezeEnemyTime = 0;
+    private boolean enemyFreeze = false;
     private boolean needEnemyFreeze = false;
     private boolean needEnemyUnfreeze = false;
 
@@ -554,13 +560,32 @@ public class Level {
     private void updateLevelState(float frameTime) {
         levelWin = levelEndChecker.checkWinCondition(this);
         levelFail = levelEndChecker.checkFailCondition(this);
+
+        if(playerTank  != null)
+            endPlayerSpeedUp(frameTime);
         endEnemyFreeze(frameTime);
+
+        if(needPlayerSpeedDown){
+            playerTank.setSpeedNormal();
+            needPlayerSpeedDown = false;
+            speedUpPlayer = false;
+        }
         if(needEnemyUnfreeze){
             for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
                 aliveBullets.get(aliveIterator).unfreeze();
             for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
                 aliveNpcTanks.get(aliveIterator).unfreeze();
             needEnemyUnfreeze = false;
+            enemyFreeze = false;
+        }
+
+        if(needPlayerSpeedUp){
+            if(playerTank != null)
+                playerTank.setSpeedUp(1.2f); // this val is calculated depending on PlayerManager
+            else
+                deadPlayerTank.setSpeedUp(1.2f); // this val is calculated depending on PlayerManager
+            needPlayerSpeedUp = false;
+            speedUpPlayer = true;
         }
         if(needEnemyFreeze){
             for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
@@ -568,6 +593,7 @@ public class Level {
             for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
                 aliveNpcTanks.get(aliveIterator).freeze();
             needEnemyFreeze = false;
+            enemyFreeze = true;
         }
         if(needPlayerRespawn)
             respawnPlayer();
@@ -583,14 +609,30 @@ public class Level {
         }
     }
 
-    public void beginEnemyFreeze(float freezeEnemyTime){
+    public void beginPlayerSpeedUp(){
+        if(this.speedUpPlayerTime == 0)
+            needPlayerSpeedUp = true;
+        this.speedUpPlayerTime = 20; // this val is calculated depending on PlayerManager
+    }
+
+    public void endPlayerSpeedUp(float delta){
+        if(speedUpPlayer) {
+            speedUpPlayerTime -= delta;
+            if(speedUpPlayerTime <= 0){
+                needPlayerSpeedDown = true;
+                speedUpPlayerTime = 0;
+            }
+        }
+    }
+
+    public void beginEnemyFreeze(){
         if(this.freezeEnemyTime == 0)
             needEnemyFreeze = true;
-        this.freezeEnemyTime = freezeEnemyTime;
+        this.freezeEnemyTime = 20;   // this val is calculated depending on PlayerManager
     }
 
     private void endEnemyFreeze(float delta){
-        if(freezeEnemyTime > 0) {
+        if(enemyFreeze) {
             freezeEnemyTime -= delta;
             if(freezeEnemyTime <= 0) {
                 needEnemyUnfreeze = true;

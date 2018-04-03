@@ -12,7 +12,7 @@ import com.test.game.utils.Enums.TankMoveState;
 import com.test.game.utils.Enums.TankShootState;
 
 public class PlayerTank extends NpcTank {
-
+    
     public float respawnInvisibility;
     public PlayerManager playerManager;
 

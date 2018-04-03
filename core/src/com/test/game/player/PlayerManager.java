@@ -48,7 +48,7 @@ public class PlayerManager {
         playerManager.items[AP_BULLETS_ID] = 0;
         playerManager.items[RAP_BULLETS_ID] = 0;
         playerManager.items[ENERGY_DRINKS_ID] = 2;
-        playerManager.items[REPAIR_TOOLKIT_ID] = 2;
+        playerManager.items[REPAIR_TOOLKIT_ID] = 2; //is not ready yet
         playerManager.items[TIME_STOP_ID] = 2;
 
         playerManager.stats[HEAVY_ID] = 0;

@@ -168,10 +168,10 @@ public class Level {
         for(int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
                 objectsMatrix[i][j] = Constants.Physics.CATEGORY_EMPTY;
-                if(Utils.random.nextBoolean())
+                //if(Utils.random.nextBoolean())
                     landMatrix[i][j] = Constants.Physics.LAND_GROUND;
-                else
-                    landMatrix[i][j] = Constants.Physics.LAND_SAND;
+                //else
+                //    landMatrix[i][j] = Constants.Physics.LAND_SAND;
             }
         matrixHeight = (short) (height - 1);
         levelHeight = (height - 2) * Constants.Physics.CELL_SIZE;
@@ -581,9 +581,9 @@ public class Level {
 
         if(needPlayerSpeedUp){
             if(playerTank != null)
-                playerTank.setSpeedUp(1.2f); // this val is calculated depending on PlayerManager
+                playerTank.setSpeedUp();
             else
-                deadPlayerTank.setSpeedUp(1.2f); // this val is calculated depending on PlayerManager
+                deadPlayerTank.setSpeedUp();
             needPlayerSpeedUp = false;
             speedUpPlayer = true;
         }
@@ -628,7 +628,7 @@ public class Level {
     public void beginEnemyFreeze(){
         if(this.freezeEnemyTime == 0)
             needEnemyFreeze = true;
-        this.freezeEnemyTime = 20;   // this val is calculated depending on PlayerManager
+        this.freezeEnemyTime = 5;   // this val is calculated depending on PlayerManager
     }
 
     private void endEnemyFreeze(float delta){

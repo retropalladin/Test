@@ -1,5 +1,6 @@
 package com.test.game.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.entities.Bullet;
@@ -70,6 +71,7 @@ public class PlayerTank extends NpcTank {
 
     @Override
     protected boolean beginShoot() {
+        level.beginPlayerSpeedUp();
         ammoType = playerManager.shootCurrentPlayerAmmo();
         if (ammoType != null){
             switch (ammoType) {

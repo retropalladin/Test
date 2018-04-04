@@ -1,5 +1,6 @@
 package com.test.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
@@ -35,21 +36,33 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     public static final float TANK_FRICTION = 0f;
     public static final float TANK_RESTITUTION = 0f;
 
-    public static final float TANK_IMPULSE_GROUND = 4.0f;
-    public static final float TANK_IMPULSE_SAND = 3.0f;
+    private static final float SPEED_UP_MUL = 1.4f;
+    private static final float TANK_IMPULSE_GROUND = 4.0f;
+    private static final float TANK_IMPULSE_SAND = 3.0f;
 
-    public static final float LIGHT_TANK_ROTATION_SPEED = 600f;
-    public static final float HEAVY_TANK_ROTATION_SPEED = 500f;
+    private static final float LIGHT_TANK_ROTATION_SPEED = 600f;
+    private static final float HEAVY_TANK_ROTATION_SPEED = 500f;
 
-    public final Vector2 TANK_UP_IMPULSE_GROUND = new Vector2(0, TANK_IMPULSE_GROUND);
-    public final Vector2 TANK_DOWN_IMPULSE_GROUND = new Vector2(0, -TANK_IMPULSE_GROUND);
-    public final Vector2 TANK_RIGHT_IMPULSE_GROUND = new Vector2(TANK_IMPULSE_GROUND, 0);
-    public final Vector2 TANK_LEFT_IMPULSE_GROUND = new Vector2(-TANK_IMPULSE_GROUND, 0);
+    private final Vector2 TANK_UP_IMPULSE_GROUND = new Vector2(0, TANK_IMPULSE_GROUND);
+    private final Vector2 TANK_DOWN_IMPULSE_GROUND = new Vector2(0, -TANK_IMPULSE_GROUND);
+    private final Vector2 TANK_RIGHT_IMPULSE_GROUND = new Vector2(TANK_IMPULSE_GROUND, 0);
+    private final Vector2 TANK_LEFT_IMPULSE_GROUND = new Vector2(-TANK_IMPULSE_GROUND, 0);
 
-    public final Vector2 TANK_UP_IMPULSE_SAND = new Vector2(0, TANK_IMPULSE_SAND);
-    public final Vector2 TANK_DOWN_IMPULSE_SAND = new Vector2(0, -TANK_IMPULSE_SAND);
-    public final Vector2 TANK_RIGHT_IMPULSE_SAND = new Vector2(TANK_IMPULSE_SAND, 0);
-    public final Vector2 TANK_LEFT_IMPULSE_SAND = new Vector2(-TANK_IMPULSE_SAND, 0);
+    private final Vector2 TANK_UP_IMPULSE_GROUND_SU = new Vector2(0, TANK_IMPULSE_GROUND * SPEED_UP_MUL);
+    private final Vector2 TANK_DOWN_IMPULSE_GROUND_SU = new Vector2(0, -TANK_IMPULSE_GROUND * SPEED_UP_MUL);
+    private final Vector2 TANK_RIGHT_IMPULSE_GROUND_SU = new Vector2(TANK_IMPULSE_GROUND * SPEED_UP_MUL, 0);
+    private final Vector2 TANK_LEFT_IMPULSE_GROUND_SU = new Vector2(-TANK_IMPULSE_GROUND * SPEED_UP_MUL, 0);
+
+    private final Vector2 TANK_UP_IMPULSE_SAND = new Vector2(0, TANK_IMPULSE_SAND);
+    private final Vector2 TANK_DOWN_IMPULSE_SAND = new Vector2(0, -TANK_IMPULSE_SAND);
+    private final Vector2 TANK_RIGHT_IMPULSE_SAND = new Vector2(TANK_IMPULSE_SAND, 0);
+    private final Vector2 TANK_LEFT_IMPULSE_SAND = new Vector2(-TANK_IMPULSE_SAND, 0);
+
+
+    private final Vector2 TANK_UP_IMPULSE_SAND_SU = new Vector2(0, TANK_IMPULSE_SAND * SPEED_UP_MUL);
+    private final Vector2 TANK_DOWN_IMPULSE_SAND_SU = new Vector2(0, -TANK_IMPULSE_SAND * SPEED_UP_MUL);
+    private final Vector2 TANK_RIGHT_IMPULSE_SAND_SU = new Vector2(TANK_IMPULSE_SAND * SPEED_UP_MUL, 0);
+    private final Vector2 TANK_LEFT_IMPULSE_SAND_SU = new Vector2(-TANK_IMPULSE_SAND * SPEED_UP_MUL, 0);
     ///////////////////////////////////////////
     /// END CONSTANTS                       ///
     ///////////////////////////////////////////
@@ -65,7 +78,6 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     protected Vector2 moveDestination;
     private Vector2 tmpLinearVelocity;
-    private float speedUp;
     private float deltaX;
     private float deltaY;
 
@@ -90,7 +102,6 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         moveState = TankMoveState.WAITING;
         shootState = TankShootState.READY;
         reloadTime = 0;
-        speedUp = 1;
     }
 
     public void configureNpcTankType(short category, byte hp, TankType tankType, AmmoType ammoType, Direction direction) {
@@ -184,10 +195,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     switch(level.landMatrix[gridY][gridX]){
                         case Constants.Physics.LAND_GROUND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_LEFT_IMPULSE_GROUND : TANK_LEFT_IMPULSE_GROUND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_LEFT_IMPULSE_GROUND_SU : TANK_LEFT_IMPULSE_GROUND, body.getWorldCenter(), true);
                             break;
                         case Constants.Physics.LAND_SAND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_LEFT_IMPULSE_SAND : TANK_LEFT_IMPULSE_SAND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_LEFT_IMPULSE_SAND_SU : TANK_LEFT_IMPULSE_SAND , body.getWorldCenter(), true);
                             break;
                     }
                     gridX--;
@@ -200,10 +211,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     switch(level.landMatrix[gridY][gridX]){
                         case Constants.Physics.LAND_GROUND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_RIGHT_IMPULSE_GROUND : TANK_RIGHT_IMPULSE_GROUND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_RIGHT_IMPULSE_GROUND_SU : TANK_RIGHT_IMPULSE_GROUND, body.getWorldCenter(), true);
                             break;
                         case Constants.Physics.LAND_SAND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_RIGHT_IMPULSE_SAND : TANK_RIGHT_IMPULSE_SAND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_RIGHT_IMPULSE_SAND_SU : TANK_RIGHT_IMPULSE_SAND, body.getWorldCenter(), true);
                             break;
                     }
                     gridX++;
@@ -216,10 +227,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     switch(level.landMatrix[gridY][gridX]){
                         case Constants.Physics.LAND_GROUND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_UP_IMPULSE_GROUND : TANK_UP_IMPULSE_GROUND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_UP_IMPULSE_GROUND_SU : TANK_UP_IMPULSE_GROUND, body.getWorldCenter(), true);
                             break;
                         case Constants.Physics.LAND_SAND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_UP_IMPULSE_SAND : TANK_UP_IMPULSE_SAND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_UP_IMPULSE_SAND_SU : TANK_UP_IMPULSE_SAND , body.getWorldCenter(), true);
                             break;
                     }
                     gridY++;
@@ -232,10 +243,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                     level.objectsMatrix[gridY][gridX] = (short) (Constants.Physics.CATEGORY_TANK_ON_MOVE | prevCategory);
                     switch(level.landMatrix[gridY][gridX]){
                         case Constants.Physics.LAND_GROUND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_DOWN_IMPULSE_GROUND : TANK_DOWN_IMPULSE_GROUND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_DOWN_IMPULSE_GROUND_SU : TANK_DOWN_IMPULSE_GROUND, body.getWorldCenter(), true);
                             break;
                         case Constants.Physics.LAND_SAND:
-                            body.applyLinearImpulse(isSpeedUp ? TANK_DOWN_IMPULSE_SAND : TANK_DOWN_IMPULSE_SAND.scl(speedUp), body.getWorldCenter(), true);
+                            body.applyLinearImpulse(isSpeedUp ? TANK_DOWN_IMPULSE_SAND_SU : TANK_DOWN_IMPULSE_SAND, body.getWorldCenter(), true);
                             break;
                     }
                     gridY--;
@@ -419,16 +430,16 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
         isFreeze = false;
     }
 
-    public void setSpeedUp(float speedUp){
-        if(speedUp > 0) {
-            this.speedUp = speedUp;
+    public void setSpeedUp(){
+        if(!isSpeedUp) {
             isSpeedUp = true;
         }
     }
 
     public void setSpeedNormal() {
-        speedUp = 1;
-        isSpeedUp = false;
+        if(isSpeedUp) {
+            isSpeedUp = false;
+        }
     }
     @Override
     public void setGridCoordinates(short gridX, short gridY){

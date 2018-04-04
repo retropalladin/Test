@@ -1,5 +1,6 @@
 package com.test.game.player;
 
+import com.badlogic.gdx.Gdx;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.TankType;
 
@@ -37,6 +38,7 @@ public class PlayerManager {
         items = new short[ITEMS_SIZE];
         stats = new byte[STATS_SIZE];
         prevAmmo = RAP_BULLETS_ID;
+        currentAllyAmmo = RAP_BULLETS_ID;
     }
 
     public static PlayerManager debugPlayerManager(){
@@ -56,15 +58,10 @@ public class PlayerManager {
         playerManager.stats[CONST_HP_ID] = 5;
         playerManager.stats[REAL_HP_ID] = 5;
 
-        playerManager.updateMarkers();
+        playerManager.currentPlayerAmmo = playerManager.prevAmmo;
+        playerManager.setCurrentPlayerAmmo(playerManager.currentPlayerAmmo);
         return playerManager;
     }
-
-    public void updateMarkers(){
-        currentAllyAmmo = RAP_BULLETS_ID;
-        setCurrentPlayerAmmo(prevAmmo);
-    }
-
 
     public byte getConstHp(){
         return stats[CONST_HP_ID];
@@ -126,14 +123,16 @@ public class PlayerManager {
         switch (currentPlayerAmmo) {
             case ENERGY_DRINKS_ID:
                 if(items[ENERGY_DRINKS_ID] > 0){
-                    this.prevAmmo = this.currentPlayerAmmo;
                     this.currentPlayerAmmo = ENERGY_DRINKS_ID;
+                } else {
+                    this.currentPlayerAmmo = prevAmmo;
                 }
                 break;
             case TIME_STOP_ID:
                 if(items[TIME_STOP_ID] > 0){
-                    this.prevAmmo = this.currentPlayerAmmo;
                     this.currentPlayerAmmo = TIME_STOP_ID;
+                } else  {
+                    this.currentPlayerAmmo = prevAmmo;
                 }
                 break;
             case RAP_BULLETS_ID:

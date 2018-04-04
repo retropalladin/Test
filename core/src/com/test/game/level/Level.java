@@ -35,12 +35,13 @@ public class Level {
     public static final byte GOD_DAMAGE = Byte.MAX_VALUE;
     public static final float RESPAWN_INVIS = 3;
 
+    public static final float TIME_STOP_RELOAD = 1;
     public static final float FREEZE_TIME = 20;
     public static final float FREEZE_INCREASE = 5;
 
+    public static final float ENERGY_DRINK_RELOAD = 1;
     public static final float SPEED_UP_TIME = 20;
     public static final float SPEED_UP_INCREASE = 5;
-
     ///////////////////////////////////////////
     /// END CONSTANTS                       ///
     ///////////////////////////////////////////

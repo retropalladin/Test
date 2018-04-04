@@ -1,5 +1,6 @@
 package com.test.game.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.entities.Bullet;
@@ -76,40 +77,38 @@ public class PlayerTank extends NpcTank {
                 case NORMAL_BULLET:
                     reloadTime = isSpeedUp ? Bullet.NORMAL_BULLET_RELOAD_SU : Bullet.NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
-                    shootState = TankShootState.RELOADING;
                     break;
                 case PLASMA_BULLET:
                     reloadTime = isSpeedUp ? Bullet.PLASMA_BULLET_RELOAD_SU : Bullet.PLASMA_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
-                    shootState = TankShootState.RELOADING;
                     break;
                 case AP_BULLET:
                     reloadTime = isSpeedUp ? Bullet.AP_BULLET_RELOAD_SU : Bullet.AP_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
-                    shootState = TankShootState.RELOADING;
                     break;
                 case RAP_BULLET:
                     reloadTime = isSpeedUp ? Bullet.RAP_BULLET_RELOAD_SU : Bullet.RAP_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
-                    shootState = TankShootState.RELOADING;
                     break;
                 case DOUBLE_NORMAL_BULLET:
                     reloadTime = isSpeedUp ? Bullet.DOUBLE_NORMAL_BULLET_RELOAD_SU : Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
-                    shootState = TankShootState.RELOADING;
                     break;
                 case DOUBLE_PLASMA_BULLET:
                     reloadTime = isSpeedUp ? Bullet.DOUBLE_PLASMA_BULLET_RELOAD_SU : Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
                     level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
-                    shootState = TankShootState.RELOADING;
                     break;
                 case ENERGY_DRINK:
+                    reloadTime = Level.ENERGY_DRINK_RELOAD;
                     level.beginPlayerSpeedUp();
                     break;
                 case TIME_STOP:
+                    reloadTime = Level.TIME_STOP_RELOAD;
                     level.beginEnemyFreeze();
                     break;
             }
+            shootState = TankShootState.RELOADING;
+
             return true;
         } else {
             return false;

@@ -124,6 +124,18 @@ public class PlayerManager {
 
     public void setCurrentPlayerAmmo(byte currentPlayerAmmo){
         switch (currentPlayerAmmo) {
+            case ENERGY_DRINKS_ID:
+                if(items[ENERGY_DRINKS_ID] > 0){
+                    this.prevAmmo = this.currentPlayerAmmo;
+                    this.currentPlayerAmmo = ENERGY_DRINKS_ID;
+                }
+                break;
+            case TIME_STOP_ID:
+                if(items[TIME_STOP_ID] > 0){
+                    this.prevAmmo = this.currentPlayerAmmo;
+                    this.currentPlayerAmmo = TIME_STOP_ID;
+                }
+                break;
             case RAP_BULLETS_ID:
                 if(items[RAP_BULLETS_ID] > 0){
                     this.currentPlayerAmmo = RAP_BULLETS_ID;
@@ -210,6 +222,14 @@ public class PlayerManager {
     public AmmoType shootCurrentPlayerAmmo(){
         setCurrentPlayerAmmo(currentPlayerAmmo);
         switch(currentPlayerAmmo){
+            case ENERGY_DRINKS_ID:
+                items[ENERGY_DRINKS_ID]--;
+                currentPlayerAmmo = prevAmmo;
+                return AmmoType.ENERGY_DRINK;
+            case TIME_STOP_ID:
+                items[TIME_STOP_ID]--;
+                currentPlayerAmmo = prevAmmo;
+                return AmmoType.TIME_STOP;
             case RAP_BULLETS_ID:
                 items[RAP_BULLETS_ID]--;
                 return AmmoType.RAP_BULLET;

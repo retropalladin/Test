@@ -1,12 +1,11 @@
 package com.test.game.player;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.test.game.entities.Bullet;
 import com.test.game.entities.NpcTank;
 import com.test.game.level.Level;
-import com.test.game.level.LevelInputManager;
+import com.test.game.inputs.GameplayInputManager;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankMoveState;
@@ -22,7 +21,7 @@ public class PlayerTank extends NpcTank {
     public PlayerTank(Level level, Body body) {
         super.init(level, body);
         moveState = TankMoveState.WAITING;
-        respawnInvisibility = Constants.Settings.RESPAWN_INVIS;
+        respawnInvisibility = Level.RESPAWN_INVIS;
     }
 
     public void configurePlayerTankType(PlayerManager playerManager, Direction direction) {
@@ -43,11 +42,11 @@ public class PlayerTank extends NpcTank {
             endRotate(delta);
         }
 
-        if(moveState != TankMoveState.ROTATING && shootState == TankShootState.READY && LevelInputManager.instance.levelInput.shoot()){
+        if(moveState != TankMoveState.ROTATING && shootState == TankShootState.READY && GameplayInputManager.instance.gameplayInput.shoot()){
             beginShoot();
         }
 
-        inputDirection = LevelInputManager.instance.levelInput.getPlayerDesiredDirection();
+        inputDirection = GameplayInputManager.instance.gameplayInput.getPlayerDesiredDirection();
 
         if(inputDirection != null && this.direction != inputDirection && moveState != TankMoveState.ON_MOVE) {
             beginRotate(inputDirection);
@@ -71,36 +70,46 @@ public class PlayerTank extends NpcTank {
 
     @Override
     protected boolean beginShoot() {
-        level.beginPlayerSpeedUp();
         ammoType = playerManager.shootCurrentPlayerAmmo();
         if (ammoType != null){
             switch (ammoType) {
                 case NORMAL_BULLET:
-                    reloadTime = Bullet.NORMAL_BULLET_RELOAD;
+                    reloadTime = isSpeedUp ? Bullet.NORMAL_BULLET_RELOAD_SU : Bullet.NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    shootState = TankShootState.RELOADING;
                     break;
                 case PLASMA_BULLET:
-                    reloadTime = Bullet.PLASMA_BULLET_RELOAD;
+                    reloadTime = isSpeedUp ? Bullet.PLASMA_BULLET_RELOAD_SU : Bullet.PLASMA_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    shootState = TankShootState.RELOADING;
                     break;
                 case AP_BULLET:
-                    reloadTime = Bullet.AP_NORMAL_BULLET_RELOAD;
+                    reloadTime = isSpeedUp ? Bullet.AP_BULLET_RELOAD_SU : Bullet.AP_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    shootState = TankShootState.RELOADING;
                     break;
                 case RAP_BULLET:
-                    reloadTime = Bullet.RAP_BULLET_RELOAD;
+                    reloadTime = isSpeedUp ? Bullet.RAP_BULLET_RELOAD_SU : Bullet.RAP_BULLET_RELOAD;
                     level.spawnCorrectedBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    shootState = TankShootState.RELOADING;
                     break;
                 case DOUBLE_NORMAL_BULLET:
-                    reloadTime = Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
+                    reloadTime = isSpeedUp ? Bullet.DOUBLE_NORMAL_BULLET_RELOAD_SU : Bullet.DOUBLE_NORMAL_BULLET_RELOAD;
                     level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    shootState = TankShootState.RELOADING;
                     break;
                 case DOUBLE_PLASMA_BULLET:
-                    reloadTime = Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
+                    reloadTime = isSpeedUp ? Bullet.DOUBLE_PLASMA_BULLET_RELOAD_SU : Bullet.DOUBLE_PLASMA_BULLET_RELOAD;
                     level.spawnCorrectedDoubleBullet(body.getPosition().x, body.getPosition().y, ammoType, direction, true);
+                    shootState = TankShootState.RELOADING;
+                    break;
+                case ENERGY_DRINK:
+                    level.beginPlayerSpeedUp();
+                    break;
+                case TIME_STOP:
+                    level.beginEnemyFreeze();
                     break;
             }
-            shootState = TankShootState.RELOADING;
             return true;
         } else {
             return false;
@@ -115,7 +124,7 @@ public class PlayerTank extends NpcTank {
         moveDestination.y = body.getPosition().y;
         rotatePosition = rotateDestination;
         reloadTime = 0;
-        respawnInvisibility = Constants.Settings.RESPAWN_INVIS;
+        respawnInvisibility = Level.RESPAWN_INVIS;
         moveState = TankMoveState.WAITING;
         shootState = TankShootState.READY;
         this.setHp(playerManager.getConstHp());

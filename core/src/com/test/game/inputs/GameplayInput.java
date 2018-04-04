@@ -1,9 +1,9 @@
-package com.test.game.utils;
+package com.test.game.inputs;
 
 import com.badlogic.gdx.InputProcessor;
 import com.test.game.utils.Enums.Direction;
 
-public interface LevelInput extends InputProcessor{
+public interface GameplayInput extends InputProcessor{
     boolean shoot();
     boolean cameraDebugOn();
     boolean debugCameraMoveLeft();

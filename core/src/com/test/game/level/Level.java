@@ -28,6 +28,23 @@ import com.test.game.utils.Utils;
 
 public class Level {
 
+    ///////////////////////////////////////////
+    /// Constants Settings                  ///
+    ///////////////////////////////////////////
+
+    public static final byte GOD_DAMAGE = Byte.MAX_VALUE;
+    public static final float RESPAWN_INVIS = 3;
+
+    public static final float FREEZE_TIME = 20;
+    public static final float FREEZE_INCREASE = 5;
+
+    public static final float SPEED_UP_TIME = 20;
+    public static final float SPEED_UP_INCREASE = 5;
+
+    ///////////////////////////////////////////
+    /// END CONSTANTS                       ///
+    ///////////////////////////////////////////
+
     public boolean levelFail = false;
     public boolean levelWin = false;
     private LevelEndChecker levelEndChecker;
@@ -493,7 +510,7 @@ public class Level {
                 tank.takeDamage(Bullet.RAP_BULLET_DAMAGE);
                 break;
         }
-        if(!bullet.takeDamage(Constants.Settings.GOD_DAMAGE)){
+        if(!bullet.takeDamage(GOD_DAMAGE)){
             deadEntities.add(bullet);
         }
         if(!tank.isAlive()){
@@ -518,7 +535,7 @@ public class Level {
                     wall.takeDamage((byte) 2);
                 break;
         }
-        if(!bullet.takeDamage(Constants.Settings.GOD_DAMAGE)){
+        if(!bullet.takeDamage(GOD_DAMAGE)){
             deadEntities.add(bullet);
         }
         if(!wall.isAlive()){
@@ -612,7 +629,7 @@ public class Level {
     public void beginPlayerSpeedUp(){
         if(this.speedUpPlayerTime == 0)
             needPlayerSpeedUp = true;
-        this.speedUpPlayerTime = 20; // this val is calculated depending on PlayerManager
+        this.speedUpPlayerTime = playerTank.playerManager.getTankType() ==  TankType.LIGHT_TANK ? SPEED_UP_TIME : SPEED_UP_TIME + SPEED_UP_INCREASE;
     }
 
     public void endPlayerSpeedUp(float delta){
@@ -628,7 +645,7 @@ public class Level {
     public void beginEnemyFreeze(){
         if(this.freezeEnemyTime == 0)
             needEnemyFreeze = true;
-        this.freezeEnemyTime = 5;   // this val is calculated depending on PlayerManager
+        this.freezeEnemyTime = playerTank.playerManager.getTankType() == TankType.LIGHT_TANK? FREEZE_TIME : FREEZE_TIME + FREEZE_INCREASE;
     }
 
     private void endEnemyFreeze(float delta){

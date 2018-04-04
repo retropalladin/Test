@@ -3,6 +3,14 @@ package com.test.game.utils;
 
 public class Enums {
 
+    // GameplayScreen mech
+
+    public enum  GameplayScreenState{
+        RUN,
+        INVENTORY_PAUSE,
+    }
+
+    // Level mech
     public enum TankMoveState {
         WAITING,
         ON_MOVE,
@@ -25,7 +33,9 @@ public class Enums {
         DOUBLE_NORMAL_BULLET,
         DOUBLE_PLASMA_BULLET,
         AP_BULLET,
-        RAP_BULLET
+        RAP_BULLET,
+        ENERGY_DRINK,
+        TIME_STOP
     }
 
     public enum  WallType {

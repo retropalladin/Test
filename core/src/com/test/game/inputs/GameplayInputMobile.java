@@ -1,13 +1,10 @@
 package com.test.game.inputs;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
-import com.test.game.utils.Enums;
 import com.test.game.utils.Enums.Direction;
-import com.test.game.utils.LevelInput;
 
-public class LevelInputMobile extends InputAdapter implements LevelInput{
+public class GameplayInputMobile extends InputAdapter implements GameplayInput {
 
     private Direction playerDesiredDirection = null;
     private int tmpconst = 180;

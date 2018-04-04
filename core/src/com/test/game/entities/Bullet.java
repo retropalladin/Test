@@ -3,6 +3,7 @@ package com.test.game.entities;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
+import com.sun.org.apache.regexp.internal.RE;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
@@ -37,8 +38,16 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
     public static final float DOUBLE_PLASMA_BULLET_RELOAD = 0.75f;
     public static final float NORMAL_BULLET_RELOAD = 1.0f;
     public static final float PLASMA_BULLET_RELOAD = 0.75f;
-    public static final float AP_NORMAL_BULLET_RELOAD = 1.0f;
+    public static final float AP_BULLET_RELOAD = 1.0f;
     public static final float RAP_BULLET_RELOAD = 1.0f;
+    
+    public static final float RELOAD_SPEED_UP = 0.25f;
+    public static final float DOUBLE_NORMAL_BULLET_RELOAD_SU = DOUBLE_NORMAL_BULLET_RELOAD - RELOAD_SPEED_UP;
+    public static final float DOUBLE_PLASMA_BULLET_RELOAD_SU = DOUBLE_PLASMA_BULLET_RELOAD - RELOAD_SPEED_UP;
+    public static final float NORMAL_BULLET_RELOAD_SU = NORMAL_BULLET_RELOAD - RELOAD_SPEED_UP;
+    public static final float PLASMA_BULLET_RELOAD_SU = PLASMA_BULLET_RELOAD - RELOAD_SPEED_UP;
+    public static final float AP_BULLET_RELOAD_SU = AP_BULLET_RELOAD - RELOAD_SPEED_UP ;
+    public static final float RAP_BULLET_RELOAD_SU = RAP_BULLET_RELOAD - RELOAD_SPEED_UP;
 
     ///////////////////////////////////////////
     /// Constants Physics                   ///
@@ -85,7 +94,7 @@ public class Bullet extends MaterialEntity implements Pool.Poolable {
                 hp = RAP_BULLET_MAX_HP;
                 break;
             default:
-                return false;
+                throw new IllegalArgumentException("No bullet AmmoType in configureBulletType");
         }
         this.type = type;
         return true;

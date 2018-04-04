@@ -6,13 +6,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.test.game.level.Level;
-import com.test.game.level.LevelInputManager;
+import com.test.game.inputs.GameplayInputManager;
 import com.test.game.level.LevelRenderer;
 import com.test.game.player.PlayerManager;
 import com.test.game.utils.Constants;
 import com.test.game.level.LevelLoader;
+import com.test.game.utils.Enums;
+import com.test.game.utils.Enums.GameplayScreenState;
 
 public class GameplayScreen implements Screen {
+
+    private GameplayScreenState gameplayScreenState;
 
     private Level level;
     private LevelRenderer levelRenderer;
@@ -27,7 +31,7 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void show() {
-        LevelInputManager.instance.enable();
+        GameplayInputManager.instance.enable();
     }
 
     @Override
@@ -50,7 +54,7 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void hide() {
-        LevelInputManager.instance.disable();
+        GameplayInputManager.instance.disable();
     }
 
     @Override

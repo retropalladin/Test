@@ -4,16 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.test.game.utils.Enums.Direction;
-import com.test.game.utils.LevelInput;
 
-public class LevelInputPc extends InputAdapter implements LevelInput {
+public class GameplayInputPc extends InputAdapter implements GameplayInput {
 
     private final Object sync = new Object();
+
+    //level part
     private int keyUpPos = 0, keyUpi = 0;
     private int[] playerDesiredDirection = new int[5];
     private boolean cameraDebugOn;
 
+
     @Override
+    //level part
     public boolean cameraDebugOn() {
         if(cameraDebugOn) {
             cameraDebugOn = false;
@@ -50,7 +53,12 @@ public class LevelInputPc extends InputAdapter implements LevelInput {
         }
         return null;
     }
+    //inventory pause part
 
+
+    //real pause part
+
+    /////////////////
     @Override
     public boolean keyDown(int keycode)
     {

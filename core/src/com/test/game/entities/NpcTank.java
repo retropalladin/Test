@@ -1,6 +1,5 @@
 package com.test.game.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
@@ -36,7 +35,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     public static final float TANK_FRICTION = 0f;
     public static final float TANK_RESTITUTION = 0f;
 
-    private static final float SPEED_UP_MUL = 1.4f;
+    private static final float TANK_IMPULSE_SPEED_UP_MUL = 1.4f;
     private static final float TANK_IMPULSE_GROUND = 4.0f;
     private static final float TANK_IMPULSE_SAND = 3.0f;
 
@@ -48,10 +47,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     private final Vector2 TANK_RIGHT_IMPULSE_GROUND = new Vector2(TANK_IMPULSE_GROUND, 0);
     private final Vector2 TANK_LEFT_IMPULSE_GROUND = new Vector2(-TANK_IMPULSE_GROUND, 0);
 
-    private final Vector2 TANK_UP_IMPULSE_GROUND_SU = new Vector2(0, TANK_IMPULSE_GROUND * SPEED_UP_MUL);
-    private final Vector2 TANK_DOWN_IMPULSE_GROUND_SU = new Vector2(0, -TANK_IMPULSE_GROUND * SPEED_UP_MUL);
-    private final Vector2 TANK_RIGHT_IMPULSE_GROUND_SU = new Vector2(TANK_IMPULSE_GROUND * SPEED_UP_MUL, 0);
-    private final Vector2 TANK_LEFT_IMPULSE_GROUND_SU = new Vector2(-TANK_IMPULSE_GROUND * SPEED_UP_MUL, 0);
+    private final Vector2 TANK_UP_IMPULSE_GROUND_SU = new Vector2(0, TANK_IMPULSE_GROUND * TANK_IMPULSE_SPEED_UP_MUL);
+    private final Vector2 TANK_DOWN_IMPULSE_GROUND_SU = new Vector2(0, -TANK_IMPULSE_GROUND * TANK_IMPULSE_SPEED_UP_MUL);
+    private final Vector2 TANK_RIGHT_IMPULSE_GROUND_SU = new Vector2(TANK_IMPULSE_GROUND * TANK_IMPULSE_SPEED_UP_MUL, 0);
+    private final Vector2 TANK_LEFT_IMPULSE_GROUND_SU = new Vector2(-TANK_IMPULSE_GROUND * TANK_IMPULSE_SPEED_UP_MUL, 0);
 
     private final Vector2 TANK_UP_IMPULSE_SAND = new Vector2(0, TANK_IMPULSE_SAND);
     private final Vector2 TANK_DOWN_IMPULSE_SAND = new Vector2(0, -TANK_IMPULSE_SAND);
@@ -59,10 +58,10 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     private final Vector2 TANK_LEFT_IMPULSE_SAND = new Vector2(-TANK_IMPULSE_SAND, 0);
 
 
-    private final Vector2 TANK_UP_IMPULSE_SAND_SU = new Vector2(0, TANK_IMPULSE_SAND * SPEED_UP_MUL);
-    private final Vector2 TANK_DOWN_IMPULSE_SAND_SU = new Vector2(0, -TANK_IMPULSE_SAND * SPEED_UP_MUL);
-    private final Vector2 TANK_RIGHT_IMPULSE_SAND_SU = new Vector2(TANK_IMPULSE_SAND * SPEED_UP_MUL, 0);
-    private final Vector2 TANK_LEFT_IMPULSE_SAND_SU = new Vector2(-TANK_IMPULSE_SAND * SPEED_UP_MUL, 0);
+    private final Vector2 TANK_UP_IMPULSE_SAND_SU = new Vector2(0, TANK_IMPULSE_SAND * TANK_IMPULSE_SPEED_UP_MUL);
+    private final Vector2 TANK_DOWN_IMPULSE_SAND_SU = new Vector2(0, -TANK_IMPULSE_SAND * TANK_IMPULSE_SPEED_UP_MUL);
+    private final Vector2 TANK_RIGHT_IMPULSE_SAND_SU = new Vector2(TANK_IMPULSE_SAND * TANK_IMPULSE_SPEED_UP_MUL, 0);
+    private final Vector2 TANK_LEFT_IMPULSE_SAND_SU = new Vector2(-TANK_IMPULSE_SAND * TANK_IMPULSE_SPEED_UP_MUL, 0);
     ///////////////////////////////////////////
     /// END CONSTANTS                       ///
     ///////////////////////////////////////////
@@ -71,7 +70,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
 
     private boolean isAlly;
     private boolean isFreeze;
-    private boolean isSpeedUp;
+    protected boolean isSpeedUp;
 
     private short prevCategory;
     private short nextCategory;
@@ -86,7 +85,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
     private int rotateDirection;
     private float rotationSpeed;
 
-    public AmmoType ammoType;
+    protected AmmoType ammoType;
     protected float reloadTime;
 
     public TankType tankType;
@@ -382,7 +381,7 @@ public class NpcTank extends MaterialEntity implements Pool.Poolable {
                 level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
                 break;
             case AP_BULLET:
-                reloadTime = Bullet.AP_NORMAL_BULLET_RELOAD;
+                reloadTime = Bullet.AP_BULLET_RELOAD;
                 level.spawnCorrectedBullet(body.getPosition().x,body.getPosition().y, ammoType,direction,isAlly);
                 break;
             case RAP_BULLET:

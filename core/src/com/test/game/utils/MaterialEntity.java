@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 public abstract class MaterialEntity {
     protected boolean alive;
     protected short category;
-    protected int hp;
+    protected byte hp;
     protected Body body;
     protected short gridX;
     protected short gridY;
@@ -32,7 +32,7 @@ public abstract class MaterialEntity {
     public void setCategory(short category){
         this.category = category;
     }
-    public void setHp(int hp){
+    public void setHp(byte hp){
         if(hp < 0)
             hp = 0;
         this.hp = hp;

@@ -1,19 +1,33 @@
 package com.test.game;
 
 import com.badlogic.gdx.Game;
-import com.test.game.utils.Constants;
-import com.test.game.utils.ScreensManager;
+import com.badlogic.gdx.assets.AssetManager;
+import com.test.game.screens.LoadingScreen;
+import com.test.game.screens.ScreensManager;
+import com.test.game.utils.Assets;
 
 public class MyTestGame extends Game {
 
-	ScreensManager screensManager = ScreensManager.getInstance(gameInstance);
+	public static  int GAME_DESKTOP_WIDTH = 720;
+	public static  int GAME_DESKTOP_HEIGHT = 420;
 
-	private static MyTestGame gameInstance;
-	public static synchronized MyTestGame getInstance() {
-		return gameInstance;
-	}
+	public AssetManager assetManager;
+	public ScreensManager screensManager;
+
 	@Override
 	public void create() {
-		screensManager.setScreen(Constants.Screens.MAINMENU_SCREEN);
+		assetManager = new AssetManager();
+		screensManager = new ScreensManager(this);
+	}
+	@Override
+	public void render() {
+		super.render();
+	}
+	@Override
+	public void dispose() {
+		super.dispose();
+
+		assetManager.dispose();
+		screensManager.dispose();
 	}
 }

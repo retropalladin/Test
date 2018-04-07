@@ -1,4 +1,4 @@
-package com.test.game;
+package com.test.game.level;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -21,7 +21,7 @@ public class LevelRenderer {
             debugRenderer = new Box2DDebugRenderer();
     }
 
-    public void render(float delta, Level level, SpriteBatch batch) {
+    public void render(float delta, com.test.game.level.Level level, SpriteBatch batch) {
         chaseCamera.update(delta, level);
         if(Constants.Developing.DEBUG_PHYSICS_RENDER) {
             debugRenderer.render(level.world, chaseCamera.camera.combined);
@@ -33,7 +33,7 @@ public class LevelRenderer {
         batch.end();
     }
 
-    public void drawPlayerTank(Level level, SpriteBatch batch){
+    public void drawPlayerTank(com.test.game.level.Level level, SpriteBatch batch){
         rotatePositionTmp = level.playerTank.getRotatePosition() + Constants.Renderer.ROTATE_SECTOR_H;
         if(rotatePositionTmp >= 360)
             rotatePositionTmp -=360;
@@ -52,7 +52,7 @@ public class LevelRenderer {
                 false, false);
     }
 
-    public void presetCameraPosition(Level level) {
+    public void presetCameraPosition(com.test.game.level.Level level) {
         chaseCamera.presetCameraPosition(level);
     }
 

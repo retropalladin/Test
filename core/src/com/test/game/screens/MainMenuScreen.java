@@ -1,28 +1,39 @@
 package com.test.game.screens;
 
-import com.badlogic.gdx.Files;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.*;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.test.game.MyTestGame;
+import com.test.game.utils.Assets;
 import com.test.game.utils.Constants;
-import com.test.game.utils.ScreensManager;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 /**
  * Created by Егор on 22.03.2018.
@@ -30,44 +41,78 @@ import com.test.game.utils.ScreensManager;
 
 public class MainMenuScreen implements Screen {
 
-    private static MyTestGame game;
-    private static MainMenuScreen mainMenuScreenInstance;
-    public static synchronized MainMenuScreen getInstance(MyTestGame game) {
-
-        if (mainMenuScreenInstance == null) {
-            mainMenuScreenInstance = new MainMenuScreen(game);
-        }
-        return mainMenuScreenInstance;
-    }
-    private MainMenuScreen() {
-    }
-    private MainMenuScreen(MyTestGame game) {
-        this.game = game;
-    }
+    private final MyTestGame game;
 
     private Stage stage;
+    private Skin skin;
+
+    private OrthographicCamera camera;
+    private BitmapFont font24;
+
+    private Image backgroundImage;
+
+    public MainMenuScreen(final MyTestGame game) {
+        //initFonts();
+        this.game = game;
+       /* this.skin = new Skin();
+        //this.skin.addRegions(Assets.instance.getAssetManager().get("skins/uiskin.atlas", TextureAtlas.class));
+        //this.skin.add("default-font", font24);
+        this.skin.load(Gdx.files.internal("skins/uiskin.json"));
+*/
+        this.camera = new OrthographicCamera();
+        camera.setToOrtho(false, MyTestGame.GAME_DESKTOP_WIDTH,
+                MyTestGame.GAME_DESKTOP_HEIGHT);
+        this.stage = new Stage(new FitViewport(MyTestGame.GAME_DESKTOP_WIDTH,
+                MyTestGame.GAME_DESKTOP_HEIGHT, camera));
+        initFonts();
+    }
+
+    public void initFonts() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Arcon.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 24;
+        parameter.color = Color.RED;
+        font24 = generator.generateFont(parameter);
+        //generator.dispose();
+    }
 
     @Override
-    public void show () {
-        stage = new Stage(new ScreenViewport());
+    public void show() {
         Gdx.input.setInputProcessor(stage);
 
-        Skin mySkin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
+        Group background = new Group();
+        background.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Group foreground = new Group();
+        foreground.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        stage.addActor(background);
+        stage.addActor(foreground);
+
+        backgroundImage = new Image(Assets.instance.assetManager.get("images/menu_backgr.png", Texture.class));
+        backgroundImage.setSize(stage.getWidth(),stage.getHeight());
+        backgroundImage.setPosition(0, 0);
+
+        background.addActor(backgroundImage);
+
+        //skin = new Skin(Assets.instance.assetManager.get(Constants.Textures.AtlasNames.SKIN_ATLAS, TextureAtlas.class));
+        this.skin = new Skin();
+        this.skin.addRegions(Assets.instance.assetManager.get("skins/uiskin.atlas", TextureAtlas.class));
+        this.skin.add("default-font", font24);
+        this.skin.load(Gdx.files.internal("skins/uiskin.json"));
         // Image
-        Image image_logo = new Image(new Texture(Gdx.files.internal("intro_pict.png")));
+        Image image_logo = new Image(Assets.instance.assetManager.get("images/menu_pict.png", Texture.class));
         image_logo.setSize(200,100);
         image_logo.setPosition(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()-100);
         //stage.addActor(image_logo);
 
         // StartGame Button
-        Button button1 = new TextButton("Start Game",mySkin,"default");
+        Button button1 = new TextButton("Start Game",skin,"default");
         button1.setSize(400,100);
         button1.setPosition(Gdx.graphics.getWidth()/2-200,Gdx.graphics.getHeight()/2);
         button1.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                ScreensManager.getInstance(game).setScreen(Constants.Screens.GAMEPLAY_SCREEN);
+                game.screensManager.setScreen(ScreensManager.STATE.PLAY);
             }
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -77,7 +122,7 @@ public class MainMenuScreen implements Screen {
         //stage.addActor(button1);
 
         // Nothing Button
-        Button button2 = new TextButton("Nothing",mySkin,"default");
+        Button button2 = new TextButton("Nothing",skin,"default");
         button2.setSize(400,100);
         button2.setPosition(Gdx.graphics.getWidth()/2-200,Gdx.graphics.getHeight()/2 - 100);
         button2.addListener(new InputListener(){
@@ -94,7 +139,7 @@ public class MainMenuScreen implements Screen {
         //stage.addActor(button2);
 
         // Nothing Button
-        Button button3 = new TextButton("Nothing",mySkin,"default");
+        Button button3 = new TextButton("Nothing",skin,"default");
         button3.setSize(400,100);
         button3.setPosition(Gdx.graphics.getWidth()/2-200,Gdx.graphics.getHeight()/2 - 210);
         button3.addListener(new InputListener(){
@@ -124,13 +169,14 @@ public class MainMenuScreen implements Screen {
         table.setFillParent(true);
         table.add(scroller).fill().expand();
 
-        this.stage.addActor(table);
+        foreground.addActor(table);
+
     }
+
     @Override
     public void render (float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.act();
+
         stage.draw();
     }
     @Override
@@ -158,7 +204,4 @@ public class MainMenuScreen implements Screen {
         stage.dispose();
     }
 
-    public boolean needsGL20 () {
-        return false;
-    }
 }

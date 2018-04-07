@@ -8,15 +8,16 @@ public class Constants {
     public final class Developing {
         private Developing() {
         }
-
         public static final boolean DEBUG = true;
         public static final boolean DEBUG_PHYSICS_RENDER = true;
+        public static final boolean DEBUG_OVERLAYS_RENDER = true;
     }
     public final class Settings {
         private Settings() {
         }
 
-        public static final int GOD_DAMAGE = 100000;
+        public static final byte GOD_DAMAGE = Byte.MAX_VALUE;
+        public static final float RESPAWN_INVIS = 3;
         public static final float PLAYER_RELOAD_MUL = 1.25f;
         public static final float FRAME_TIME_MAX = 0.25f;
     }
@@ -43,6 +44,7 @@ public class Constants {
         public static final float PHYSICS_STEP = 1 / 300f;
         public static final float CELL_SIZE = 2;
         public static final float CELL_SIZE_H = CELL_SIZE * 0.5f;
+        public static final float FAR_FAR = Renderer.WORLD_VISIBLE_HEIGHT * 100;
 
         public static final short LAND_GROUND = 1;
         public static final short LAND_SAND = (1 << 2);
@@ -62,7 +64,8 @@ public class Constants {
         public static final short MASK_ALLY_BULLET = CATEGORY_WALL | CATEGORY_ENEMY_TANK | CATEGORY_ENEMY_BULLET;
         public static final short MASK_ENEMY_BULLET = CATEGORY_WALL | CATEGORY_ALLY_TANK | CATEGORY_ALLY_BULLET;
 
-        public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_EMPTY | CATEGORY_SPAWN;
+        public static final short PLAYER_TANK_MOVE_MASK = CATEGORY_WALL | CATEGORY_TANK_ON_MOVE | CATEGORY_ENEMY_TANK;
+        public static final short ENEMY_TANK_MOVE_MASK = CATEGORY_WALL | CATEGORY_TANK_ON_MOVE | CATEGORY_ALLY_TANK;
     }
 
     public final class Sounds {
@@ -72,6 +75,15 @@ public class Constants {
 
     public final class Textures {
         private Textures() {
+        }
+
+        public final class AtlasNames {
+            private AtlasNames() {
+            }
+            public static final String TANK_LIGHT_ATLAS = "atlases/tank_light.atlas";
+            public static final String TANK_HEAVY_ATLAS = "atlases/tank_heavy.atlas";
+            public static final String SKIN_ATLAS = "skins/uiskin.atlas";
+            public static final String TANKS_ATLAS = "images/TankAtlas.atlas";
         }
 
         public final class BattleItems {
@@ -118,6 +130,11 @@ public class Constants {
         public final class InterfaceItems {
             private InterfaceItems() {
             }
+
+            public static final String TEXTURE_ATLAS = "images/interface_atlas.atlas";
+
+            public static final String BACKGROUND = "menu_backgr";
+            public static final String LOGO = "menu_pict";
         }
 
         public final class DecorationItems {

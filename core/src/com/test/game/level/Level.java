@@ -1,4 +1,4 @@
-package com.test.game;
+package com.test.game.level;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -19,14 +19,21 @@ import com.test.game.utils.Enums.AmmoType;
 import com.test.game.utils.Enums.Direction;
 import com.test.game.utils.Enums.TankType;
 import com.test.game.utils.Enums.WallType;
-import com.test.game.utils.LevelContactListener;
 import com.test.game.utils.MaterialEntity;
+import com.test.game.player.PlayerStatsManager;
 
 
 public class Level {
 
-    public PlayerTank playerTank;
-    public boolean needRespawn = false;
+    public boolean levelFail = false;
+    public boolean levelWin = false;
+
+    private float freezeEnemyTime = 0;
+    private boolean needEnemyFreeze = false;
+    private boolean needEnemyUnfreeze = false;
+
+    private boolean needPlayerRespawn = false;
+    private boolean needPlayerDispawn = false;
     public short allySpawnX;
     public short allySpawnY;
 
@@ -38,6 +45,9 @@ public class Level {
 
     public float levelWidth = 0;
     public float levelHeight = 0;
+
+    public PlayerTank playerTank;
+    public PlayerTank deadPlayerTank;
 
     public Array<Bullet> aliveBullets;
     private static Pool<Bullet> bulletPool = Pools.get(Bullet.class);
@@ -158,38 +168,32 @@ public class Level {
         allySpawnX = 1;
         allySpawnY = 1;
         objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_SPAWN;
-        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, 5, 2, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.UP);
+        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, new PlayerStatsManager(), Direction.UP);
 
         //spawnGridDefinedWall((short)20,(short)20,WallType.WOODEN_WALL);
         //spawnGridDefinedWall((short)20,(short)21,WallType.WOODEN_WALL);
         //spawnGridDefinedWall((short)20,(short)22,WallType.WOODEN_WALL);
-        objectsMatrix[5][5] = Constants.Physics.CATEGORY_SPAWN;
-        spawnGridDefinedNpcTank((short)5,(short)5, 5, 0, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, false);
+        objectsMatrix[5][7] = Constants.Physics.CATEGORY_SPAWN;
+        spawnGridDefinedNpcTank((short)7,(short)5, (byte) 5, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.LEFT, false);
         }
 
 
     //player
-    private void respawnPlayer(){
-        playerTank = spawnGridDefinedPlayerTank(allySpawnX,allySpawnY, 5, 0, TankType.LIGHT_TANK, AmmoType.NORMAL_BULLET, Direction.UP);
-        if(playerTank != null)
-            needRespawn = false;
-    }
-
-    public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction){
+    public PlayerTank spawnGridDefinedPlayerTank(short posX, short posY, PlayerStatsManager playerStatsManager, Direction direction){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
-            objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK;
+            objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
             PlayerTank playerTank = spawnDefinedPlayerTank(posX * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN, posY * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN,
-                    hp, shieldHp, type, ammoType, direction);
+                    playerStatsManager, direction);
             playerTank.setGridCoordinates(posX, posY);
             return playerTank;
         }
         return null;
     }
 
-    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, int hp, int shieldHp,TankType type, AmmoType ammoType, Direction direction) {
+    private PlayerTank spawnDefinedPlayerTank(float posX, float posY, PlayerStatsManager playerStatsManager, Direction direction) {
         PlayerTank playerTank = spawnPlayerTank(posX,posY);
-        configurePlayerTankFixture(type);
-        playerTank.configurePlayerTankType(Constants.Physics.CATEGORY_ALLY_TANK, hp, shieldHp, type, ammoType, direction);
+        configurePlayerTankFixture(playerStatsManager.getTankType());
+        playerTank.configurePlayerTankType(playerStatsManager, direction);
         playerTank.createFixture(tankFixtureDef);
         return playerTank;
     }
@@ -201,7 +205,6 @@ public class Level {
         PlayerTank playerTank = new PlayerTank(this, body);
         body.setUserData(playerTank);
 
-        aliveNpcTanks.add(playerTank);
         return playerTank;
     }
 
@@ -262,22 +265,22 @@ public class Level {
     }
     //end wall
     //npc
-    public void spawnGridDefinedNpcTank(short posX, short posY, int hp, int shieldHp, TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
+    public void spawnGridDefinedNpcTank(short posX, short posY, byte hp,  TankType type, AmmoType ammoType, Direction direction, boolean isAlly){
         if(objectsMatrix[posY][posX] == Constants.Physics.CATEGORY_SPAWN) {
             if (isAlly)
                 objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ALLY_TANK;
             else
                 objectsMatrix[posY][posX] = Constants.Physics.CATEGORY_ENEMY_TANK;
             NpcTank npcTank = spawnDefinedNpcTank(posX * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN, posY * Constants.Physics.CELL_SIZE + NpcTank.TANK_MARGIN,
-                    hp, shieldHp, type, ammoType, direction, isAlly);
+                    hp,  type, ammoType, direction, isAlly);
             npcTank.setGridCoordinates(posX, posY);
         }
     }
 
-    private NpcTank spawnDefinedNpcTank(float posX, float posY, int hp, int shieldHp, TankType type, AmmoType ammoType,Direction direction, boolean isAlly) {
+    private NpcTank spawnDefinedNpcTank(float posX, float posY, byte hp,  TankType type, AmmoType ammoType,Direction direction, boolean isAlly) {
         NpcTank npcTank = spawnNpcTank(posX,posY);
         configureNpcTankFixture(type, isAlly);
-        npcTank.configureNpcTankType(tankFixtureDef.filter.categoryBits, hp, shieldHp, type, ammoType, direction);
+        npcTank.configureNpcTankType(tankFixtureDef.filter.categoryBits, hp,  type, ammoType, direction);
         npcTank.createFixture(tankFixtureDef);
         return npcTank;
     }
@@ -482,27 +485,25 @@ public class Level {
             deadEntities.add(bullet);
         }
         if(!tank.isAlive()){
-            deadEntities.add(tank);
             if(tank == playerTank) {
-                playerTank = null;
-                needRespawn = true;
+                needPlayerDispawn = true;
+            } else {
+                deadEntities.add(tank);
             }
         }
     }
 
     public void bulletAndWallCollisionProcedure(Bullet bullet, Wall wall) {
-        switch (bullet.type){
+        switch (bullet.type) {
             case NORMAL_BULLET:
-                wall.takeDamage(Bullet.NORMAL_BULLET_DAMAGE);
-                break;
             case PLASMA_BULLET:
-                wall.takeDamage(Bullet.PLASMA_BULLET_DAMAGE);
+                if (wall.bulletDamage)
+                    wall.takeDamage((byte) 1);
                 break;
             case AP_BULLET:
-                wall.takeDamage(Bullet.AP_BULLET_DAMAGE);
-                break;
             case RAP_BULLET:
-                wall.takeDamage(Bullet.RAP_BULLET_DAMAGE);
+                if (wall.bulletDamage)
+                    wall.takeDamage((byte) 2);
                 break;
         }
         if(!bullet.takeDamage(Constants.Settings.GOD_DAMAGE)){
@@ -514,20 +515,26 @@ public class Level {
     }
 
     public void bulletAndBulletCollisionProcedure(Bullet bullet1, Bullet bullet2) {
-        if(!bullet1.takeDamage(1)){
+        if(!bullet1.takeDamage((byte) 1)){
             deadEntities.add(bullet1);
         }
-        if(!bullet2.takeDamage(1)){
+        if(!bullet2.takeDamage((byte) 1)){
             deadEntities.add(bullet2);
         }
     }
     // end collisions
+    // updating level
     public void update(float delta) {
         frameTime = Math.min(delta, Constants.Settings.FRAME_TIME_MAX);
-        if(needRespawn)
-            respawnPlayer();
+
+        updateLevelState(frameTime);
+
+        if(playerTank != null)
+            playerTank.update(frameTime);
+
         for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
             aliveNpcTanks.get(aliveIterator).update(frameTime);
+
         accumulator += frameTime;
         while (accumulator >= Constants.Physics.PHYSICS_STEP) {
             world.step(Constants.Physics.PHYSICS_STEP,
@@ -538,7 +545,69 @@ public class Level {
         }
     }
 
+    private void updateLevelState(float frameTime) {
+        checkWinCondition();
+        checkFailCondition();
+        endEnemyFreeze(frameTime);
+        if(needEnemyUnfreeze){
+            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveBullets.get(aliveIterator).unfreeze();
+            for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveNpcTanks.get(aliveIterator).unfreeze();
+            needEnemyUnfreeze = false;
+        }
+        if(needEnemyFreeze){
+            for(aliveIterator = aliveBullets.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveBullets.get(aliveIterator).freeze();
+            for(aliveIterator = aliveNpcTanks.size - 1; aliveIterator >=0; aliveIterator --)
+                aliveNpcTanks.get(aliveIterator).freeze();
+            needEnemyFreeze = false;
+        }
+        if(needPlayerRespawn)
+            respawnPlayer();
+    }
+
+    private void checkWinCondition(){
+    }
+
+    private void checkFailCondition(){
+    }
+
+    private void respawnPlayer(){
+        if(objectsMatrix[allySpawnY][allySpawnX] == Constants.Physics.CATEGORY_SPAWN) {
+            playerTank = deadPlayerTank;
+            objectsMatrix[allySpawnY][allySpawnX] = Constants.Physics.CATEGORY_ALLY_TANK | Constants.Physics.CATEGORY_SPAWN;
+            playerTank.respawn(allySpawnX,allySpawnY);
+            deadPlayerTank = null;
+            needPlayerRespawn = false;
+        }
+    }
+
+    public void beginEnemyFreeze(float freezeEnemyTime){
+        if(this.freezeEnemyTime == 0)
+            needEnemyFreeze = true;
+        this.freezeEnemyTime = freezeEnemyTime;
+    }
+
+    private void endEnemyFreeze(float delta){
+        if(freezeEnemyTime > 0) {
+            freezeEnemyTime -= delta;
+            if(freezeEnemyTime <= 0) {
+                needEnemyUnfreeze = true;
+                freezeEnemyTime = 0;
+            }
+        }
+    }
+
     public void removeDead(){
+        if(needPlayerDispawn){
+            playerTank.getBody().setTransform(Constants.Physics.FAR_FAR,Constants.Physics.FAR_FAR,0);
+            deadPlayerTank = playerTank;
+            playerTank = null;
+            needPlayerDispawn = false;
+            if(deadPlayerTank.playerStatsManager.getLives() >= 0 )
+                needPlayerRespawn = true;
+        }
         for(deadIterator = deadEntities.size - 1; deadIterator >= 0; deadIterator--){
             deadEntity = deadEntities.get(deadIterator);
             world.destroyBody(deadEntity.getBody());
@@ -561,7 +630,8 @@ public class Level {
         }
         deadEntities.clear();
     }
-
+    // updating level end
+    //disposing level
     public void dispose() {
         world.dispose();
         wallRectangle.dispose();
@@ -576,4 +646,5 @@ public class Level {
         npcTankPool.freeAll(aliveNpcTanks);
         wallPool.freeAll(aliveWalls);
     }
+    //disposing level end
 }

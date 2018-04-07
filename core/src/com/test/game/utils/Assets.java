@@ -58,10 +58,13 @@ public class Assets implements Disposable, AssetErrorListener {
 
     public LightTankAssets lightTankAssets;
     public HeavyTankAssets heavyTankAssets;
+    public InterfaceAssets interfaceAssets;
     //public OnScreenControlsAssets onScreenControlsAssets;
     //public ButtonAssets buttonAssets;
 
-    private AssetManager assetManager;
+    public AssetManager assetManager;
+
+
 
     //////////////////////////////////////////////////////
     /// обращаться напрямую к инстанс плохо.
@@ -100,13 +103,25 @@ public class Assets implements Disposable, AssetErrorListener {
     public void init(AssetManager assetManager) {
         this.assetManager = assetManager;
         assetManager.setErrorListener(this);
+
         assetManager.load(Constants.Textures.BattleItems.TEXTURE_ATLAS, TextureAtlas.class);
         assetManager.finishLoading();
+        assetManager.load(Constants.Textures.InterfaceItems.TEXTURE_ATLAS, TextureAtlas.class);
+        assetManager.finishLoading();
+        //assetManager.load("skins/uiskin.atlas", TextureAtlas.class);
+        //assetManager.finishLoading();
+        TextureAtlas atlasTsnks = assetManager.get(Constants.Textures.BattleItems.TEXTURE_ATLAS);
+        lightTankAssets = new LightTankAssets(atlasTsnks);
+        heavyTankAssets = new HeavyTankAssets(atlasTsnks);
 
-        TextureAtlas atlas = assetManager.get(Constants.Textures.BattleItems.TEXTURE_ATLAS);
-        lightTankAssets = new LightTankAssets(atlas);
-        heavyTankAssets = new HeavyTankAssets(atlas);
+        TextureAtlas atlasInterface = assetManager.get(Constants.Textures.InterfaceItems.TEXTURE_ATLAS);
+        interfaceAssets = new InterfaceAssets(atlasInterface);
+
+        assetManager.finishLoading();
     }
+    //public AssetManager getAssetManager() {
+    //    return assetManager;
+    //}
 
     @Override
     public void error(AssetDescriptor asset, Throwable throwable) {
@@ -168,6 +183,18 @@ public class Assets implements Disposable, AssetErrorListener {
             rotationRegions[15] = atlas.findRegion(Constants.Textures.BattleItems.HEAVY_TANK338);
         }
     }
+
+    public class InterfaceAssets {
+        public final TextureAtlas.AtlasRegion background;
+        public final TextureAtlas.AtlasRegion logo;
+
+        public InterfaceAssets(TextureAtlas atlas) {
+            background = atlas.findRegion(Constants.Textures.InterfaceItems.BACKGROUND);
+            logo = atlas.findRegion(Constants.Textures.InterfaceItems.LOGO);
+
+        }
+    }
+
 /*
     public class OnScreenControlsAssets {
         //todo OnScreenControls

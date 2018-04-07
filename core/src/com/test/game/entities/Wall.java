@@ -1,9 +1,8 @@
 package com.test.game.entities;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Pool;
-import com.test.game.Level;
+import com.test.game.level.Level;
 import com.test.game.utils.Constants;
 import com.test.game.utils.Enums.WallType;
 import com.test.game.utils.MaterialEntity;
@@ -14,8 +13,8 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
     /// Constants Settings                  ///
     ///////////////////////////////////////////
 
-    public static int STONE_WALL_HP_MAX = 1000;
-    public static int WOODEN_WALL_HP_MAX = 4;
+    public static byte STONE_WALL_HP_MAX = 100;
+    public static byte WOODEN_WALL_HP_MAX = 4;
 
     ///////////////////////////////////////////
     /// Constants Physics                   ///
@@ -28,6 +27,7 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
     /// END CONSTANTS                       ///
     ///////////////////////////////////////////
 
+    public boolean bulletDamage;
     public boolean immortal;
     public WallType type;
 
@@ -47,19 +47,22 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
         switch (type){
             case WOODEN_WALL:
                 hp = WOODEN_WALL_HP_MAX;
+                bulletDamage = true;
                 immortal = false;
                 break;
             case STONE_WALL:
                 hp = STONE_WALL_HP_MAX;
+                bulletDamage = false;
                 immortal = false;
                 break;
             case LEVEL_BORDER:
-                hp = Integer.MAX_VALUE;
+                hp = Byte.MAX_VALUE;
+                bulletDamage = false;
                 immortal = true;
         }
     }
 
-    public void takeDamage(int damage){
+    public void takeDamage(byte damage){
         if(immortal)
             decreaseHp(0);
         else{
@@ -75,7 +78,7 @@ public class Wall extends MaterialEntity implements Pool.Poolable {
         this.setAlive(false);
         this.setBody(null);
         this.setCategory((short) 0);
-        this.setHp(0);
+        this.setHp((byte) 0);
         immortal = false;
     }
 }

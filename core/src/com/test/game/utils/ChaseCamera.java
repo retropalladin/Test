@@ -2,7 +2,7 @@ package com.test.game.utils;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.test.game.Level;
+import com.test.game.level.*;
 import com.test.game.entities.NpcTank;
 
 public class ChaseCamera {
@@ -29,7 +29,7 @@ public class ChaseCamera {
     }
 
     public void update(float delta, Level level) {
-        if (Constants.Developing.DEBUG & LevelInputManager.instance.levelInput.cameraDebugOn()){
+        if (Constants.Developing.DEBUG & com.test.game.level.LevelInputManager.instance.levelInput.cameraDebugOn()){
             following = !following;
         }
         if (following) {
@@ -103,16 +103,16 @@ public class ChaseCamera {
     }
 
     private void debugMove(float delta){
-        if (LevelInputManager.instance.levelInput.debugCameraMoveLeft()) {
+        if (com.test.game.level.LevelInputManager.instance.levelInput.debugCameraMoveLeft()) {
             camera.position.x -= delta * Constants.Renderer.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
-        if (LevelInputManager.instance.levelInput.debugCameraMoveRight()) {
+        if (com.test.game.level.LevelInputManager.instance.levelInput.debugCameraMoveRight()) {
             camera.position.x += delta * Constants.Renderer.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
-        if (LevelInputManager.instance.levelInput.debugCameraMoveUp()) {
+        if (com.test.game.level.LevelInputManager.instance.levelInput.debugCameraMoveUp()) {
             camera.position.y += delta * Constants.Renderer.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
-        if (LevelInputManager.instance.levelInput.debugCameraMoveDown()) {
+        if (com.test.game.level.LevelInputManager.instance.levelInput.debugCameraMoveDown()) {
             camera.position.y -= delta * Constants.Renderer.CHASE_CAMERA_NOT_FOLLOWING_MOVE_SPEED;
         }
     }

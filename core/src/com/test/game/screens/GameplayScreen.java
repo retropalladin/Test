@@ -2,17 +2,14 @@ package com.test.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import com.test.game.Level;
-import com.test.game.utils.LevelInputManager;
-import com.test.game.LevelRenderer;
-import com.test.game.utils.Assets;
+import com.test.game.level.Level;
+import com.test.game.level.LevelInputManager;
+import com.test.game.level.LevelRenderer;
 import com.test.game.utils.Constants;
-import com.test.game.utils.LevelLoader;
-import com.test.game.utils.ScreensManager;
+import com.test.game.level.LevelLoader;
 
 public class GameplayScreen implements Screen {
 
@@ -57,7 +54,8 @@ public class GameplayScreen implements Screen {
 
     @Override
     public void dispose() {
-        ScreensManager.instance.disposeScreens();
+        //TODO deal with sm instance
+        //ScreensManager.instance.disposeScreens();
     }
 
     public void resetScreen(String levelName) {

@@ -50,15 +50,11 @@ public class MainMenuScreen implements Screen {
     private BitmapFont font24;
 
     private Image backgroundImage;
+    private Image image_logo;
 
     public MainMenuScreen(final MyTestGame game) {
-        //initFonts();
+
         this.game = game;
-       /* this.skin = new Skin();
-        //this.skin.addRegions(Assets.instance.getAssetManager().get("skins/uiskin.atlas", TextureAtlas.class));
-        //this.skin.add("default-font", font24);
-        this.skin.load(Gdx.files.internal("skins/uiskin.json"));
-*/
         this.camera = new OrthographicCamera();
         camera.setToOrtho(false, MyTestGame.GAME_DESKTOP_WIDTH,
                 MyTestGame.GAME_DESKTOP_HEIGHT);
@@ -88,27 +84,28 @@ public class MainMenuScreen implements Screen {
         stage.addActor(background);
         stage.addActor(foreground);
 
+        image_logo = new Image(Assets.instance.assetManager.get("images/menu_pict.png", Texture.class));
+        //image_logo.setSize(200,100);
+        image_logo.setPosition(stage.getWidth() / 2 - image_logo.getWidth()/2, stage.getHeight() - image_logo.getHeight());
+
         backgroundImage = new Image(Assets.instance.assetManager.get("images/menu_backgr.png", Texture.class));
         backgroundImage.setSize(stage.getWidth(),stage.getHeight());
-        backgroundImage.setPosition(0, 0);
+        backgroundImage.setPosition(0, -image_logo.getHeight());
 
         background.addActor(backgroundImage);
+        background.addActor(image_logo);
 
         //skin = new Skin(Assets.instance.assetManager.get(Constants.Textures.AtlasNames.SKIN_ATLAS, TextureAtlas.class));
-        this.skin = new Skin();
-        this.skin.addRegions(Assets.instance.assetManager.get("skins/uiskin.atlas", TextureAtlas.class));
-        this.skin.add("default-font", font24);
-        this.skin.load(Gdx.files.internal("skins/uiskin.json"));
-        // Image
-        Image image_logo = new Image(Assets.instance.assetManager.get("images/menu_pict.png", Texture.class));
-        image_logo.setSize(200,100);
-        image_logo.setPosition(Gdx.graphics.getWidth()/2-100,Gdx.graphics.getHeight()-100);
-        //stage.addActor(image_logo);
+        skin = new Skin();
+        skin.addRegions(Assets.instance.assetManager.get("skins/uiskin.atlas", TextureAtlas.class));
+        skin.add("default-font", font24);
+        skin.load(Gdx.files.internal("skins/uiskin.json"));
 
         // StartGame Button
         Button button1 = new TextButton("Start Game",skin,"default");
-        button1.setSize(400,100);
-        button1.setPosition(Gdx.graphics.getWidth()/2-200,Gdx.graphics.getHeight()/2);
+        button1.setSize(MyTestGame.GAME_DESKTOP_WIDTH/2,75);
+        button1.setPosition(stage.getWidth() / 2 - MyTestGame.GAME_DESKTOP_WIDTH/4,
+                stage.getHeight()/2);
         button1.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -122,7 +119,7 @@ public class MainMenuScreen implements Screen {
         //stage.addActor(button1);
 
         // Nothing Button
-        Button button2 = new TextButton("Nothing",skin,"default");
+        /*Button button2 = new TextButton("Nothing",skin,"default");
         button2.setSize(400,100);
         button2.setPosition(Gdx.graphics.getWidth()/2-200,Gdx.graphics.getHeight()/2 - 100);
         button2.addListener(new InputListener(){
@@ -135,11 +132,11 @@ public class MainMenuScreen implements Screen {
 
                 return true;
             }
-        });
+        });*/
         //stage.addActor(button2);
 
         // Nothing Button
-        Button button3 = new TextButton("Nothing",skin,"default");
+        /*Button button3 = new TextButton("Nothing",skin,"default");
         button3.setSize(400,100);
         button3.setPosition(Gdx.graphics.getWidth()/2-200,Gdx.graphics.getHeight()/2 - 210);
         button3.addListener(new InputListener(){
@@ -152,25 +149,24 @@ public class MainMenuScreen implements Screen {
 
                 return true;
             }
-        });
+        });*/
 
-        Table scrollTable = new Table();
-        scrollTable.add(image_logo);
-        scrollTable.row();
+        /*Table scrollTable = new Table();
+        //scrollTable.add(image_logo);
+        //scrollTable.row();
         scrollTable.add(button1);
         scrollTable.row();
-        scrollTable.add(button2);
+        *//*scrollTable.add(button2);
         scrollTable.row();
         scrollTable.add(button3);
-
+*//*
         ScrollPane scroller = new ScrollPane(scrollTable);
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(scroller).fill().expand();
+        table.add(scroller).fill().expand();*/
 
-        foreground.addActor(table);
-
+        foreground.addActor(button1);
     }
 
     @Override

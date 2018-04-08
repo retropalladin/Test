@@ -52,7 +52,7 @@ public class LoadingScreen implements Screen {
     @Override
     public void show() {
         shapeRenderer.setProjectionMatrix(camera.combined);
-        this.progress = 0f;
+        progress = 0f;
         queueAssets();
     }
 
@@ -71,11 +71,16 @@ public class LoadingScreen implements Screen {
         update(delta);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(32, camera.viewportHeight / 2 - 8, camera.viewportWidth - 64, 16);
 
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(32, camera.viewportHeight / 2 - 8, progress * (camera.viewportWidth - 64), 16);
+        shapeRenderer.rect(32, camera.viewportHeight / 2 - 8, camera.viewportWidth - 64, 16 - progress * 16);
+
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(32, camera.viewportHeight / 2 - 8, progress * (camera.viewportWidth - 64) / 2, 16);
+
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(camera.viewportWidth - 32 - progress * (camera.viewportWidth - 64)/2, camera.viewportHeight / 2 - 8, progress * (camera.viewportWidth - 64) / 2, 16);
+
         shapeRenderer.end();
     }
 
